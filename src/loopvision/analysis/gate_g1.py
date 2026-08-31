@@ -64,6 +64,7 @@ def main() -> int:
     print()
 
     if args.json:
+        Path(args.json).parent.mkdir(parents=True, exist_ok=True)
         Path(args.json).write_text(
             json.dumps(
                 {

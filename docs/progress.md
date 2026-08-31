@@ -12,7 +12,7 @@ Milestone tracker for "What a Loop Sees". Mirrors Section 11 of `what-a-loop-see
 
 **As of 2026-08-31**
 
-- Phase: **milestone 2 in progress, blocked on the GPU queue.** Gate G1's four training runs are submitted (jobs 4953 to 4956) and queued.
+- Phase: **milestone 2, GATE G1 FAILED on attempt 1.** Hard stop. Milestone 3 does not start until G1 passes.
 - Repository: `loopvision/`, git initialised, six commits. Cloned to `<cluster-user>@<login-node>:~/loopvision`, transferred by git bundle so the LF line endings survive.
 - Environment: Python 3.11.11 via `module load python311`, torch **2.4.1+cu121**, driver 525.147.05 confirmed. See D-014.
 - `pytest -q`: **99 passed.** Milestone 0's 13 plus the data layer.
@@ -75,11 +75,11 @@ The two hard stops. A gate that fails means stop and report, not work around.
 
 | Gate | Milestone | Question | Status | Date | Outcome |
 |---|---|---|---|---|---|
-| G1 | 2 | Do the tasks actually separate depth from breadth? | PENDING | | |
-| G1.1 | 2 | Depth 3 unsolvable at k=1, looped and non-looped both near chance | PENDING | | |
-| G1.2 | 2 | Depth 1 solvable at k=1 to high threshold | PENDING | | |
+| G1 | 2 | Do the tasks actually separate depth from breadth? | **FAILED, attempt 1** | 2026-08-31 | G1.2 failed. Hard stop, milestone 3 does not start. See findings.md and D-022 |
+| G1.1 | 2 | Depth 3 unsolvable at k=1, looped and non-looped both near chance | PASS but vacuous | 2026-08-31 | 0.0204 both, chance 0.0208. Uninterpretable while G1.2 fails |
+| G1.2 | 2 | Depth 1 solvable at k=1 to high threshold | **FAILED** | 2026-08-31 | 0.0204, needed 0.90. Not rendering: glyph recognition is 1.000. The group multiplication is what will not learn |
 | G1.3 | 2 | Order-blind ceiling below tau, probe not above ceiling (revised, D-016) | **PASSED** | 2026-08-31 | Worst ceiling 0.652 at depth 2, tau 0.90, margin 0.248. Linear probe 0.056, well under its ceiling. Needs no trained model |
-| G1.4 | 2 | Family C solvable at k=1 at every breadth | PENDING | | |
+| G1.4 | 2 | Family C solvable at k=1 at every breadth | **PASSED** | 2026-08-31 | 1.000 at every breadth cell, 4 through 8 |
 | G2 | 4 | Does looping beat matched-compute feedforward and the echo baseline? | PENDING | | |
 
 Record every gate outcome here and in `findings.md`, including a failing outcome and what was changed in response. A gate that was re-run after a task change must show both attempts.

@@ -26,12 +26,36 @@ Gates are results too, and the G1 table goes in the paper as evidence the depth 
 
 ### Gate G1, task validity, milestone 2
 
+**ATTEMPT 1, 2026-08-31: FAILED on G1.2.** This is a hard stop. Milestone 3 does not start.
+
 | Check | Requirement | Measured | run_id | Status |
 |---|---|---|---|---|
-| G1.1 | Depth 3 near chance at k=1, looped and non-looped. Chance for family A is 1/48 = 0.021 | | | PENDING |
-| G1.2 | Depth 1 solvable at k=1 to high threshold | | | PENDING |
-| G1.3 | ~~Bag-of-operators probe at chance for depth greater than 1~~ **Superseded, see below.** Probe must not exceed the order-blind ceiling, and the ceiling must stay below tau | | | PENDING, criterion revised 2026-08-31 |
-| G1.4 | Family C solvable at k=1 at every breadth | | | PENDING |
+| G1.1 | Depth 3 near chance at k=1, looped and non-looped. Chance for family A is 1/48 = 0.021 | 0.0204 looped, 0.0204 feedforward, n=16384 each | `g1_famA_d3_looped_s0`, `g1_famA_d3_ffwd_s0` | **PASS, but vacuous. See below** |
+| G1.2 | Depth 1 solvable at k=1 to high threshold (0.90) | **0.0204**, n=16384 | `g1_famA_d1_looped_s0` | **FAIL** |
+| G1.3 | Probe must not exceed the order-blind ceiling, and the ceiling must stay below tau | worst ceiling 0.652 at depth 2, threshold 0.75. Linear probe 0.056 | analytic, no model needed | PASS |
+| G1.4 | Family C solvable at k=1 at every breadth | **1.000** at every cell, breadth 4 through 8 | `g1_famC_looped_s0` | PASS |
+
+**Why the G1.1 pass does not count.** G1.1 and G1.2 are not independent. G1.1 asks whether depth 3 is unsolvable in one pass, and it is; but G1.2 shows depth **1** is also unsolvable in one pass, and depth 1 is a single group multiplication with no composition in it at all. So the depth-3 result cannot be attributed to composition depth. Both numbers are 0.0204 because both models collapsed to a constant prediction, and 334 of 16384 is simply that class's base rate. Reporting G1.1 as a pass without this caveat would be the most misleading thing in the whole gate.
+
+**Diagnosis: not rendering, and not the pipeline.** Three pieces of evidence, in the order they narrowed it.
+
+1. **The pipeline works.** Family C reached **1.000** at every breadth using the same model, trainer, optimiser and schedule. Whatever is wrong is specific to family A.
+2. **The model works.** It overfits 32 family A depth-1 samples to 100 percent accuracy under both `zeros` and `randn` state initialisation, so the data, the gradient path and the architecture are all sound.
+3. **Rendering works.** Splitting the depth-1 task into its parts, at k=1 on a 20000 sample pool:
+
+| Sub-task at k=1 | Final loss | Accuracy |
+|---|---|---|
+| Recognise the queried object's state glyph, 48-way | 0.000 | **1.000** |
+| Recognise the queried object's operator glyph, 48-way | 0.000 | **1.000** |
+| Compose the two, which is the depth 1 task | 2.429 | **0.101** |
+
+The model reads both 4x4 glyphs perfectly. What it cannot learn is the D4 x S3 multiplication table itself. IMPLEMENTATION.md Section 4.6 anticipated two causes for a G1.2 failure, "rendering or capacity"; the first is now excluded by measurement.
+
+**What this means for the task design.** Family A's difficulty floor is too high. Depth 1 is not a shallow task with one composition step: it already requires learning a 48 element non-abelian group's full multiplication table from pixels, 2304 input pairs mapping to 48 classes. Composition depth is then stacked on top of a base task that is itself unsolved. The depth axis has no valid origin.
+
+Also relevant: the flat loss at ln(48) = 3.8712 held for all 20000 steps on fresh non-repeating data, while a repeating 20000 sample pool reached loss 2.429. The task is learnable with enough exposure per example and not learnable in the online regime we ran, which points at sample efficiency rather than a hard impossibility.
+
+**Not fixed, deliberately.** Choosing a remedy changes the task, and the standing rule is that a failing gate is reported rather than worked around. Options are in `docs/decisions.md` D-022, awaiting a decision.
 
 **Attempt history:** none yet. If the gate is failed and the task is deepened, add a row per attempt, stating what changed. A task that was deepened until the gate passed must be reported that way in the paper.
 

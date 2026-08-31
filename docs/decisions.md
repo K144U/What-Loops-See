@@ -230,6 +230,26 @@ The visited-sprite exclusion in the walk is the part that matters most for the s
 **Consequence:** each job gets half the CPU. Data generation is procedural and runs in the training process rather than in DataLoader workers, so this is the throughput that suffers, not GPU utilisation. If steps per second drops enough to matter, the fix is DataLoader workers rather than reverting to 8 cores. Worth measuring once the gate runs land: if wall-clock per run more than doubles, this trade was wrong.
 **Reversible:** yes, one line, and the override is documented in the script.
 
+### D-022. Gate G1 failed. Remedy options for family A, awaiting a decision
+**Date:** 2026-08-31
+**Milestone:** 2
+**Type:** resolution
+**Status:** **OPEN, blocking milestone 3.** Recorded rather than acted on, because every option below changes the task and a failing gate is reported, not worked around.
+
+**What failed.** G1.2: family A depth 1 at k=1 reached 0.0204 against a required 0.90. Chance is 0.0208. Full diagnosis in `findings.md`. Rendering is excluded by measurement: the model recognises both the state glyph and the operator glyph 48-way at 1.000 accuracy. What it cannot learn is the D4 x S3 multiplication itself, 2304 input pairs to 48 classes, from pixels in the online regime.
+
+**Options, roughly cheapest first.**
+
+1. **Train longer.** Loss was flat at ln(48) for 20000 steps on fresh data, but reached 2.429 on a repeating 20000 sample pool, so the mapping is learnable with more exposure per example. Cheapest test: rerun G1.2 at 100k to 200k steps. Risk: if depth 1 needs 200k steps at k=1, the M1 sweep at milestone 5 becomes ten times more expensive, which collides with the queue reality in D-003.
+2. **Shrink the group.** D4 alone is order 8, D4 x S3 is 48. A smaller group means a smaller multiplication table and a lower difficulty floor. Cost: chance rises from 0.021 to 0.125, the order-blind ceiling shifts and D-016's numbers must be regenerated, and the comparison with the text-case work weakens, which is the reason family A exists.
+3. **Split the task.** Present the operator in the query token stream rather than as a glyph, which is the `tokens` presentation variant already built and tested. This isolates composition from visual parsing. Cost: it is no longer a purely pixel task, which is the paper's central claim.
+4. **Add capacity or curriculum.** Larger d, or pre-train on glyph recognition then fine-tune on composition. Cost: a curriculum makes "loops required" depend on training procedure, which contaminates H1.
+5. **Redefine the depth origin.** Accept that depth 1 needs k > 1 and measure the curve from there. Cost: G1.2 exists precisely to prevent this, since without a solvable origin there is no way to tell "needs loops for composition" from "cannot do the base task".
+
+**Recommendation.** Try option 1 first: it is the only one that does not change the task, it is a single rerun, and it directly tests the sample-efficiency hypothesis the pool result points to. If depth 1 still fails at 200k steps, option 2 is the honest next move and the group change gets reported in the paper.
+
+**Note for the paper regardless of outcome.** That family C reaches 1.000 while family A depth 1 sits at chance under identical training is itself a finding about the two task families, and the gate table belongs in the task validity section either way.
+
 ### D-003. Compute block, sixteen weeks on the cluster
 **Date:** open
 **Milestone:** blocks the pre-registration freeze at milestone 5
