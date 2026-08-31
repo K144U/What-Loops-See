@@ -1,0 +1,11 @@
+# The cluster is Linux. A shell script checked out with CRLF line endings
+# fails there with errors that point nowhere useful, typically
+# "bad interpreter: /bin/bash^M". Development happens on Windows, so this
+# has to be pinned rather than left to core.autocrlf.
+*.sh   text eol=lf
+*.pbs  text eol=lf
+*.py   text eol=lf
+*.yaml text eol=lf
+*.yml  text eol=lf
+*.toml text eol=lf
+*.md   text eol=lf
