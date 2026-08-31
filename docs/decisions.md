@@ -181,6 +181,15 @@ for d in range(2, 7):
 **Consequence:** four cells rather than three, so the glyph needs slightly more canvas. Chance stays at exactly 1/48 = 0.021 as the spec states. Both the rejection of the tromino and the acceptance of the tetromino are asserted computationally in `tests/test_groups.py`, including a regression test that keeps the tromino rejected so nobody reintroduces it.
 **Reversible:** any shape with a trivial stabiliser works. The test computes the stabiliser rather than assuming it, so swapping the glyph is safe.
 
+### D-018. Family A has no combo_ood split
+**Date:** 2026-08-31
+**Milestone:** 1
+**Type:** deviation
+**Decision:** family A supports train, iid_val, depth_ood and breadth_ood. It does not define `combo_ood`, and requesting it raises rather than improvising a substitute.
+**Reason:** IMPLEMENTATION.md Section 4.5 defines `combo_ood` as "unseen colour and shape pairings". Family A has no shapes and no free colours: it has one glyph and three colours that the S3 factor permutes. Holding out any colour or any operator subset would break the uniform-factorisation property the anti-shortcut sampler depends on, which would cost more than the split is worth. Inventing a contrived substitute and calling it `combo_ood` would be worse than having none, because an OOD result would then be reported for a split that does not mean what its name says.
+**Consequence:** `combo_ood` is a families B and C split. Any cross-family comparison on that split covers two families rather than three, and the paper must say so rather than leaving readers to infer coverage from a table. Enforced by `SUPPORTED_SPLITS` on each family module and by `test_unsupported_split_raises_rather_than_improvising`.
+**Reversible:** yes, if someone designs a compositional held-out split for family A that preserves label uniformity.
+
 ### D-003. Compute block, sixteen weeks on the cluster
 **Date:** open
 **Milestone:** blocks the pre-registration freeze at milestone 5
