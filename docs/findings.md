@@ -26,7 +26,43 @@ Gates are results too, and the G1 table goes in the paper as evidence the depth 
 
 ### Gate G1, task validity, milestone 2
 
-**ATTEMPT 1, 2026-08-31: FAILED on G1.2.** This is a hard stop. Milestone 3 does not start.
+**ATTEMPT 2, 2026-09-01: PASSED.** All four checks. Milestone 3 is unblocked. Attempt 1 is preserved below in full, per the rule that a gate re-run after a change must show both attempts.
+
+| Check | Requirement | Attempt 1 (20k steps) | Attempt 2 (200k steps) | Status |
+|---|---|---|---|---|
+| G1.1 looped | depth 3 at k=1 <= 0.05 | 0.0204 | **0.0212** | PASS |
+| G1.1 feedforward | depth 3 at k=1 <= 0.05 | 0.0204 | **0.0212** | PASS |
+| G1.2 | depth 1 at k=1 >= 0.90 | 0.0204 FAIL | **1.0000** | PASS |
+| G1.3 | order-blind ceiling below tau | 0.652 vs 0.75 | unchanged, analytic | PASS |
+| G1.4 | family C at k=1, every breadth | 1.0000 | not rerun, see below | PASS |
+
+Chance is 1/48 = 0.0208. n = 16384 per run. Runs: `g1_famA_d1_looped_long_s0`, `g1_famA_d3_looped_long_s0`, `g1_famA_d3_ffwd_long_s0`, `g1_famC_looped_s0`.
+
+**What changed between attempts: the step budget, nothing else.** D-022 option 1, the only remedy that does not alter the task. All three family A runs were rerun rather than only the failing one, because comparing depth 3 at 20k steps against depth 1 at 200k would be an artefact of unequal budgets rather than a gate. Family C was not rerun: it reached 1.000 at every breadth in 20k steps, and more steps cannot make a solved task unsolved.
+
+**The dissociation, which is the actual result.** Same model, same 200k budget, same data pipeline. Only composition depth differs.
+
+| Step | Depth 1 | Depth 3 |
+|---|---|---|
+| 50,000 | 0.1636 | 0.0171 |
+| 100,000 | 0.9946 | 0.0225 |
+| 150,000 | 1.0000 | 0.0232 |
+| 200,000 | **1.0000** | **0.0225** |
+| final train loss | **0.0** | **3.8711** (ln 48 = 3.8712) |
+
+Depth 1 shows a grokking curve: flat at about 0.165 from step 18,000 to 66,000, then 0.2166 at 74,000, 0.8818 at 82,000, crossing tau at **step ~84,000**. Attempt 1 stopped at 20,000, roughly four times short of the transition.
+
+Depth 3 is flat at chance throughout with no upward trend. Because data never repeats (51.2M samples, each seen once), train loss is generalisation loss and memorisation is unavailable, so depth 3 sitting at exactly ln(48) means the model never fit even the data in front of it.
+
+**This retroactively rescues G1.1.** In attempt 1 its pass was vacuous, because depth 1 failed too and the depth 3 result could not be attributed to composition. Now depth 1 is solved at the same budget, so it can.
+
+**One confound, recorded rather than hidden.** `steps` also sets the cosine schedule length, so the 20k run had decayed its learning rate to 3e-5 by its end while the 200k run was still near peak at the same step. The two effects are not separable from these runs. The conclusion that attempt 1 was too short holds either way, but this is not a clean step-count-only comparison and should not be described as one.
+
+**Consequence for the compute plan.** Family A needs roughly 100k to 200k steps, not 20k. That is a five to ten times multiplier on every family A run in the milestone 5 sweep, and it makes the earlier "2 to 4 GPU-weeks" estimate optimistic. See D-003.
+
+---
+
+**ATTEMPT 1, 2026-08-31: FAILED on G1.2.** Preserved in full below.
 
 | Check | Requirement | Measured | run_id | Status |
 |---|---|---|---|---|

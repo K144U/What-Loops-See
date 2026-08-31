@@ -12,7 +12,7 @@ Milestone tracker for "What a Loop Sees". Mirrors Section 11 of `what-a-loop-see
 
 **As of 2026-08-31**
 
-- Phase: **milestone 2, GATE G1 FAILED on attempt 1.** Hard stop. Milestone 3 does not start until G1 passes.
+- Phase: **milestone 2 complete. GATE G1 PASSED on attempt 2.** Milestone 3 is unblocked.
 - Repository: `loopvision/`, git initialised, six commits. Cloned to `<cluster-user>@<login-node>:~/loopvision`, transferred by git bundle so the LF line endings survive.
 - Environment: Python 3.11.11 via `module load python311`, torch **2.4.1+cu121**, driver 525.147.05 confirmed. See D-014.
 - `pytest -q`: **99 passed.** Milestone 0's 13 plus the data layer.
@@ -52,8 +52,8 @@ Legend: NOT STARTED, IN PROGRESS, BLOCKED, DONE, FAILED.
 |---|---|---|---|---|---|
 | 0 | 0 | Sep 1 to 6, 2026 | Repo skeleton, `pyproject.toml`, CI running pytest, `pick_gpu.sh`, hello-world PBS job surviving a kill and resuming | `pytest -q` passes and a chained 2-job run completes | **DONE 2026-08-31.** 13 tests pass on the cluster, 4-job chain completed and matched an uninterrupted run bit exactly |
 | 1 | 1 | Sep 7 to 13 | `groups.py`, `render.py`, families A, B, C generators, manifest and splits | `pytest tests/test_data.py` passes, 64 sample images dumped and eyeballed | **DONE 2026-08-31.** 99 tests pass, all three families, 11 contact sheets dumped and eyeballed |
-| 2 | 2 | Sep 14 to 20 | **GATE G1**, task validity | `pytest tests/test_gate_g1.py` passes on stored gate runs | **IN PROGRESS.** Thresholds pre-registered and committed before submission. Model, trainer and gate runner built. Four runs queued (4953 to 4956), waiting on the GPU queue |
-| 3 | 3 to 5 | Sep 21 to Oct 11 | Model, training loop, stability, three conditioning variants, four baselines | d=384 trains stably at k=8 on depth 3 above threshold, cold start, twice with different seeds | NOT STARTED |
+| 2 | 2 | Sep 14 to 20 | **GATE G1**, task validity | `pytest tests/test_gate_g1.py` passes on stored gate runs | **DONE 2026-09-01.** Passed on attempt 2 at 200k steps. Attempt 1 at 20k steps failed G1.2 and is recorded in full |
+| 3 | 3 to 5 | Sep 21 to Oct 11 | Model, training loop, stability, three conditioning variants, four baselines | d=384 trains stably at k=8 on depth 3 above threshold, cold start, twice with different seeds | **UNBLOCKED.** Model, trainer, baselines and parallel generation already built during milestone 2 |
 | 4 | 5 | Oct 5 to 11 | **GATE G2**, loops beat matched-compute feedforward and echo baseline | `python -m loopvision.analysis.gate_g2` exits 0 | NOT STARTED |
 | 5 | 6 to 7 | Oct 12 to 25 | Freeze `preregistration.md` at tag `prereg-v1`, then full M1 sweep | H1 resolves, `m1_loopcurve.parquet` complete, coefficients a and b with CIs printed | NOT STARTED |
 | 6 | 8 to 9 | Oct 26 to Nov 8 | M2 patching over (loop, patch position) | H3 resolves, heatmaps for all three families | NOT STARTED |
@@ -75,9 +75,9 @@ The two hard stops. A gate that fails means stop and report, not work around.
 
 | Gate | Milestone | Question | Status | Date | Outcome |
 |---|---|---|---|---|---|
-| G1 | 2 | Do the tasks actually separate depth from breadth? | **FAILED, attempt 1** | 2026-08-31 | G1.2 failed. Hard stop, milestone 3 does not start. See findings.md and D-022 |
-| G1.1 | 2 | Depth 3 unsolvable at k=1, looped and non-looped both near chance | PASS but vacuous | 2026-08-31 | 0.0204 both, chance 0.0208. Uninterpretable while G1.2 fails |
-| G1.2 | 2 | Depth 1 solvable at k=1 to high threshold | **FAILED** | 2026-08-31 | 0.0204, needed 0.90. Not rendering: glyph recognition is 1.000. The group multiplication is what will not learn |
+| G1 | 2 | Do the tasks actually separate depth from breadth? | **PASSED, attempt 2** | 2026-09-01 | Attempt 1 failed G1.2 at 20k steps. Attempt 2 at 200k steps passes all four. Both attempts in findings.md |
+| G1.1 | 2 | Depth 3 unsolvable at k=1, looped and non-looped both near chance | **PASSED** | 2026-09-01 | 0.0212 both at 200k steps, chance 0.0208. Now meaningful, since depth 1 is solved at the same budget |
+| G1.2 | 2 | Depth 1 solvable at k=1 to high threshold | **PASSED** | 2026-09-01 | 1.0000 at 200k steps. Grokked at step ~84k, so attempt 1's 20k budget was 4x short |
 | G1.3 | 2 | Order-blind ceiling below tau, probe not above ceiling (revised, D-016) | **PASSED** | 2026-08-31 | Worst ceiling 0.652 at depth 2, tau 0.90, margin 0.248. Linear probe 0.056, well under its ceiling. Needs no trained model |
 | G1.4 | 2 | Family C solvable at k=1 at every breadth | **PASSED** | 2026-08-31 | 1.000 at every breadth cell, 4 through 8 |
 | G2 | 4 | Does looping beat matched-compute feedforward and the echo baseline? | PENDING | | |
@@ -122,6 +122,7 @@ Live risks with the trigger that would make each one real.
 | Risk | Trigger | Response | Status |
 |---|---|---|---|
 | Model does not train stably at k=8 on depth 3 | end of week 3 with no stable run | adopt ELT-style intra-loop self-distillation, re-run | not triggered |
+| Step budget makes the M1 sweep unaffordable | family A needs 100k to 200k steps, not 20k, measured at gate G1 | **LIVE.** A five to ten times multiplier on every family A run. Options: fewer seeds, a shorter ladder, or accept a longer milestone 5. Must be resolved before the sweep is launched | **triggered 2026-09-01** |
 | Still unstable after distillation | end of week 5 | drop to single-block core and 16x16 resolution | not triggered |
 | Cluster access intermittent | any two-week gap in usable GPU time | cut size ladder from four models to two (d=384, d=768) and say so in the paper | not triggered |
 | Probe checkpoints exceed disk quota | quota check before milestone 5 | reduce probe density from 100 to 50 log-spaced steps | not triggered |

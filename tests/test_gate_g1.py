@@ -22,12 +22,9 @@ from loopvision.data import validate as V
 
 RUNS = Path(__file__).resolve().parents[1] / "runs"
 
-GATE_RUNS = {
-    "d3_looped": RUNS / "g1_famA_d3_looped_s0",
-    "d3_ffwd": RUNS / "g1_famA_d3_ffwd_s0",
-    "d1_looped": RUNS / "g1_famA_d1_looped_s0",
-    "famC": RUNS / "g1_famC_looped_s0",
-}
+# Read from validate.GATE_RUNS so the tests and the gate runner can never
+# disagree about which stored runs the gate is being judged on.
+GATE_RUNS = {k: RUNS / v for k, v in V.GATE_RUNS.items()}
 
 
 def needs(run: str):

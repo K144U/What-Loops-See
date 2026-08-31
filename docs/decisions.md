@@ -234,7 +234,7 @@ The visited-sprite exclusion in the walk is the part that matters most for the s
 **Date:** 2026-08-31
 **Milestone:** 2
 **Type:** resolution
-**Status:** **OPEN, blocking milestone 3.** Recorded rather than acted on, because every option below changes the task and a failing gate is reported, not worked around.
+**Status:** **RESOLVED 2026-09-01. Option 1 worked.** Depth 1 at 200000 steps reached 1.0000 against a required 0.90, while depth 3 stayed at 0.0212 at the same budget. Gate G1 passed on attempt 2 and milestone 3 is unblocked. The task was never broken; the run was roughly four times too short, with depth 1 grokking at step ~84000. Full result in `findings.md`. The options below are preserved because the reasoning behind rejecting options 2 to 5 still applies if a later family needs the same decision.
 
 **What failed.** G1.2: family A depth 1 at k=1 reached 0.0204 against a required 0.90. Chance is 0.0208. Full diagnosis in `findings.md`. Rendering is excluded by measurement: the model recognises both the state glyph and the operator glyph 48-way at 1.000 accuracy. What it cannot learn is the D4 x S3 multiplication itself, 2304 input pairs to 48 classes, from pixels in the online regime.
 
