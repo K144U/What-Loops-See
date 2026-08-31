@@ -1,0 +1,64 @@
+#!/bin/bash
+#PBS -N loopvis
+#PBS -q gpu
+#PBS -l select=1:ncpus=8:mem=48gb
+#PBS -l walltime=24:00:00
+#PBS -j oe
+
+# Self-chaining training job.
+#
+# qalter is blocked on this cluster, so a running job cannot have its
+# walltime extended and dies at the wall. The chain is how a run longer
+# than 24 hours completes: each job stops itself an hour before the wall,
+# checkpoints, and submits its own successor with a dependency on itself.
+# The DONE sentinel is what breaks the loop.
+#
+#   RUN_ID=smoke01 ENTRY=loopvision.train.smoke qsub scripts/submit.pbs
+#   RUN_ID=famA_384_v1 CONFIG=base.yaml qsub scripts/submit.pbs
+#
+# ncpus=8 is deliberate. The gpu queue caps a user at 16 concurrent cores,
+# so 8 per job means two jobs run at once. Asking for more halves throughput.
+
+set -euo pipefail
+
+cd "$PBS_O_WORKDIR"
+mkdir -p logs
+source .venv/bin/activate
+source scripts/pick_gpu.sh
+
+export RUN_ID="${RUN_ID:?RUN_ID must be set}"
+export ENTRY="${ENTRY:-loopvision.train.cli}"
+export OMP_NUM_THREADS=8
+export PYTHONUNBUFFERED=1
+export WANDB_MODE=offline
+
+# Resume is the default path, not the exception. A cold start and a restart
+# run the same command; the difference lives in whether a checkpoint exists.
+EXTRA_ARGS=()
+if [ -n "${CONFIG:-}" ]; then
+    EXTRA_ARGS+=(--config "configs/${CONFIG}")
+fi
+
+set +e
+python -m "$ENTRY" \
+    "${EXTRA_ARGS[@]}" \
+    --run-id "$RUN_ID" \
+    --resume auto \
+    --max-hours 23.0
+TRAIN_RC=$?
+set -e
+
+# Chain on anything short of the step budget, including a crash. afterany
+# rather than afterok is deliberate: a job killed at the wall exits non
+# zero, and that is precisely the case the chain exists to recover from.
+# The DONE sentinel, not the exit code, decides whether we are finished.
+if [ ! -f "runs/$RUN_ID/DONE" ]; then
+    echo "run $RUN_ID incomplete (rc=$TRAIN_RC), queueing successor"
+    qsub -W depend=afterany:"$PBS_JOBID" \
+         -v RUN_ID="$RUN_ID",ENTRY="$ENTRY"${CONFIG:+,CONFIG="$CONFIG"} \
+         scripts/submit.pbs
+else
+    echo "run $RUN_ID has DONE, chain complete"
+fi
+
+exit $TRAIN_RC

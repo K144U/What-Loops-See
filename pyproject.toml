@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "loopvision"
+version = "0.1.0"
+description = "Mechanistic interpretability of looped (depth-recurrent) vision models"
+requires-python = ">=3.10"
+
+# Single source of dependency truth. Do not add a line here without a
+# corresponding entry in docs/decisions.md Section 2.
+#
+# torch is deliberately NOT pinned to a +cu121 local version string here,
+# because the build variant comes from the index URL, not the version
+# specifier. On the cluster, install torch first and separately:
+#
+#   pip install torch==2.4.1 --index-url https://download.pytorch.org/whl/cu121
+#
+# Driver 525.147.05 with CUDA 12.0 cannot run a cu124 or later build.
+dependencies = [
+    "torch==2.4.1",
+    "numpy",
+    "einops",
+    "pyyaml",
+    "pandas",
+    "pyarrow",
+    "scipy",
+    "statsmodels",
+    "matplotlib",
+    "tqdm",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-timeout",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
+markers = [
+    "slow: takes more than a few seconds",
+    "cluster: requires PBS and a GPU node, skipped locally",
+]

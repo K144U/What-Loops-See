@@ -1,0 +1,175 @@
+# Decisions
+
+Append-only log of every choice that deviates from `what-a-loop-sees-IMPLEMENTATION.md`, every dependency added, every fallback taken, and every open question resolved.
+
+**Append-only means append-only.** Do not edit or delete a past entry. If a decision is reversed, write a new entry that supersedes it and add a `Superseded by D-NNN` line to the old one. The history of what we thought is part of the record.
+
+**This file is canonical.** When the repository skeleton is created at milestone 0, this file moves to `loopvision/docs/decisions.md`. It is moved, not copied. Two decision logs that drift apart is worse than none.
+
+**When to write an entry.** Any of these, no exceptions:
+
+- Deviating from the implementation spec in any way, however small.
+- Adding a dependency. The spec requires a line here for every one.
+- Taking a documented fallback (the stability time-box, the size-ladder cut, the probe-density reduction).
+- Resolving one of the open questions in Section 4 below.
+- Changing anything after `preregistration.md` is frozen. The pre-registration is never edited. Changes live here, with a date and a reason.
+- Choosing not to do something the spec calls for.
+
+**Entry format:**
+
+```
+### D-NNN. Short title
+**Date:** YYYY-MM-DD
+**Milestone:** N
+**Type:** deviation | dependency | fallback | resolution | scope
+**Decision:** what we are doing.
+**Reason:** why. Include what we tried first if this is a fallback.
+**Consequence:** what this changes downstream, including anything the paper must now say.
+**Reversible:** yes or no, and by when.
+```
+
+---
+
+## 1. Log
+
+### D-001. Create five planning documents alongside the implementation spec
+**Date:** 2026-08-31
+**Milestone:** pre-0
+**Type:** deviation
+**Decision:** create `paper.md`, `progress.md`, `findings.md`, `decisions.md` and `learnings.md` in the project root before starting milestone 0. The spec calls only for `docs/decisions.md`.
+**Reason:** the spec is a strong engineering document but has no place to record what the paper claims, how far along we are, what we found, or what we learned from mistakes. Without those, the paper-level story gets reconstructed at writing time from memory, which is exactly how the prior submission acquired an invented count and a promised sweep that had not run.
+**Consequence:** five documents to keep current. `progress.md` is updated every session, `findings.md` whenever a run produces a number, `decisions.md` and `learnings.md` on the events named in their own headers. If they go stale they are worse than useless, because they will be trusted.
+**Reversible:** yes, at any time.
+
+### D-002. This file becomes `docs/decisions.md` at milestone 0
+**Date:** 2026-08-31
+**Milestone:** pre-0
+**Type:** deviation
+**Decision:** when the repo skeleton is built, move this file to `loopvision/docs/decisions.md` rather than creating a new empty one there. Same for the other four, which go to `loopvision/docs/` with `paper.md` alongside `proposal.md`.
+**Reason:** the spec places `decisions.md` inside the repo. Creating a second one at milestone 0 would split the log, and the entries written before the repo existed are exactly the ones about why the project is shaped the way it is.
+**Consequence:** milestone 0 includes a move step, not a create step. The move itself gets a log entry confirming it happened.
+**Reversible:** yes.
+
+### D-007. Related work survey run before milestone 0, and what it changes
+**Date:** 2026-08-31
+**Milestone:** pre-0
+**Type:** scope
+**Decision:** ran a full related work survey before writing any code. Results in `gap-analysis.md`. Twenty one directly relevant papers exist that the implementation spec does not cite. Four consequences are adopted now: (a) H2 must be reworded before the pre-registration freeze, from "convergence diagnostics do not predict extrapolation" to an oracle comparison against ground-truth required depth. (b) H4 is demoted to a cited replication of Kuo et al. (arXiv 2606.29983), which already reports the effect in text. (c) Family C is protected absolutely, since the breadth axis is the genuinely unexplored one. (d) The geometry secondary claim is repositioned against arXiv 2512.19941, which already reports directional convergence in vision transformers.
+**Reason:** the spec's reference list stops well short of the current literature. The looped vision line roughly tripled between February and August 2026. Two hypotheses as written were at risk of being replications of published text results, which would have been discovered at review rather than at week zero.
+**Consequence:** `paper.md` Section 4 needs H2 rewritten and the contribution ordering reconsidered, since H3 and the patching instrument are now more defensible than the loop-count curves. Related work grows to three paragraphs. The introduction must position explicitly against arXiv 2607.20594, which uses group word problems in text and is our nearest neighbour. None of this changes the milestone schedule.
+**Reversible:** yes, but not after the pre-registration is frozen at milestone 5.
+
+### D-008. Bibliography verification standard
+**Date:** 2026-08-31
+**Milestone:** pre-0
+**Type:** deviation
+**Decision:** no citation enters a draft until its arXiv abstract page has been fetched and its title, authors and date confirmed. `gap-analysis.md` Section 9 holds the current verification debt, fourteen papers from a curated list plus five from the spec's own reference list.
+**Reason:** the same principle as the count rule that produced 329 versus 344. A citation carried from a list into a draft without verification is a hand-typed number by another name.
+**Consequence:** a verification pass is required before the bibliography freezes, roughly nineteen abstracts.
+**Reversible:** no. This is cheap and there is no reason to relax it.
+
+### D-009. Mechanism leads the contributions, benchmark stays first
+**Date:** 2026-08-31
+**Milestone:** pre-0
+**Type:** scope
+**Decision:** reordered `paper.md` Section 3. The patching mechanism account (H3) moves ahead of the loop-count curves (H1) and becomes the headline result. The benchmark stays at position 1. New order: benchmark, mechanism, loop-count curves, oracle comparison, scale check. F3 replaces F2 as the lead figure. Executes the reconsideration flagged in D-007.
+**Reason:** the August 2026 survey found the depth half of H1 partly anticipated in text (arXiv 2604.07822, 2607.20594), while the (loop, spatial position) patching grid is untouched by anyone. The spatial axis has no text analogue. Ordering now follows defensibility rather than the order the work happens in. The benchmark stays first because the patching result is uninterpretable without knowing depth and breadth were independently controlled.
+**Consequence:** M2 at milestone 6 now carries the headline, though M1 at milestone 5 still runs first. If milestone 6 slips, the headline slips, which was not true under the old ordering. Paper body section order is unchanged and stays a writing-time decision for milestone 12. All cross-references in `paper.md` now name contributions instead of numbering them.
+**Reversible:** yes, until the draft exists.
+
+### D-003. Compute block, sixteen weeks on the cluster
+**Date:** open
+**Milestone:** blocks the pre-registration freeze at milestone 5
+**Type:** resolution
+**Decision:** OPEN. From Section 12 of the spec.
+**Question:** is a sixteen-week window on the Jaypee cluster realistic alongside the merging pipeline?
+**If access is intermittent:** cut the size ladder from four models to two (d=384 and d=768) and say so in the paper.
+**Resolve by:** before milestone 5, mid October 2026.
+
+### D-004. Co-authorship and affiliation
+**Date:** open
+**Milestone:** blocks preprint and submission
+**Type:** resolution
+**Decision:** OPEN. From Section 12 of the spec.
+**Question:** Prof. Garg and Dr. Saini both in play. The Indian Institute of Information Technology Allahabad affiliation affects anonymity handling if a preprint goes up first.
+**Resolve by:** before any preprint, and in any case before milestone 13.
+
+### D-005. Preprint timing
+**Date:** open
+**Milestone:** after milestone 8
+**Type:** resolution
+**Decision:** OPEN. From Section 12 of the spec.
+**Question:** a preprint after milestone 8 protects priority but complicates NeurIPS anonymity. The earlier submission pair already flagged cross-paper anonymity risks.
+**Resolve by:** end of milestone 8, late November 2026. Do not let this drift into the submission window, because by then the decision makes itself badly.
+
+### D-006. Task family priority
+**Date:** open
+**Milestone:** blocks the pre-registration freeze at milestone 5
+**Type:** resolution
+**Decision:** OPEN. From Section 12 of the spec.
+**Question:** family A is the strongest scientific transfer from the state-tracking work. Family B is the most legible to vision reviewers. If only one can be done well, which audience is being optimised for?
+**Note for whoever resolves this:** family C is not a candidate for cutting under any circumstance. It is the null arm of H1, and without it the depth-versus-breadth contrast is void rather than merely weaker.
+**Resolve by:** before milestone 5, mid October 2026.
+
+---
+
+## 2. Dependency additions
+
+Every package not in the spec's pinned list. The spec's list is: `torch`, `numpy`, `einops`, `pyyaml`, `pandas`, `pyarrow`, `scipy`, `statsmodels`, `matplotlib`, `tqdm`, `pytest`, plus Weights and Biases in offline mode.
+
+| Package | Version | Why | Entry | Date |
+|---|---|---|---|---|
+| | *(none yet)* | | | |
+
+---
+
+## 3. Deviations from the pre-registration
+
+Empty until `preregistration.md` is frozen at git tag `prereg-v1` before milestone 5. After that, **the pre-registration is never edited** and every difference between what was registered and what was done appears here, and in the paper.
+
+| # | Registered | Actually done | Reason | Date |
+|---|---|---|---|---|
+| | *(pre-registration not yet frozen)* | | | |
+
+---
+
+## 4. Open questions
+
+Live at the top, resolved ones moved to the log above with a resolution entry.
+
+| # | Question | Blocks | Resolve by | Owner |
+|---|---|---|---|---|
+| D-003 | Sixteen-week compute window realistic? | pre-registration freeze, size ladder | mid Oct 2026 | |
+| D-004 | Co-authorship and affiliation | preprint, submission | before preprint | |
+| D-005 | Preprint timing versus NeurIPS anonymity | priority protection | end Nov 2026 | |
+| D-006 | Family A or family B priority if only one | pre-registration freeze | mid Oct 2026 | |
+
+---
+
+## 5. Inherited defaults
+
+Choices the spec already fixed. Listed so that a deviation is visible against a baseline rather than being invisible. Changing any of these requires a log entry in Section 1.
+
+| Area | Default | Spec section |
+|---|---|---|
+| PyTorch build | `torch==2.4.1+cu121`, never cu124 or later | 3 |
+| Cores per job | `ncpus=8`, `--num-workers 4` | 3 |
+| Resolution | 32x32, 64x64 only for the robustness check | 4.1 |
+| Group | D4 x S3, order 48 | 4.2 |
+| Presentation variant | `strip` by default | 4.2 |
+| Size ladder | d in {256, 384, 512, 768} | 5 |
+| Core depth | 2 blocks tied, 1 block as ablation | 5 |
+| Loop conditioning | three variants: none, embed, adaln | 5 |
+| k_max training | 32 | 6.1 |
+| k_mean_target | 8 | 6.1 |
+| Jitter | on by default, sigma = 0.5 | 6.1 |
+| BPTT window | 8, or 4 under memory pressure | 6.2 |
+| Optimiser | AdamW, lr 3e-4, betas (0.9, 0.95), wd 0.05, clip 1.0 | 6.3 |
+| Batch size | 256 at 32x32 | 6.3 |
+| Precision | bf16 autocast, fp32 parameters | 6.3 |
+| torch.compile | off | 6.3 |
+| Probe checkpoints | 100 log-spaced steps, M1 and M5 configs only | 6.4 |
+| M1 threshold | tau = 0.90, pre-registered | 7 |
+| Seeds | 5 per cell, 10 for headline cells | 8 |
+| Correction | Holm across the pre-registered family | 8 |
+| Generation arm | out of scope | 1 |
