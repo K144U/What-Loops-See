@@ -229,6 +229,7 @@ The visited-sprite exclusion in the walk is the part that matters most for the s
 **Question:** is a sixteen-week window on the Jaypee cluster realistic alongside the merging pipeline?
 **If access is intermittent:** cut the size ladder from four models to two (d=384 and d=768) and say so in the paper.
 **Resolve by:** before milestone 5, mid October 2026.
+**Evidence, 2026-08-31.** First real submission met a saturated queue: 40 running, 8 queued, 14 held on the gpu queue, with our four gate jobs waiting behind roughly four others. Jobs carry 24 hour walltimes, so a slot can be a day away. This is one observation and not yet a trend, but the M1 sweep at milestone 5 is 200 to 400 runs, and at this queue depth that is the binding constraint rather than GPU speed. Worth measuring queue latency over the next week before committing to the four-model ladder.
 
 ### D-004. Co-authorship and affiliation
 **Date:** open

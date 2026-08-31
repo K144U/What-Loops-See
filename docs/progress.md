@@ -12,12 +12,13 @@ Milestone tracker for "What a Loop Sees". Mirrors Section 11 of `what-a-loop-see
 
 **As of 2026-08-31**
 
-- Phase: **milestone 1 complete.** Milestone 2 (gate G1) is next, and it is a hard stop.
+- Phase: **milestone 2 in progress, blocked on the GPU queue.** Gate G1's four training runs are submitted (jobs 4953 to 4956) and queued.
 - Repository: `loopvision/`, git initialised, six commits. Cloned to `<cluster-user>@<login-node>:~/loopvision`, transferred by git bundle so the LF line endings survive.
 - Environment: Python 3.11.11 via `module load python311`, torch **2.4.1+cu121**, driver 525.147.05 confirmed. See D-014.
 - `pytest -q`: **99 passed.** Milestone 0's 13 plus the data layer.
-- **Open item needing your sign-off: D-016**, the gate G1.3 rewrite. It blocks milestone 2, not earlier work.
-- Next action: milestone 2, gate G1. Train k=1 models and run the four validity checks. This is a hard stop: if it fails, stop and report.
+- D-016 approved 2026-08-31, so gate G1.3 uses the revised ceiling criterion.
+- **Blocking: cluster queue depth.** At submission the gpu queue held 40 running, 8 queued and 14 held jobs. Our four are queued behind roughly four others. Nothing to do but wait; the jobs will start as slots free.
+- Next action: when the runs finish, `python -m loopvision.analysis.gate_g1` and `pytest tests/test_gate_g1.py`. If the gate fails, stop and report rather than adjusting anything.
 
 ### Milestone 0 cluster sign-off, PASSED 2026-08-31
 
@@ -51,7 +52,7 @@ Legend: NOT STARTED, IN PROGRESS, BLOCKED, DONE, FAILED.
 |---|---|---|---|---|---|
 | 0 | 0 | Sep 1 to 6, 2026 | Repo skeleton, `pyproject.toml`, CI running pytest, `pick_gpu.sh`, hello-world PBS job surviving a kill and resuming | `pytest -q` passes and a chained 2-job run completes | **DONE 2026-08-31.** 13 tests pass on the cluster, 4-job chain completed and matched an uninterrupted run bit exactly |
 | 1 | 1 | Sep 7 to 13 | `groups.py`, `render.py`, families A, B, C generators, manifest and splits | `pytest tests/test_data.py` passes, 64 sample images dumped and eyeballed | **DONE 2026-08-31.** 99 tests pass, all three families, 11 contact sheets dumped and eyeballed |
-| 2 | 2 | Sep 14 to 20 | **GATE G1**, task validity | `pytest tests/test_gate_g1.py` passes on stored gate runs | NOT STARTED |
+| 2 | 2 | Sep 14 to 20 | **GATE G1**, task validity | `pytest tests/test_gate_g1.py` passes on stored gate runs | **IN PROGRESS.** Thresholds pre-registered and committed before submission. Model, trainer and gate runner built. Four runs queued (4953 to 4956), waiting on the GPU queue |
 | 3 | 3 to 5 | Sep 21 to Oct 11 | Model, training loop, stability, three conditioning variants, four baselines | d=384 trains stably at k=8 on depth 3 above threshold, cold start, twice with different seeds | NOT STARTED |
 | 4 | 5 | Oct 5 to 11 | **GATE G2**, loops beat matched-compute feedforward and echo baseline | `python -m loopvision.analysis.gate_g2` exits 0 | NOT STARTED |
 | 5 | 6 to 7 | Oct 12 to 25 | Freeze `preregistration.md` at tag `prereg-v1`, then full M1 sweep | H1 resolves, `m1_loopcurve.parquet` complete, coefficients a and b with CIs printed | NOT STARTED |
@@ -77,7 +78,7 @@ The two hard stops. A gate that fails means stop and report, not work around.
 | G1 | 2 | Do the tasks actually separate depth from breadth? | PENDING | | |
 | G1.1 | 2 | Depth 3 unsolvable at k=1, looped and non-looped both near chance | PENDING | | |
 | G1.2 | 2 | Depth 1 solvable at k=1 to high threshold | PENDING | | |
-| G1.3 | 2 | Bag-of-operators shortcut probe at chance for depth greater than 1 | PENDING | | |
+| G1.3 | 2 | Order-blind ceiling below tau, probe not above ceiling (revised, D-016) | **PASSED** | 2026-08-31 | Worst ceiling 0.652 at depth 2, tau 0.90, margin 0.248. Linear probe 0.056, well under its ceiling. Needs no trained model |
 | G1.4 | 2 | Family C solvable at k=1 at every breadth | PENDING | | |
 | G2 | 4 | Does looping beat matched-compute feedforward and the echo baseline? | PENDING | | |
 
