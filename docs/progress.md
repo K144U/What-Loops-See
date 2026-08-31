@@ -174,3 +174,22 @@ The suite was mutation checked. Disabling `restore_rng_state` initially failed *
 Blocked by: **cluster access.** The PBS half of the milestone 0 gate has not run. See the sign-off block at the top of this file.
 
 Next: run the two-job chain on the cluster. Milestone 1 does not start until it passes.
+
+### 2026-08-31, milestone 0 cluster sign-off
+
+Did: connected to `<login-node>` as `<cluster-user>` over the VPN. Probed the environment, transferred the repo by git bundle, built a venv on `module load python311`, installed torch 2.4.1+cu121, ran the suite, and drove the PBS chain to completion.
+
+Command run and exit code: `python -m pytest -q` exits 0, **13 passed on the cluster**. Chain submitted as job 4904, completed through 4906, 4908 and 4910.
+
+Result: **milestone 0 gate passed in full.** A run split across four PBS jobs is bit identical to an uninterrupted one, verified on loss trace and on final parameters under `torch.equal`. Details in the sign-off block at the top of this file.
+
+Two spec assumptions failed on first contact with real hardware and both were fixed rather than worked around:
+
+1. **GPU selection gated on the wrong quantity** (D-013). The spec said fail if the chosen card has more than 2 GB in use. Every A100 on this cluster had more than 2 GB in use while six of eight had over 70 GB free, so the rule would have refused to start on a perfectly usable machine. Now gates on free memory with a 20 GB floor. Validated live: `selected GPU 4 (77075 MiB free, 3977 MiB used)`.
+2. **Self-chaining from inside a job is refused** (D-015). `qsub: Bad UID for job execution`. The spec's Section 3.2 design cannot work here. A probe job established that ssh to the login node is passwordless and qsub is accepted there, so the chain now falls back to that. This one had a silent failure mode: the first job checkpointed correctly and exited 0, and the run simply stopped advancing with nothing in the log to say why. It is now fatal and loud.
+
+Also learned: driver is **525.147.05 exactly as the spec said**, so the cu121 pin is correct and cu124 would genuinely have failed. Disk is a non-issue at 324T free, closing that checklist item. The gpu queue was busy, 39 running and 4 queued, which bears on D-003.
+
+Blocked by: nothing.
+
+Next: milestone 1. `groups.py` with the D4 x S3 multiplication table and unit tests for associativity, inverses and non-commutativity, then `render.py` and `family_a.py` with the anti-shortcut sampler.
