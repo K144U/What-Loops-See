@@ -40,6 +40,10 @@ source scripts/pick_gpu.sh
 
 export RUN_ID="${RUN_ID:?RUN_ID must be set}"
 export ENTRY="${ENTRY:-loopvision.train.cli}"
+# About an hour under the 24 hour walltime, so the process stops itself and
+# checkpoints rather than being killed mid-step. Overridable so the chain
+# itself can be tested without waiting a day per link.
+export MAX_HOURS="${MAX_HOURS:-23.0}"
 export OMP_NUM_THREADS=8
 export PYTHONUNBUFFERED=1
 export WANDB_MODE=offline
@@ -50,13 +54,16 @@ EXTRA_ARGS=()
 if [ -n "${CONFIG:-}" ]; then
     EXTRA_ARGS+=(--config "configs/${CONFIG}")
 fi
+if [ -n "${STEPS:-}" ]; then
+    EXTRA_ARGS+=(--steps "${STEPS}")
+fi
 
 set +e
 python -m "$ENTRY" \
     "${EXTRA_ARGS[@]}" \
     --run-id "$RUN_ID" \
     --resume auto \
-    --max-hours 23.0
+    --max-hours "$MAX_HOURS"
 TRAIN_RC=$?
 set -e
 
@@ -65,10 +72,18 @@ set -e
 # zero, and that is precisely the case the chain exists to recover from.
 # The DONE sentinel, not the exit code, decides whether we are finished.
 if [ ! -f "runs/$RUN_ID/DONE" ]; then
+    # Every variable that shaped this job must be forwarded, or the
+    # successor silently runs with different settings. Forgetting MAX_HOURS
+    # here is a particularly quiet bug: the successor would run to the full
+    # 23 hours, the chain would appear to work, and the wall-clock stop
+    # would never actually be exercised.
+    CHAIN_VARS="RUN_ID=$RUN_ID,ENTRY=$ENTRY,MAX_HOURS=$MAX_HOURS"
+    [ -n "${CONFIG:-}" ] && CHAIN_VARS="$CHAIN_VARS,CONFIG=$CONFIG"
+    [ -n "${STEPS:-}" ]  && CHAIN_VARS="$CHAIN_VARS,STEPS=$STEPS"
+
     echo "run $RUN_ID incomplete (rc=$TRAIN_RC), queueing successor"
-    qsub -W depend=afterany:"$PBS_JOBID" \
-         -v RUN_ID="$RUN_ID",ENTRY="$ENTRY"${CONFIG:+,CONFIG="$CONFIG"} \
-         scripts/submit.pbs
+    echo "chain vars: $CHAIN_VARS"
+    qsub -W depend=afterany:"$PBS_JOBID" -v "$CHAIN_VARS" scripts/submit.pbs
 else
     echo "run $RUN_ID has DONE, chain complete"
 fi
