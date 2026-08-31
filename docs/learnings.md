@@ -135,9 +135,19 @@ A sweep that re-runs a config whose hash already has a DONE sentinel will silent
 
 ## 3. Learned on this project
 
-Empty until we make our own mistakes. Newest at the bottom. When adding an entry, check whether it is a repeat of something in Section 1 or Section 2, and if it is, say so explicitly in the entry, because a repeat means the enforcement point failed and the enforcement point is what needs fixing.
+Newest at the bottom. When adding an entry, check whether it is a repeat of something in Section 1 or Section 2, and if it is, say so explicitly in the entry, because a repeat means the enforcement point failed and the enforcement point is what needs fixing.
 
-*(no entries yet)*
+### L-011. A passing test that could not fail
+**Source:** this project, milestone 0
+**What happened:** `tests/test_resume.py` passed all six tests. To check the tests had teeth, `restore_rng_state` was mutated into a no-op, so that resumed runs would restore model, optimizer and data cursor but not a single RNG stream. **All six tests still passed.** The smoke trainer at that point was a plain MLP whose forward pass consumed no global RNG after initialisation, so RNG restoration genuinely did not affect the result and the test could not have detected a bug in it.
+**Cost:** none, caught at milestone 0. The cost had it survived would have been large and delayed: the real trainer samples a loop count per batch from the global stream (IMPLEMENTATION.md Section 6.1), so RNG restore becomes load bearing at milestone 3. A silently broken restore would have made every resumed run a slightly different experiment, and resumed runs are the normal case on a cluster where jobs die at the wall.
+**Root cause:** the test target was built to be simple rather than to be representative. A smoke model that does not exercise the mechanism under test cannot test it, no matter how thorough the assertions look.
+**Rule now:** two rules, and the second is the general one.
+1. The smoke trainer is a miniature of the real architecture, not an arbitrary stand-in. It is a looped model with per-batch loop-count sampling from the global RNG stream, because that is the structure whose resume we actually need to guarantee.
+2. **Every new test gets mutation checked.** Break the thing it claims to test, on purpose, and confirm the test fails. A test that passes against a deliberately broken implementation is not evidence, and the effort to find that out is about two minutes.
+**Enforced by:** `CLAUDE.md` workflow section, which now carries the mutation-check rule; the docstring on `SmokeModel`, which records why it is looped so nobody simplifies it back; and the confirmed failure mode, three tests failing with "loss diverged at step 8" once the mutation is reapplied.
+
+**Connection to N-001.** The same week, a paper entered the survey whose author reported two evaluation errors that were "mutually invisible", each concealing the other, requiring two independent checks to surface. This is the same shape: a single check that comes back clean is weak evidence. That is now twice in one week that the lesson has appeared from different directions, which is worth noticing.
 
 ---
 

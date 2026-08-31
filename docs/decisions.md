@@ -77,6 +77,33 @@ Append-only log of every choice that deviates from `what-a-loop-sees-IMPLEMENTAT
 **Consequence:** M2 at milestone 6 now carries the headline, though M1 at milestone 5 still runs first. If milestone 6 slips, the headline slips, which was not true under the old ordering. Paper body section order is unchanged and stays a writing-time decision for milestone 12. All cross-references in `paper.md` now name contributions instead of numbering them.
 **Reversible:** yes, until the draft exists.
 
+### D-010. Local development environment differs from the cluster pin
+**Date:** 2026-08-31
+**Milestone:** 0
+**Type:** deviation
+**Decision:** development happens on Windows with Python 3.12.10 and torch 2.10.0+cu128, while `pyproject.toml` pins torch 2.4.1 for the cluster, installed from the cu121 index. The two are not reconciled and will not be.
+**Reason:** the cluster's driver 525 with CUDA 12.0 cannot load a cu124 or later build, and the local machine is not the cluster. Forcing the dev box down to 2.4.1 would buy nothing and cost the ability to work locally at all.
+**Consequence:** **local test passes are not cluster test passes.** Anything version sensitive must be re-run on the cluster before it counts. The bit-exact resume guarantee in `tests/test_resume.py` is a CPU guarantee under the local torch, and it is re-verified on the cluster as part of the milestone 0 sign-off. GPU determinism is untested by that suite and is deferred to milestone 3 where it can be tested against the real model.
+**Reversible:** yes, but there is no reason to.
+
+### D-011. The smoke trainer is a miniature looped model, and mutation checking is now standing practice
+**Date:** 2026-08-31
+**Milestone:** 0
+**Type:** deviation
+**Decision:** the milestone 0 smoke trainer is a prelude, tied core applied k times, coda, with the loop count drawn per batch from the global torch RNG stream. The spec (Section 14, prompt 1) asked only for "a smoke training script that counts to 1000 steps". Additionally, every new test is now mutation checked: break the implementation deliberately and confirm the test fails.
+**Reason:** the first version was a plain MLP, and disabling RNG restoration entirely failed zero tests, because nothing in that model consumed global RNG. See `learnings.md` L-011. A smoke target that does not exercise the mechanism under test cannot test it.
+**Consequence:** the smoke model must stay looped. Simplifying it back to an MLP would silently disarm `tests/test_resume.py`, and the `SmokeModel` docstring says so. Mutation checking adds a couple of minutes per test and is now in `CLAUDE.md`.
+**Reversible:** no. Reverting either half would restore a known defect.
+
+### D-012. LF line endings pinned via .gitattributes
+**Date:** 2026-08-31
+**Milestone:** 0
+**Type:** deviation
+**Decision:** `.gitattributes` forces `eol=lf` for `.sh`, `.pbs`, `.py`, `.yaml`, `.toml` and `.md`.
+**Reason:** development is on Windows and the cluster is Linux. Git was converting `pick_gpu.sh` and `submit.pbs` to CRLF on checkout, which fails on the cluster with `bad interpreter: /bin/bash^M`, an error that points nowhere useful and costs a queue wait to diagnose.
+**Consequence:** none locally. Verified by inspecting the stored blobs, which are clean ASCII with no CRLF terminators.
+**Reversible:** no reason to.
+
 ### D-003. Compute block, sixteen weeks on the cluster
 **Date:** open
 **Milestone:** blocks the pre-registration freeze at milestone 5

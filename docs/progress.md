@@ -12,10 +12,28 @@ Milestone tracker for "What a Loop Sees". Mirrors Section 11 of `what-a-loop-see
 
 **As of 2026-08-31**
 
-- Phase: pre-milestone-0. Nothing built.
-- Repository: does not exist yet. This directory holds planning documents only.
-- Blocking item: none. Milestone 0 can start.
-- Next action: milestone 0, repo skeleton, using prompt 1 from Section 14 of the spec.
+- Phase: milestone 0, **local half complete, cluster half outstanding**.
+- Repository: `loopvision/`, git initialised, two commits.
+- `pytest -q`: **13 passed**. Bit-exact resume verified against abrupt death, external kill, and repeated kills.
+- Blocking item: **the PBS chain has never run.** Milestone 0's gate is "pytest passes **and** a chained 2-job run completes". The second half needs cluster access and cannot be faked locally.
+- Next action: run the two-job chain on the cluster (see the sign-off block below). Do not start milestone 1 until it passes.
+
+### Milestone 0 cluster sign-off, outstanding
+
+The chain *logic* is tested locally in `tests/test_chain.py`, including a twelve-job chain that reproduces an uninterrupted run exactly. What is untested is PBS itself: `qsub`, `-W depend=afterany`, and `pick_gpu.sh` against real cards. Run this on the cluster and paste the result into the session log:
+
+```bash
+RUN_ID=smoke_chain01 ENTRY=loopvision.train.smoke qsub scripts/submit.pbs
+```
+
+Pass criteria, all four:
+
+1. Two or more jobs appear in `qstat` history for the run id, the second depending on the first.
+2. `runs/smoke_chain01/DONE` exists at the end.
+3. The metrics file has every step exactly once, no duplicates and no gaps.
+4. `pick_gpu.sh` selected a card and the log shows its index and free memory.
+
+If the chain does not terminate, the DONE sentinel logic is wrong and that is a hard stop, not a nuisance: an unterminating chain will silently consume the queue.
 
 ---
 
@@ -25,7 +43,7 @@ Legend: NOT STARTED, IN PROGRESS, BLOCKED, DONE, FAILED.
 
 | # | Weeks | Planned dates | Work | Done when | Status |
 |---|---|---|---|---|---|
-| 0 | 0 | Sep 1 to 6, 2026 | Repo skeleton, `pyproject.toml`, CI running pytest, `pick_gpu.sh`, hello-world PBS job surviving a kill and resuming | `pytest -q` passes and a chained 2-job run completes | NOT STARTED |
+| 0 | 0 | Sep 1 to 6, 2026 | Repo skeleton, `pyproject.toml`, CI running pytest, `pick_gpu.sh`, hello-world PBS job surviving a kill and resuming | `pytest -q` passes and a chained 2-job run completes | **IN PROGRESS.** pytest half done, 13 passed. PBS chain not yet run, see sign-off block above |
 | 1 | 1 | Sep 7 to 13 | `groups.py`, `render.py`, families A, B, C generators, manifest and splits | `pytest tests/test_data.py` passes, 64 sample images dumped and eyeballed | NOT STARTED |
 | 2 | 2 | Sep 14 to 20 | **GATE G1**, task validity | `pytest tests/test_gate_g1.py` passes on stored gate runs | NOT STARTED |
 | 3 | 3 to 5 | Sep 21 to Oct 11 | Model, training loop, stability, three conditioning variants, four baselines | d=384 trains stably at k=8 on depth 3 above threshold, cold start, twice with different seeds | NOT STARTED |
@@ -137,3 +155,17 @@ Command run and exit code: none, no code exists yet.
 Result: the spec's citations are accurate but its reference list is roughly twenty one papers short of the current literature. H2 is severely threatened as worded and must be rewritten before the pre-registration freeze. H4 is scooped as a phenomenon by arXiv 2606.29983. H3 is largely intact and is now the strongest hypothesis. The core gap, ground-truth composition depth in pixels with depth crossed against breadth, holds and nobody else has it. Two new risks added to the register above.
 Blocked by: nothing. The changes are to framing, not to the build order.
 Next: unchanged, milestone 0. The H2 rewrite is due before milestone 5, not before milestone 0.
+
+### 2026-08-31, milestone 0
+
+Did: synced the spec to the survey (H2 reframed, H4 attributed to arXiv 2606.29983, family C protected, reference list expanded from 4 groups to 6, ELT correctly labelled as generation). Built the repository: `pyproject.toml`, package skeleton, `checkpoint.py`, `smoke.py`, `pick_gpu.sh`, self-chaining `submit.pbs`, `CLAUDE.md`, `.gitattributes`. Moved the six planning documents into `docs/` per D-002. Two commits.
+
+Command run and exit code: `pytest -q` exits 0, **13 passed**.
+
+Result: bit-exact resume is verified three ways, abrupt self-termination via `os._exit`, an external kill mid-run, and three sequential kills in one run. Also covered: the DONE sentinel stopping the chain, wall-clock self-stop leaving a checkpoint but no DONE, a twelve-job chain reproducing an uninterrupted run exactly, recovery from a missing LATEST pointer, and refusal to load a mismatched checkpoint format.
+
+The suite was mutation checked. Disabling `restore_rng_state` initially failed **zero** tests, which exposed that the smoke model consumed no global RNG and so could not test RNG restoration at all. The smoke model was rebuilt as a miniature looped model with per-batch loop-count sampling. Re-running the same mutation now fails three tests. See `learnings.md` L-011 and `decisions.md` D-011.
+
+Blocked by: **cluster access.** The PBS half of the milestone 0 gate has not run. See the sign-off block at the top of this file.
+
+Next: run the two-job chain on the cluster. Milestone 1 does not start until it passes.
