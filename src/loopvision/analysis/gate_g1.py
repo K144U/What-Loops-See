@@ -21,18 +21,17 @@ from pathlib import Path
 from loopvision.data import validate as V
 
 
-def run(runs_root: Path, skip_slow: bool = False) -> tuple[list[V.CheckResult], bool]:
+def run(runs_root: Path, skip_slow: bool = False, attempt: int = 2) -> tuple[list[V.CheckResult], bool]:
     results: list[V.CheckResult] = []
 
+    runs = V.ATTEMPT_1_RUNS if attempt == 1 else V.GATE_RUNS
     results.extend(
-        V.check_g1_1(
-            runs_root / "g1_famA_d3_looped_s0", runs_root / "g1_famA_d3_ffwd_s0"
-        )
+        V.check_g1_1(runs_root / runs["d3_looped"], runs_root / runs["d3_ffwd"])
     )
-    results.append(V.check_g1_2(runs_root / "g1_famA_d1_looped_s0"))
+    results.append(V.check_g1_2(runs_root / runs["d1_looped"]))
     if not skip_slow:
         results.append(V.check_g1_3())
-    results.append(V.check_g1_4(runs_root / "g1_famC_looped_s0"))
+    results.append(V.check_g1_4(runs_root / runs["famC"]))
 
     return results, all(r.passed for r in results)
 
@@ -41,18 +40,20 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--runs-root", default="runs")
     parser.add_argument("--skip-slow", action="store_true", help="skip G1.3")
+    parser.add_argument("--attempt", type=int, default=2, choices=[1, 2],
+                        help="1 reads the 20k step runs, 2 the 200k step reruns")
     parser.add_argument("--json", help="also write the results here")
     args = parser.parse_args()
 
     try:
-        results, passed = run(Path(args.runs_root), skip_slow=args.skip_slow)
+        results, passed = run(Path(args.runs_root), skip_slow=args.skip_slow, attempt=args.attempt)
     except FileNotFoundError as exc:
         print(f"gate G1 cannot be evaluated: {exc}")
         return 1
 
     width = max(len(r.name) for r in results) + 2
     print()
-    print("Gate G1: task validity")
+    print(f"Gate G1: task validity (attempt {args.attempt})")
     print("=" * (width + 46))
     for r in results:
         status = "PASS" if r.passed else "FAIL"

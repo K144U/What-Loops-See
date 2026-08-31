@@ -58,6 +58,35 @@ G1_3_CEILING_MARGIN = 0.15
 G1_4_MIN_ACCURACY = TAU
 
 
+#: Which stored runs each check reads.
+#:
+#: **Attempt 1** used 20000 step runs (`g1_famA_*_s0`) and FAILED on G1.2:
+#: family A depth 1 reached 0.0204 against a required 0.90. Attempt 2 reran
+#: family A at 200000 steps per docs/decisions.md D-022 option 1.
+#:
+#: All three family A runs were rerun, not just the failing one. Comparing
+#: depth 3 at 20000 steps against depth 1 at 200000 would not be a gate, it
+#: would be an artefact of unequal training budgets.
+#:
+#: Family C is deliberately NOT rerun. It reached 1.000 at every breadth in
+#: 20000 steps, and G1.4 asks whether the task is solvable at k=1. More
+#: steps cannot make a solved task unsolved, so a rerun would cost GPU time
+#: to confirm a saturated result.
+GATE_RUNS = {
+    "d3_looped": "g1_famA_d3_looped_long_s0",
+    "d3_ffwd": "g1_famA_d3_ffwd_long_s0",
+    "d1_looped": "g1_famA_d1_looped_long_s0",
+    "famC": "g1_famC_looped_s0",
+}
+
+ATTEMPT_1_RUNS = {
+    "d3_looped": "g1_famA_d3_looped_s0",
+    "d3_ffwd": "g1_famA_d3_ffwd_s0",
+    "d1_looped": "g1_famA_d1_looped_s0",
+    "famC": "g1_famC_looped_s0",
+}
+
+
 @dataclass(frozen=True)
 class CheckResult:
     name: str
