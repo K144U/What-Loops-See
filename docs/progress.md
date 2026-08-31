@@ -12,28 +12,33 @@ Milestone tracker for "What a Loop Sees". Mirrors Section 11 of `what-a-loop-see
 
 **As of 2026-08-31**
 
-- Phase: milestone 0, **local half complete, cluster half outstanding**.
-- Repository: `loopvision/`, git initialised, two commits.
-- `pytest -q`: **13 passed**. Bit-exact resume verified against abrupt death, external kill, and repeated kills.
-- Blocking item: **the PBS chain has never run.** Milestone 0's gate is "pytest passes **and** a chained 2-job run completes". The second half needs cluster access and cannot be faked locally.
-- Next action: run the two-job chain on the cluster (see the sign-off block below). Do not start milestone 1 until it passes.
+- Phase: **milestone 0 complete, both halves, verified on the cluster.** Milestone 1 is unblocked.
+- Repository: `loopvision/`, git initialised, six commits. Cloned to `<cluster-user>@<login-node>:~/loopvision`, transferred by git bundle so the LF line endings survive.
+- Environment: Python 3.11.11 via `module load python311`, torch **2.4.1+cu121**, driver 525.147.05 confirmed. See D-014.
+- `pytest -q`: **13 passed on the cluster**, not only locally.
+- Next action: milestone 1. `groups.py`, `render.py`, families A, B and C, manifest and splits.
 
-### Milestone 0 cluster sign-off, outstanding
+### Milestone 0 cluster sign-off, PASSED 2026-08-31
 
-The chain *logic* is tested locally in `tests/test_chain.py`, including a twelve-job chain that reproduces an uninterrupted run exactly. What is untested is PBS itself: `qsub`, `-W depend=afterany`, and `pick_gpu.sh` against real cards. Run this on the cluster and paste the result into the session log:
+Submitted as:
 
 ```bash
-RUN_ID=smoke_chain01 ENTRY=loopvision.train.smoke qsub scripts/submit.pbs
+qsub -v RUN_ID=smoke_chain02,ENTRY=loopvision.train.smoke,MAX_HOURS=0,STEPS=3 scripts/submit.pbs
 ```
 
-Pass criteria, all four:
+All four pass criteria met, plus one stronger check that was not required.
 
-1. Two or more jobs appear in `qstat` history for the run id, the second depending on the first.
-2. `runs/smoke_chain01/DONE` exists at the end.
-3. The metrics file has every step exactly once, no duplicates and no gaps.
-4. `pick_gpu.sh` selected a card and the log shows its index and free memory.
+| # | Criterion | Result |
+|---|---|---|
+| 1 | Two or more chained jobs, each depending on the previous | **4 jobs**: 4904 cold start, 4906 resumed at step 1, 4908 resumed at step 2, 4910 resumed at step 3 and wrote DONE |
+| 2 | DONE sentinel present at the end | yes, and job 4910 terminated the chain rather than queueing a fifth |
+| 3 | Every step exactly once, no duplicates, no gaps | steps 1, 2, 3, each once |
+| 4 | `pick_gpu.sh` selected a card and logged it | every job: `selected GPU 4 (77075 MiB free, 3977 MiB used)` |
+| 5 | **Not required: chained equals uninterrupted** | loss trace **identical**, and all final parameters bit identical under `torch.equal` |
 
-If the chain does not terminate, the DONE sentinel logic is wrong and that is a hard stop, not a nuisance: an unterminating chain will silently consume the queue.
+Criterion 5 is the one that matters scientifically. A run split across four PBS jobs produced exactly the same result as one that ran straight through, on the real cluster, with the real torch build.
+
+**Two spec assumptions failed first contact and are now fixed.** The GPU selection rule (D-013) and self-chaining from inside a job (D-015). Both would have been discovered later and more expensively.
 
 ---
 
@@ -43,7 +48,7 @@ Legend: NOT STARTED, IN PROGRESS, BLOCKED, DONE, FAILED.
 
 | # | Weeks | Planned dates | Work | Done when | Status |
 |---|---|---|---|---|---|
-| 0 | 0 | Sep 1 to 6, 2026 | Repo skeleton, `pyproject.toml`, CI running pytest, `pick_gpu.sh`, hello-world PBS job surviving a kill and resuming | `pytest -q` passes and a chained 2-job run completes | **IN PROGRESS.** pytest half done, 13 passed. PBS chain not yet run, see sign-off block above |
+| 0 | 0 | Sep 1 to 6, 2026 | Repo skeleton, `pyproject.toml`, CI running pytest, `pick_gpu.sh`, hello-world PBS job surviving a kill and resuming | `pytest -q` passes and a chained 2-job run completes | **DONE 2026-08-31.** 13 tests pass on the cluster, 4-job chain completed and matched an uninterrupted run bit exactly |
 | 1 | 1 | Sep 7 to 13 | `groups.py`, `render.py`, families A, B, C generators, manifest and splits | `pytest tests/test_data.py` passes, 64 sample images dumped and eyeballed | NOT STARTED |
 | 2 | 2 | Sep 14 to 20 | **GATE G1**, task validity | `pytest tests/test_gate_g1.py` passes on stored gate runs | NOT STARTED |
 | 3 | 3 to 5 | Sep 21 to Oct 11 | Model, training loop, stability, three conditioning variants, four baselines | d=384 trains stably at k=8 on depth 3 above threshold, cold start, twice with different seeds | NOT STARTED |
@@ -103,7 +108,7 @@ Items that are easy to defer to the final week and must not be. Guardrail 1 from
 | Artifact DOI | | milestone 10 | NOT STARTED |
 | AI use statement, written not TODO | | milestone 10 | NOT STARTED |
 | Co-authorship and affiliation settled | | before preprint or submission | OPEN, see decisions.md D-004 |
-| Compute access confirmed for 16 weeks | | before milestone 5 | OPEN, see decisions.md D-003 |
+| Compute access confirmed for 16 weeks | | before milestone 5 | PARTIAL. Access works and jobs run. The gpu queue was busy at first contact (39 running, 4 queued), so throughput is the open half. See D-003 and D-014 |
 | Disk quota checked against probe checkpoint estimate (about 150 GB) | | before milestone 5 | **CLOSED 2026-08-31.** `/home` is BeeGFS, 466T with 324T free. 150 GB is a non-issue. Probe density stays at 100 log-spaced steps, no reduction to 50 needed. See D-014 |
 
 ---

@@ -133,6 +133,16 @@ Append-only log of every choice that deviates from `what-a-loop-sees-IMPLEMENTAT
 
 **Consequence:** the disk quota item in the `progress.md` standing checklist is closed. The `python311` module load is now required in `submit.pbs`. D-003, the compute block question, is informed but not resolved: the queue is busy, which bears on whether a sixteen-week window is realistic.
 
+### D-015. The chain submits its successor through the login node
+**Date:** 2026-08-31
+**Milestone:** 0
+**Type:** deviation
+**Decision:** `submit.pbs` attempts a direct `qsub` for the successor job and, on failure, retries by sshing to `<login-node>` (overridable via `CHAIN_SUBMIT_HOST`) and submitting from there. A failure to queue a successor is fatal and loud.
+**Reason:** this PBS server rejects `qsub` from inside a running job with `qsub: Bad UID for job execution`, exit code 175. IMPLEMENTATION.md Section 3.2 assumed self-chaining from within the job would work, and it does not here. That assumption failing silently broke the whole cluster strategy: the first job ran, stopped at its wall, checkpointed correctly, and then simply had no successor. A probe job confirmed that ssh from a compute node to the login node is passwordless and that `qsub` is accepted there. `PBS_O_WORKDIR` is on BeeGFS shared storage, so the working directory path resolves identically from both hosts, which is what makes the indirection work.
+**Consequence:** every chained job log will contain one `qsub: Bad UID for job execution` line followed by `direct qsub failed (rc=175), retrying via the login node`. That is expected on this cluster and is not an error to chase. The direct attempt is kept so the script still works unmodified on a server configured with `flatuid`. If the noise ever obscures a real failure, add a `CHAIN_MODE` variable to skip the direct attempt.
+**Risk retired:** a chain that cannot queue its successor now exits non-zero with an explicit message. Before this change it exited 0 and the run silently stopped advancing, which on a real multi-day run would have looked like a job that had simply not been resubmitted yet.
+**Reversible:** yes, if the cluster admins set `flatuid` the fallback becomes dead code and can be removed.
+
 ### D-003. Compute block, sixteen weeks on the cluster
 **Date:** open
 **Milestone:** blocks the pre-registration freeze at milestone 5
