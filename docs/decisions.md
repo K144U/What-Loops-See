@@ -190,6 +190,37 @@ for d in range(2, 7):
 **Consequence:** `combo_ood` is a families B and C split. Any cross-family comparison on that split covers two families rather than three, and the paper must say so rather than leaving readers to infer coverage from a table. Enforced by `SUPPORTED_SPLITS` on each family module and by `test_unsupported_split_raises_rather_than_improvising`.
 **Reversible:** yes, if someone designs a compositional held-out split for family A that preserves label uniformity.
 
+### D-019. Family B relation semantics and scene construction
+**Date:** 2026-08-31
+**Milestone:** 1
+**Type:** deviation
+**Decision:** three departures from IMPLEMENTATION.md Section 4.3, all forced by measurement rather than preference.
+
+1. **Relations are nearest-neighbour along a shared row or column**, not CLEVR-style directional sets. `left_of(X)` is the nearest sprite in X's row to its left.
+2. **Sprites are placed in a compact rectangle** sized just larger than the sprite count, at a random offset, not scattered uniformly over the 8x8 grid.
+3. **Chains are walked constructively**, choosing uniformly among relations that actually resolve to an unvisited sprite, rather than sampled blind and rejected.
+
+**Reason, with the numbers.** The spec's set semantics need rejection sampling to guarantee a unique referent. Nearest-neighbour gives uniqueness structurally, so the only rejection cause is a dead end. But nearest-neighbour needs sprites to share rows and columns, and uniform scatter over 64 cells almost never produces that: measured rejection was **0.885 at depth 2 breadth 3, 0.970 at depth 3, and depth 4 could not be sampled at all**. Compact placement fixed most of it, and constructive walking fixed the rest. Worst cell is now **0.135**, against the spec's 0.30 ceiling.
+
+The visited-sprite exclusion in the walk is the part that matters most for the science. Without it a chain could go `left_of` then `right_of` and land back on its anchor, so a depth 3 question would be exactly as hard as a depth 1 question while still being labelled depth 3. The depth axis would then be part signal and part noise, and H1 would be fitting the mixture without anything flagging it.
+
+**Consequence:** the paper must describe the relation semantics as nearest-neighbour rather than implying CLEVR's, since the two give different chain distributions. The compact placement means absolute scene extent correlates weakly with breadth, which is acceptable because breadth is a declared axis, but it should not be described as uniform scatter. Rejection rates per cell are asserted in `tests/test_families_bc.py`.
+**Reversible:** yes, but reverting any one of the three reintroduces the rejection rates above.
+
+### D-020. Label spaces, split ranges and sprite gaps for families B and C
+**Date:** 2026-08-31
+**Milestone:** 1
+**Type:** deviation
+**Decision:** four smaller choices, grouped because they are all consequences of fitting the spec's task descriptions onto a 32x32 canvas.
+
+1. **Family B answers attribute queries only**, giving 13 classes (6 colours, 5 shapes, 2 sizes). The spec says "yes/no plus attribute values". Yes/no tokens are reserved in the vocabulary but unused. A verify-style question adds a second query type and a second failure mode for no additional purchase on H1, which is about loop counts rather than answer format.
+2. **Family B breadth starts at 6**, not the spec's 3. A depth d chain visits d distinct sprites, so depth 4 is structurally impossible below breadth 4 and rare at 5. Critically, **train and depth_ood share one breadth range** (6 to 9): letting the deeper split use broader scenes would confound the two axes and make H1 unanswerable, which is a far worse failure than a high rejection rate. `sample_scene` raises on `depth > breadth` rather than retrying, since that cell is structurally empty rather than hard.
+3. **Family C has no depth_ood split.** Depth is 1 by construction and there is nothing to extrapolate along. A family C depth_ood would be a relabelling of the training distribution.
+4. **Every sprite mask leaves its last row and column clear**, guaranteeing a one pixel gap between sprites in adjacent patches. Found by eyeballing a sample dump: two adjacent yellow triangles had rendered as one connected blob. Merely ugly for family B, actively wrong for family C, whose task is counting them. Family A glyphs already got this gap from being centred.
+
+**Consequence:** family C contributes to three of the five splits. Any cross-family table must show coverage rather than let readers assume all families appear everywhere. The eyeball step in milestone 1's definition of done earned its place, since item 4 is invisible to every numerical test we had.
+**Reversible:** items 1 and 2 yes, items 3 and 4 no, they fix real defects.
+
 ### D-003. Compute block, sixteen weeks on the cluster
 **Date:** open
 **Milestone:** blocks the pre-registration freeze at milestone 5

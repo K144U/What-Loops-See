@@ -19,7 +19,7 @@ from loopvision.data import family_a as FA
 from loopvision.data import groups as G
 from loopvision.data import render
 
-FAMILIES = ["A"]  # B and C are added as they land
+FAMILIES = ["A", "B", "C"]
 
 
 # ---------------------------------------------------------------------------
@@ -143,7 +143,7 @@ def test_split_depth_and_breadth_ranges_are_respected(family: str) -> None:
     """
     module = D.get_family(family)
     for split in sorted(module.SUPPORTED_SPLITS):
-        spec = D.SPLITS[split]
+        spec = D.split_spec(family, split)
         depths, breadths = set(), set()
         for i in range(400):
             s = D.generate(family, D.global_index(split, i), split)

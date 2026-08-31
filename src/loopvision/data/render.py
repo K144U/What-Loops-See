@@ -153,3 +153,66 @@ def save_contact_sheet(canvases, path, cols: int = 8, scale: int = 4, pad: int =
     img = Image.fromarray(sheet, mode="RGB")
     img = img.resize((sheet.shape[1] * scale, sheet.shape[0] * scale), Image.NEAREST)
     img.save(path)
+
+
+# ---------------------------------------------------------------------------
+# Sprites, for families B and C
+# ---------------------------------------------------------------------------
+#
+# Five shapes crossed with two sizes, drawn as explicit 4x4 bitmasks so that
+# every (shape, size) pair occupies exactly one patch, exactly like a family
+# A glyph. Hand designed rather than rasterised: at this resolution an
+# anti-aliased circle and an anti-aliased square differ by a pixel or two,
+# and the task would become about acuity rather than about relations.
+#
+# All ten masks are asserted mutually distinct in tests/test_data.py.
+
+SHAPES = ("square", "ring", "triangle", "circle", "bar")
+SIZES = ("small", "large")
+
+N_SPRITE_COLOURS = 6
+SPRITE_COLOURS: tuple[tuple[int, int, int], ...] = (
+    (222, 58, 58),    # red
+    (54, 200, 88),    # green
+    (62, 104, 232),   # blue
+    (240, 196, 32),   # yellow
+    (186, 84, 220),   # purple
+    (235, 235, 235),  # white
+)
+
+
+def _mask(rows: tuple[str, ...]) -> np.ndarray:
+    return np.array([[c == "1" for c in row] for row in rows], dtype=bool)
+
+
+# Every mask leaves the last row and last column clear, so two sprites in
+# adjacent patches always have a one pixel background gap between them.
+# Without that guarantee, two same-coloured neighbours merge into a single
+# blob, which is merely ugly for family B and actively wrong for family C,
+# where the task is to count them. Family A glyphs already get this gap
+# from being centred; this makes it explicit for sprites.
+SHAPE_MASKS: dict[tuple[str, str], np.ndarray] = {
+    ("square", "large"): _mask(("1110", "1110", "1110", "0000")),
+    ("ring", "large"): _mask(("1110", "1010", "1110", "0000")),
+    ("triangle", "large"): _mask(("1000", "1100", "1110", "0000")),
+    ("circle", "large"): _mask(("0100", "1110", "0100", "0000")),
+    ("bar", "large"): _mask(("0100", "0100", "0100", "0000")),
+    ("square", "small"): _mask(("1100", "1100", "0000", "0000")),
+    ("ring", "small"): _mask(("1100", "1000", "0000", "0000")),
+    ("triangle", "small"): _mask(("1000", "1100", "0000", "0000")),
+    ("circle", "small"): _mask(("0100", "1100", "0000", "0000")),
+    ("bar", "small"): _mask(("1000", "1000", "0000", "0000")),
+}
+
+
+def render_sprite(colour: int, shape: str, size: str, patch: int = PATCH) -> np.ndarray:
+    """Draw one sprite as a (3, patch, patch) uint8 tile."""
+    if (shape, size) not in SHAPE_MASKS:
+        raise ValueError(f"unknown sprite ({shape!r}, {size!r})")
+    mask = SHAPE_MASKS[(shape, size)]
+    rgb = SPRITE_COLOURS[colour]
+    tile = np.empty((3, patch, patch), dtype=np.uint8)
+    for c in range(3):
+        tile[c, :, :] = BACKGROUND[c]
+        tile[c][mask] = rgb[c]
+    return tile

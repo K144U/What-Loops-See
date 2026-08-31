@@ -54,7 +54,11 @@ REL_BASE = _NEXT                     # left_of, right_of, above, below
 RELATIONS = ("left_of", "right_of", "above", "below")
 _NEXT += len(RELATIONS)
 
-ANSWER_BASE = _NEXT                  # yes, no
+ATTR_BASE = _NEXT                    # which attribute a family B query asks for
+ATTRIBUTES = ("colour", "shape", "size")
+_NEXT += len(ATTRIBUTES)
+
+ANSWER_BASE = _NEXT                  # yes, no. Reserved, see docs/decisions.md D-019
 _NEXT += 2
 
 VOCAB_SIZE = _NEXT
@@ -126,6 +130,22 @@ SPLITS: dict[str, SplitSpec] = {
     "breadth_ood": SplitSpec("breadth_ood", 3 * _SPLIT_STRIDE, (1, 2, 3), (5, 6)),
     "combo_ood": SplitSpec("combo_ood", 4 * _SPLIT_STRIDE, (1, 2, 3), (1, 2, 3, 4)),
 }
+
+
+def split_spec(family: str, split: str) -> SplitSpec:
+    """The split as this family defines it.
+
+    The spec's ranges in Section 4.5 are written "family-appropriate", and
+    they genuinely differ: family A composes up to depth 6 while family B
+    chains to 4, and family C is depth 1 by construction. A family
+    declaring SPLIT_RANGES overrides the defaults below.
+    """
+    base = SPLITS[split]
+    overrides = getattr(get_family(family), "SPLIT_RANGES", {})
+    if split not in overrides:
+        return base
+    depth, breadth = overrides[split]
+    return SplitSpec(base.name, base.base, tuple(depth), tuple(breadth))
 
 
 def split_seed(family: str, split: str, idx: int, master_seed: int) -> int:

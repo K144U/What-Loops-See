@@ -28,10 +28,14 @@ def dump_family(family: str, out_dir: Path, per_depth: int, cfg: D.TaskConfig) -
     # Walk the index space until every depth has enough samples. Depth is
     # drawn per sample, so we cannot ask for a specific one directly.
     for split in sorted(module.SUPPORTED_SPLITS):
-        spec = D.SPLITS[split]
-        wanted = set(spec.depth)
+        # Per-family ranges, not the global defaults. Using D.SPLITS here
+        # made this look for family A's depths (4, 5, 6) inside family B,
+        # so family B depth 3 was never dumped and two splits spun to the
+        # index cap looking for depths that do not exist.
+        spec = D.split_spec(family, split)
+        wanted = {d for d in spec.depth}
         idx = 0
-        while wanted and idx < 200_000:
+        while wanted and idx < 20_000:
             sample = D.generate(family, D.global_index(split, idx), split, cfg)
             bucket = by_depth.setdefault(sample.depth, [])
             if sample.depth in wanted and len(bucket) < per_depth:

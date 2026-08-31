@@ -12,11 +12,12 @@ Milestone tracker for "What a Loop Sees". Mirrors Section 11 of `what-a-loop-see
 
 **As of 2026-08-31**
 
-- Phase: **milestone 0 complete, both halves, verified on the cluster.** Milestone 1 is unblocked.
+- Phase: **milestone 1 complete.** Milestone 2 (gate G1) is next, and it is a hard stop.
 - Repository: `loopvision/`, git initialised, six commits. Cloned to `<cluster-user>@<login-node>:~/loopvision`, transferred by git bundle so the LF line endings survive.
 - Environment: Python 3.11.11 via `module load python311`, torch **2.4.1+cu121**, driver 525.147.05 confirmed. See D-014.
-- `pytest -q`: **13 passed on the cluster**, not only locally.
-- Next action: milestone 1. `groups.py`, `render.py`, families A, B and C, manifest and splits.
+- `pytest -q`: **99 passed.** Milestone 0's 13 plus the data layer.
+- **Open item needing your sign-off: D-016**, the gate G1.3 rewrite. It blocks milestone 2, not earlier work.
+- Next action: milestone 2, gate G1. Train k=1 models and run the four validity checks. This is a hard stop: if it fails, stop and report.
 
 ### Milestone 0 cluster sign-off, PASSED 2026-08-31
 
@@ -49,7 +50,7 @@ Legend: NOT STARTED, IN PROGRESS, BLOCKED, DONE, FAILED.
 | # | Weeks | Planned dates | Work | Done when | Status |
 |---|---|---|---|---|---|
 | 0 | 0 | Sep 1 to 6, 2026 | Repo skeleton, `pyproject.toml`, CI running pytest, `pick_gpu.sh`, hello-world PBS job surviving a kill and resuming | `pytest -q` passes and a chained 2-job run completes | **DONE 2026-08-31.** 13 tests pass on the cluster, 4-job chain completed and matched an uninterrupted run bit exactly |
-| 1 | 1 | Sep 7 to 13 | `groups.py`, `render.py`, families A, B, C generators, manifest and splits | `pytest tests/test_data.py` passes, 64 sample images dumped and eyeballed | **IN PROGRESS.** groups, render, family A, dataset and splits done, 63 tests pass, 64 samples per depth dumped and eyeballed. Families B and C outstanding |
+| 1 | 1 | Sep 7 to 13 | `groups.py`, `render.py`, families A, B, C generators, manifest and splits | `pytest tests/test_data.py` passes, 64 sample images dumped and eyeballed | **DONE 2026-08-31.** 99 tests pass, all three families, 11 contact sheets dumped and eyeballed |
 | 2 | 2 | Sep 14 to 20 | **GATE G1**, task validity | `pytest tests/test_gate_g1.py` passes on stored gate runs | NOT STARTED |
 | 3 | 3 to 5 | Sep 21 to Oct 11 | Model, training loop, stability, three conditioning variants, four baselines | d=384 trains stably at k=8 on depth 3 above threshold, cold start, twice with different seeds | NOT STARTED |
 | 4 | 5 | Oct 5 to 11 | **GATE G2**, loops beat matched-compute feedforward and echo baseline | `python -m loopvision.analysis.gate_g2` exits 0 | NOT STARTED |
