@@ -55,6 +55,9 @@ DEFAULTS = {
     "checkpoint_every_minutes": 30,
     "seed": 0,
     "master_seed": 20260901,
+    # Training is generation bound. One less than ncpus, leaving a core
+    # for the main process and the GPU feed.
+    "num_workers": 3,
     "state_init": "randn",
     "conditioning": "none",
     "inject": True,
@@ -90,24 +93,68 @@ def task_config(cfg: dict) -> D.TaskConfig:
     )
 
 
+_POOL = None
+
+
+def _gen_chunk(args):
+    """Worker entry point. Must be module level to be picklable."""
+    family, split, indices, tcfg = args
+    out = []
+    for idx in indices:
+        s = D.generate(family, idx, split, tcfg)
+        out.append((s.image, s.query, s.label, s.depth, s.breadth))
+    return out
+
+
+def get_pool(num_workers: int):
+    """One pool per process, created lazily and reused across steps.
+
+    Prefers fork, which is what the Linux cluster uses and which avoids
+    re-importing torch in every worker. Falls back to spawn on platforms
+    without fork, so the same code runs on the Windows dev machine.
+    """
+    global _POOL
+    if num_workers > 0 and _POOL is None:
+        import multiprocessing as mp
+
+        try:
+            ctx = mp.get_context("fork")
+        except ValueError:
+            ctx = mp.get_context("spawn")
+        _POOL = ctx.Pool(num_workers)
+    return _POOL
+
+
 def make_batch(cfg: dict, split: str, cursor: int, device):
     """Generate one batch from the procedural stream at a given cursor.
 
     The cursor is the entire dataloader state, which is why resume can be
-    exact. Generation is CPU bound but cheap at 32x32.
+    exact. Parallel generation preserves that exactly: every sample is a
+    pure function of its global index, so splitting the batch across
+    processes and reassembling in index order gives byte-identical results
+    to generating it serially. Asserted in tests/test_parallel_gen.py.
+
+    Measured on the gate runs, training was entirely generation bound at
+    around 4200 samples per second while the A100 idled, so this is where
+    the wall clock actually goes.
     """
     tcfg = task_config(cfg)
-    images, queries, labels, depths, breadths = [], [], [], [], []
-    for i in range(cfg["batch_size"]):
-        sample = D.generate(
-            cfg["family"], D.global_index(split, cursor + i), split, tcfg
-        )
-        images.append(sample.image)
-        queries.append(sample.query)
-        labels.append(sample.label)
-        depths.append(sample.depth)
-        breadths.append(sample.breadth)
+    n = cfg["batch_size"]
+    indices = [D.global_index(split, cursor + i) for i in range(n)]
+    workers = cfg.get("num_workers", 0)
 
+    if workers > 0:
+        pool = get_pool(workers)
+        chunk = (n + workers - 1) // workers
+        chunks = [
+            (cfg["family"], split, indices[i : i + chunk], tcfg)
+            for i in range(0, n, chunk)
+        ]
+        rows = [r for part in pool.map(_gen_chunk, chunks) for r in part]
+    else:
+        rows = _gen_chunk((cfg["family"], split, indices, tcfg))
+
+    images, queries, labels, depths, breadths = zip(*rows)
     image = torch.from_numpy(np.stack(images)).to(device).float().div_(255.0)
     query = torch.from_numpy(np.stack(queries)).to(device).long()
     label = torch.tensor(labels, device=device, dtype=torch.long)
