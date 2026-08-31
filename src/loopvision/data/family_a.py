@@ -87,9 +87,9 @@ def render_scene(
 
 def generate(idx: int, split: str, cfg: TaskConfig | None = None) -> Sample:
     cfg = cfg or TaskConfig()
-    from loopvision.data.dataset import SPLITS
+    from loopvision.data.dataset import split_spec
 
-    spec = SPLITS[split]
+    spec = split_spec(FAMILY, split, cfg)
     rng = sample_rng(FAMILY, split, idx, cfg)
 
     depth = int(rng.choice(spec.depth))

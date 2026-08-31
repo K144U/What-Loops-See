@@ -102,6 +102,12 @@ class TaskConfig:
     presentation: str = "strip"  # strip | frames | tokens, see Section 4.2
     canvas: int = render.CANVAS
 
+    # Narrow a split to specific depths or breadths. Gate G1 needs data at
+    # exactly one depth ("depth 3 must be unsolvable at k=1"), which the
+    # split ranges alone cannot express since depth is drawn per sample.
+    depths: tuple[int, ...] | None = None
+    breadths: tuple[int, ...] | None = None
+
 
 # ---------------------------------------------------------------------------
 # Splits
@@ -132,7 +138,7 @@ SPLITS: dict[str, SplitSpec] = {
 }
 
 
-def split_spec(family: str, split: str) -> SplitSpec:
+def split_spec(family: str, split: str, cfg: TaskConfig | None = None) -> SplitSpec:
     """The split as this family defines it.
 
     The spec's ranges in Section 4.5 are written "family-appropriate", and
@@ -142,10 +148,23 @@ def split_spec(family: str, split: str) -> SplitSpec:
     """
     base = SPLITS[split]
     overrides = getattr(get_family(family), "SPLIT_RANGES", {})
-    if split not in overrides:
-        return base
-    depth, breadth = overrides[split]
-    return SplitSpec(base.name, base.base, tuple(depth), tuple(breadth))
+    if split in overrides:
+        depth, breadth = overrides[split]
+        base = SplitSpec(base.name, base.base, tuple(depth), tuple(breadth))
+    if cfg is not None and (cfg.depths or cfg.breadths):
+        depth = tuple(cfg.depths) if cfg.depths else base.depth
+        breadth = tuple(cfg.breadths) if cfg.breadths else base.breadth
+        unknown_d = set(depth) - set(base.depth)
+        unknown_b = set(breadth) - set(base.breadth)
+        if unknown_d or unknown_b:
+            raise ValueError(
+                f"{family}/{split}: requested depths {sorted(unknown_d)} and "
+                f"breadths {sorted(unknown_b)} are outside the split's own "
+                f"ranges {base.depth} and {base.breadth}. Narrowing a split is "
+                f"allowed, redefining it is not."
+            )
+        base = SplitSpec(base.name, base.base, depth, breadth)
+    return base
 
 
 def split_seed(family: str, split: str, idx: int, master_seed: int) -> int:
