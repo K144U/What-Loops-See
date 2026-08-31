@@ -221,6 +221,15 @@ The visited-sprite exclusion in the walk is the part that matters most for the s
 **Consequence:** family C contributes to three of the five splits. Any cross-family table must show coverage rather than let readers assume all families appear everywhere. The eyeball step in milestone 1's definition of done earned its place, since item 4 is invisible to every numerical test we had.
 **Reversible:** items 1 and 2 yes, items 3 and 4 no, they fix real defects.
 
+### D-021. Four cores per job, not eight
+**Date:** 2026-08-31
+**Milestone:** 2
+**Type:** deviation
+**Decision:** `submit.pbs` requests `ncpus=4`, not the `ncpus=8` of IMPLEMENTATION.md Section 3. `OMP_NUM_THREADS` now follows `$NCPUS` rather than being hardcoded, so changing the request cannot leave threads oversubscribed. A job that needs more can override on the qsub line.
+**Reason:** the spec chose 8 so that two jobs run concurrently under the 16 concurrent core cap. That reasoning optimises per-job throughput, which is the right target on an idle cluster and the wrong one here. First contact found the gpu queue at 40 running, 8 queued and 14 held, with 24 hour walltimes, so our four gate jobs sat entirely unscheduled. At `ncpus=4` the cap allows four concurrent jobs instead of two, and smaller requests also backfill into gaps sooner.
+**Consequence:** each job gets half the CPU. Data generation is procedural and runs in the training process rather than in DataLoader workers, so this is the throughput that suffers, not GPU utilisation. If steps per second drops enough to matter, the fix is DataLoader workers rather than reverting to 8 cores. Worth measuring once the gate runs land: if wall-clock per run more than doubles, this trade was wrong.
+**Reversible:** yes, one line, and the override is documented in the script.
+
 ### D-003. Compute block, sixteen weeks on the cluster
 **Date:** open
 **Milestone:** blocks the pre-registration freeze at milestone 5

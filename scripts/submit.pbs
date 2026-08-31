@@ -1,7 +1,7 @@
 #!/bin/bash
 #PBS -N loopvis
 #PBS -q gpu
-#PBS -l select=1:ncpus=8:mem=48gb
+#PBS -l select=1:ncpus=4:mem=48gb
 #PBS -l walltime=24:00:00
 #PBS -j oe
 
@@ -16,8 +16,15 @@
 #   RUN_ID=smoke01 ENTRY=loopvision.train.smoke qsub scripts/submit.pbs
 #   RUN_ID=famA_384_v1 CONFIG=base.yaml qsub scripts/submit.pbs
 #
-# ncpus=8 is deliberate. The gpu queue caps a user at 16 concurrent cores,
-# so 8 per job means two jobs run at once. Asking for more halves throughput.
+# ncpus=4 is deliberate. The gpu queue caps a user at 16 concurrent cores,
+# so 4 per job means four jobs run at once rather than two. The spec asked
+# for 8; first contact with a saturated queue (40 running, 8 queued, 14
+# held) made scheduling latency the binding constraint rather than
+# per-job throughput. Smaller requests also fit into gaps sooner. See
+# docs/decisions.md D-021.
+#
+# Override for a job that genuinely needs more:
+#   qsub -l select=1:ncpus=8:mem=48gb -v ... scripts/submit.pbs
 
 set -euo pipefail
 
@@ -46,7 +53,9 @@ export ENTRY="${ENTRY:-loopvision.train.cli}"
 export MAX_HOURS="${MAX_HOURS:-23.0}"
 # Login node used to submit the successor job, see the chain block below.
 export CHAIN_SUBMIT_HOST="${CHAIN_SUBMIT_HOST:-<login-node>}"
-export OMP_NUM_THREADS=8
+# Follow the actual allocation rather than hardcoding it, so changing the
+# ncpus request cannot silently leave threads oversubscribed.
+export OMP_NUM_THREADS="${NCPUS:-4}"
 export PYTHONUNBUFFERED=1
 export WANDB_MODE=offline
 
