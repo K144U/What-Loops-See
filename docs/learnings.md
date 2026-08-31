@@ -165,10 +165,20 @@ Things caught before they cost anything. Worth recording because the catch mecha
 
 **The methodological lesson, which is the more valuable half.** The author reports that the two errors were "mutually invisible", each concealing the other, so that finding them required both a split audit and an antisymmetrisation check. Neither alone would have surfaced anything. This is a direct warning about our own instruments: a single validity check that comes back clean is weak evidence when two plausible errors can cancel. Gate G1 already reflects this by running four checks rather than one, and the M2 patching normalisation, where 0 is the corrupted run and 1 is the clean run, should be audited in both directions rather than only checking that clean recovers to 1.
 
+### N-002. A shortcut probe that reported no shortcut because of a tie break
+**Source:** this project, milestone 1
+**What happened:** the first implementation of `bag_of_operators_ceiling` enumerated every ordering of the operator multiset, took the modal composite with `Counter.most_common`, and checked whether it equalled the true target. It reported a ceiling of **1.000** at depth 2. `itertools.permutations` yields the input ordering first, so on a tie `most_common` returns whichever composite was inserted first, which is the true answer by construction. The estimator was reading back its own input.
+**Cost:** none. It failed a test written expecting roughly 0.5, which is the only reason it surfaced.
+**Root cause:** measuring a quantity by simulating a predictor, where the simulation had access to information the real predictor would not have. The tie break was the leak.
+**Rule now:** where a quantity has a closed form, compute the closed form rather than simulating an agent that estimates it. The fix computes `E_M [ max_g P(g | M) ]` directly, which has no tie-breaking step to leak through.
+**Enforced by:** a docstring on `bag_of_operators_ceiling` naming this specific trap, because the modal-composite implementation is the obvious one and someone will reach for it again.
+
+**Why this is a near miss rather than a curiosity.** Had the number come out plausible instead of a suspicious 1.000, it would have been recorded as evidence that the anti-shortcut sampler worked perfectly, and gate G1.3 would have passed on a measurement error. The true ceiling is 0.652 at depth 2. Same shape as [[L-011]] and N-001: a check that comes back clean is weak evidence until you have tried to make it come back dirty.
+
 ---
 
 ## 5. Recurring themes
 
 Filled in during milestone 9 and again before writing. If three entries in Section 3 share a cause, the cause is the real lesson and it belongs here.
 
-*(no entries yet)*
+**Emerging already, three times in one week.** L-011 (a resume test that passed against a disabled RNG restore), N-001 (a paper whose two errors were each invisible without the other), and N-002 (a shortcut probe that leaked its own answer through a tie break). In every case a check returned a clean result that was wrong, and in every case the only thing that caught it was deliberately trying to make it fail. This is on track to be the methodological theme of the project, and it argues for treating "the validation passed" as the beginning of a check rather than the end of one.

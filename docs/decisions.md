@@ -143,6 +143,44 @@ Append-only log of every choice that deviates from `what-a-loop-sees-IMPLEMENTAT
 **Risk retired:** a chain that cannot queue its successor now exits non-zero with an explicit message. Before this change it exited 0 and the run silently stopped advancing, which on a real multi-day run would have looked like a job that had simply not been resubmitted yet.
 **Reversible:** yes, if the cluster admins set `flatuid` the fallback becomes dead code and can be removed.
 
+### D-016. Gate G1.3 rewritten, the at-chance criterion was unachievable
+**Date:** 2026-08-31
+**Milestone:** 1
+**Type:** deviation
+**Status:** **needs human sign-off.** This changes a gate criterion, which the standing rules say must never be done to make a result pass. It is logged here in full so the change is visible and auditable rather than silent.
+
+**Decision:** gate G1.3 changes from "the bag-of-operators shortcut probe must sit at chance for depth greater than 1" to two checks:
+
+1. The measured probe must not exceed the **order-blind ceiling**, the Bayes accuracy of the best possible predictor that sees only the multiset of operators. A probe above the ceiling means the probe is using order information and the probe implementation is wrong.
+2. The order-blind ceiling must sit **below the M1 threshold tau = 0.90 by a clear margin** at every depth in use. This is the property that makes the loop-count curve interpretable.
+
+**Reason:** the original criterion is mathematically impossible, not merely hard. At depth 2 an order-blind predictor sees the multiset `{a, b}` and chooses between `a.b` and `b.a`, scoring about 0.65 against a chance level of 0.021. Measured ceilings are 0.652, 0.477, 0.375, 0.301 and 0.256 at depths 2 through 6, which is 31x down to 12x chance. This follows from composition in a finite non-abelian group and cannot be sampled away. The anti-shortcut sampler is working exactly as specified; the specified gate simply asked for something unattainable.
+
+**Why the science is unaffected.** The ceiling never approaches tau = 0.90. An order-blind model cannot reach threshold at any depth, with at least 0.25 of margin, so `k_min` to threshold cannot be produced by a counting statistic. H1 is intact. Had tau been set below 0.65 this would have been a genuine crisis instead of a documentation fix.
+
+**Consequence:** `validate.py` at milestone 2 implements the two-part check. The ceiling table goes in the paper's task validity section, as evidence rather than as an appendix detail, since "the shortcut exists and here is exactly how large it is" is more credible than claiming no shortcut exists. Regenerate the numbers with:
+
+```bash
+python -c "
+import numpy as np
+from loopvision.data import groups as G
+rng = np.random.default_rng(23)
+for d in range(2, 7):
+    print(d, round(G.bag_of_operators_ceiling(rng, d, trials=4000), 4))
+"
+```
+
+**Reversible:** the alternative is to change the task until an order-blind model really is at chance, which would need a much larger group and a harder rendering problem, and would cost the comparability with the text-case work that family A exists to provide. Not recommended, but it is the option if the sign-off goes the other way.
+
+### D-017. Family A stimulus is a chiral tetromino, not an L-tromino
+**Date:** 2026-08-31
+**Milestone:** 1
+**Type:** deviation
+**Decision:** the family A glyph is a J-tetromino with three distinctly coloured cells and one neutral cell, not the "L-tromino with a coloured tip" of IMPLEMENTATION.md Section 4.2.
+**Reason:** the suggested shape does not have a trivial stabiliser, which the spec itself requires in the same sentence. An L-tromino is symmetric under reflection about its diagonal; pairing that reflection with the transposition of its two arm colours fixes the glyph. The stabiliser has order 2, so the group acts with 24 orbits and the "48-way classification" would silently have been 24-way with chance at 1/24 rather than the stated 1/48. A coloured tip does not help either: a single coloured cell is fixed by any colour permutation that fixes that colour.
+**Consequence:** four cells rather than three, so the glyph needs slightly more canvas. Chance stays at exactly 1/48 = 0.021 as the spec states. Both the rejection of the tromino and the acceptance of the tetromino are asserted computationally in `tests/test_groups.py`, including a regression test that keeps the tromino rejected so nobody reintroduces it.
+**Reversible:** any shape with a trivial stabiliser works. The test computes the stabiliser rather than assuming it, so swapping the glyph is safe.
+
 ### D-003. Compute block, sixteen weeks on the cluster
 **Date:** open
 **Milestone:** blocks the pre-registration freeze at milestone 5
