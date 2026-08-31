@@ -23,7 +23,19 @@ set -euo pipefail
 
 cd "$PBS_O_WORKDIR"
 mkdir -p logs
+
+# The venv is built against the python311 module, not the system python,
+# which is 3.8 and too old for this project. Compute nodes do not inherit
+# the login shell's module environment, so this load is required and its
+# absence produces a confusing "python: command not found" or a silent
+# fallback to 3.8.
+source /etc/profile.d/modules.sh
+module load python311
+
 source .venv/bin/activate
+
+# Exits non-zero if no card has enough free memory. Do not paper over this:
+# starting anyway means dying on OOM hours later.
 source scripts/pick_gpu.sh
 
 export RUN_ID="${RUN_ID:?RUN_ID must be set}"

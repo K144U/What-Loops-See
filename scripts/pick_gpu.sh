@@ -19,12 +19,25 @@ if ! command -v nvidia-smi >/dev/null 2>&1; then
     return 0 2>/dev/null || exit 0
 fi
 
-# memory.used first, utilisation as the tiebreak. A card with low memory
-# but pinned utilisation is running someone's job and we should not join it.
+# Selection is on memory FREE, not memory used, with utilisation as the
+# tiebreak. A card with low memory but pinned utilisation is running
+# someone's job and we should not join it.
+#
+# The threshold is free memory, not used memory, and that is a deliberate
+# change from IMPLEMENTATION.md Section 3, which said to fail if the
+# selected device has more than 2 GB in use. On this cluster the cards are
+# 80 GB A100s shared by roughly forty concurrent jobs, and at the time of
+# writing every single card had more than 2 GB in use while six of the
+# eight had over 70 GB free. A used-memory threshold would have refused to
+# start on a completely usable machine. See docs/decisions.md D-013.
+#
+# Override for a larger model: LOOPVISION_MIN_FREE_MIB=40960 source ...
+_min_free="${LOOPVISION_MIN_FREE_MIB:-20480}"
+
 _best=$(nvidia-smi \
-    --query-gpu=index,memory.used,utilization.gpu \
+    --query-gpu=index,memory.free,memory.used,utilization.gpu \
     --format=csv,noheader,nounits \
-    | sort -t, -k2,2n -k3,3n \
+    | sort -t, -k2,2nr -k4,4n \
     | head -n 1)
 
 if [ -z "$_best" ]; then
@@ -33,16 +46,21 @@ if [ -z "$_best" ]; then
 fi
 
 _idx=$(echo "$_best"  | cut -d, -f1 | tr -d ' ')
-_mem=$(echo "$_best"  | cut -d, -f2 | tr -d ' ')
-_util=$(echo "$_best" | cut -d, -f3 | tr -d ' ')
+_free=$(echo "$_best" | cut -d, -f2 | tr -d ' ')
+_used=$(echo "$_best" | cut -d, -f3 | tr -d ' ')
+_util=$(echo "$_best" | cut -d, -f4 | tr -d ' ')
 
 export CUDA_VISIBLE_DEVICES="$_idx"
-echo "pick_gpu: selected GPU $_idx (${_mem} MiB used, ${_util}% util)"
+export LOOPVISION_GPU_FREE_MIB="$_free"
+echo "pick_gpu: selected GPU $_idx (${_free} MiB free, ${_used} MiB used, ${_util}% util)"
 
-if [ "$_mem" -gt 2048 ]; then
-    echo "pick_gpu: WARNING every GPU has more than 2 GB in use." >&2
-    echo "pick_gpu: the freest was $_idx at ${_mem} MiB. The training process" >&2
-    echo "pick_gpu: will refuse to start rather than sharing a card." >&2
+if [ "$_free" -lt "$_min_free" ]; then
+    echo "pick_gpu: FATAL the freest GPU ($_idx) has only ${_free} MiB free," >&2
+    echo "pick_gpu: below the ${_min_free} MiB floor. Every card is loaded." >&2
+    echo "pick_gpu: Refusing rather than starting a run that will die on OOM" >&2
+    echo "pick_gpu: hours later, or quietly evict someone else's job." >&2
+    unset _best _idx _free _used _util _min_free
+    return 1 2>/dev/null || exit 1
 fi
 
-unset _best _idx _mem _util
+unset _best _idx _free _used _util _min_free

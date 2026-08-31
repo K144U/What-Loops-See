@@ -104,6 +104,35 @@ Append-only log of every choice that deviates from `what-a-loop-sees-IMPLEMENTAT
 **Consequence:** none locally. Verified by inspecting the stored blobs, which are clean ASCII with no CRLF terminators.
 **Reversible:** no reason to.
 
+### D-013. GPU selection gates on free memory, not used memory
+**Date:** 2026-08-31
+**Milestone:** 0
+**Type:** deviation
+**Decision:** `pick_gpu.sh` selects the card with the most free memory and refuses to run if that card has less than 20480 MiB free, overridable with `LOOPVISION_MIN_FREE_MIB`. IMPLEMENTATION.md Section 3 specified failing if the selected device has more than 2 GB **in use**.
+**Reason:** the spec's rule is unworkable on this cluster and would have blocked every job. First contact with `<gpu-node>` showed eight A100-SXM4-80GB cards with roughly forty concurrent jobs across the gpu queue, and **every single card had more than 2 GB in use** while six of the eight had over 70 GB free. Used memory is the wrong quantity on a large shared card: 4 GB used on an 80 GB A100 is five percent, not contention. Free memory is what determines whether our job fits.
+**Consequence:** the Python-side re-check at milestone 3 must use the same free-memory criterion, not the spec's 2 GB used rule, or the two will disagree and the disagreement will surface as an intermittent startup failure. `pick_gpu.sh` exports `LOOPVISION_GPU_FREE_MIB` so the Python side can read what the shell decided rather than re-querying and racing.
+**Known limitation:** if no card has enough free memory the job exits non-zero and **does not queue a successor**, so a long run can die permanently on a transient cluster-full condition. Dying loudly beats a resubmit spin loop for now. Revisit at milestone 3 when real multi-day runs start, and consider a bounded retry with a delay.
+**Reversible:** yes, it is one threshold.
+
+### D-014. Cluster environment as found, 2026-08-31
+**Date:** 2026-08-31
+**Milestone:** 0
+**Type:** resolution
+**Decision:** recorded for reference, since several spec assumptions were checked against reality for the first time.
+**What was found on `<login-node>` as user `<cluster-user>`:**
+
+| Item | Spec said | Actually found |
+|---|---|---|
+| Driver and CUDA | 525.147.05, CUDA 12.0 | **525.147.05 confirmed exactly.** The cu121 pin is correct and cu124 or later would genuinely fail |
+| GPU node | 8 GPUs, 96 cores | `<gpu-node>`, 8 x A100-SXM4-80GB, 96 ncpus, confirmed |
+| Compute nodes | six workq nodes, 384 cores | six nodes `<cpu-node-01>` to `cn06`, 64 ncpus each, confirmed |
+| Python | not stated | system python is 3.8.18, too old. **`module load python311` gives 3.11.11** and is required in every job script |
+| Disk | check quota before milestone 5 | `/home` is BeeGFS, 466T total with 324T free. The 150 GB probe checkpoint estimate is a non-issue |
+| Outbound network | compute nodes may lack it | the **login node** reaches PyPI and the PyTorch index. Installs happen there, not in jobs |
+| Queue load | not stated | gpu queue had 39 running, 4 queued, 2 held at first contact. This is a busy shared cluster, not an idle one |
+
+**Consequence:** the disk quota item in the `progress.md` standing checklist is closed. The `python311` module load is now required in `submit.pbs`. D-003, the compute block question, is informed but not resolved: the queue is busy, which bears on whether a sixteen-week window is realistic.
+
 ### D-003. Compute block, sixteen weeks on the cluster
 **Date:** open
 **Milestone:** blocks the pre-registration freeze at milestone 5

@@ -104,7 +104,7 @@ Items that are easy to defer to the final week and must not be. Guardrail 1 from
 | AI use statement, written not TODO | | milestone 10 | NOT STARTED |
 | Co-authorship and affiliation settled | | before preprint or submission | OPEN, see decisions.md D-004 |
 | Compute access confirmed for 16 weeks | | before milestone 5 | OPEN, see decisions.md D-003 |
-| Disk quota checked against probe checkpoint estimate (about 150 GB) | | before milestone 5 | NOT STARTED |
+| Disk quota checked against probe checkpoint estimate (about 150 GB) | | before milestone 5 | **CLOSED 2026-08-31.** `/home` is BeeGFS, 466T with 324T free. 150 GB is a non-issue. Probe density stays at 100 log-spaced steps, no reduction to 50 needed. See D-014 |
 
 ---
 
