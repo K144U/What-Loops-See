@@ -44,6 +44,8 @@ export ENTRY="${ENTRY:-loopvision.train.cli}"
 # checkpoints rather than being killed mid-step. Overridable so the chain
 # itself can be tested without waiting a day per link.
 export MAX_HOURS="${MAX_HOURS:-23.0}"
+# Login node used to submit the successor job, see the chain block below.
+export CHAIN_SUBMIT_HOST="${CHAIN_SUBMIT_HOST:-<login-node>}"
 export OMP_NUM_THREADS=8
 export PYTHONUNBUFFERED=1
 export WANDB_MODE=offline
@@ -83,7 +85,35 @@ if [ ! -f "runs/$RUN_ID/DONE" ]; then
 
     echo "run $RUN_ID incomplete (rc=$TRAIN_RC), queueing successor"
     echo "chain vars: $CHAIN_VARS"
-    qsub -W depend=afterany:"$PBS_JOBID" -v "$CHAIN_VARS" scripts/submit.pbs
+
+    # This PBS server refuses qsub from inside a running job with
+    # "Bad UID for job execution", so the successor is submitted by sshing
+    # back to the login node, which is permitted and passwordless within
+    # the cluster. The direct call is tried first so this script still
+    # works on a server configured with flatuid. See docs/decisions.md
+    # D-015.
+    #
+    # PBS_O_WORKDIR is on BeeGFS shared storage, so the path resolves
+    # identically on the login node. That is what makes this work at all.
+    CHAIN_QSUB="qsub -W depend=afterany:$PBS_JOBID -v $CHAIN_VARS scripts/submit.pbs"
+
+    set +e
+    $CHAIN_QSUB
+    QSUB_RC=$?
+    if [ $QSUB_RC -ne 0 ]; then
+        echo "direct qsub failed (rc=$QSUB_RC), retrying via the login node"
+        ssh -o BatchMode=yes -o StrictHostKeyChecking=no "$CHAIN_SUBMIT_HOST" \
+            "cd '$PBS_O_WORKDIR' && $CHAIN_QSUB"
+        QSUB_RC=$?
+    fi
+    set -e
+
+    if [ $QSUB_RC -ne 0 ]; then
+        echo "FATAL could not queue the successor for $RUN_ID. The chain is" >&2
+        echo "broken and this run will not finish on its own. Investigate" >&2
+        echo "before resubmitting, and do not assume it self-healed." >&2
+        exit 1
+    fi
 else
     echo "run $RUN_ID has DONE, chain complete"
 fi
