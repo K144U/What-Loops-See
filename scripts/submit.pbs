@@ -68,6 +68,12 @@ fi
 if [ -n "${STEPS:-}" ]; then
     EXTRA_ARGS+=(--steps "${STEPS}")
 fi
+# Without this, every "different seed" run silently trains the same model.
+# The milestone 3 gate asks for two cold starts with different seeds, and
+# two identical runs would have satisfied it on paper and not in fact.
+if [ -n "${SEED:-}" ]; then
+    EXTRA_ARGS+=(--seed "${SEED}")
+fi
 
 set +e
 python -m "$ENTRY" \
@@ -91,6 +97,7 @@ if [ ! -f "runs/$RUN_ID/DONE" ]; then
     CHAIN_VARS="RUN_ID=$RUN_ID,ENTRY=$ENTRY,MAX_HOURS=$MAX_HOURS"
     [ -n "${CONFIG:-}" ] && CHAIN_VARS="$CHAIN_VARS,CONFIG=$CONFIG"
     [ -n "${STEPS:-}" ]  && CHAIN_VARS="$CHAIN_VARS,STEPS=$STEPS"
+    [ -n "${SEED:-}" ]   && CHAIN_VARS="$CHAIN_VARS,SEED=$SEED"
 
     echo "run $RUN_ID incomplete (rc=$TRAIN_RC), queueing successor"
     echo "chain vars: $CHAIN_VARS"
