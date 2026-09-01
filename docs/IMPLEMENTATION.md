@@ -266,7 +266,7 @@ query token ids  --embed-->                      L query tokens
 
 - **Block.** Pre-norm, RMSNorm, multi-head attention with head dim 64, SwiGLU MLP at 8/3 expansion, no dropout, RoPE over a flattened 2D patch index plus a learned segment embedding distinguishing patch tokens from query tokens.
 - **Adapter.** `Linear(2d, d)` on the concatenation of the current state and the prelude output, exactly Huginn's recipe, so the core sees the input at every iteration instead of drifting. **Ablation control: no injection** (core sees only `s_i`).
-- **Size ladder.** Four models, `d in {256, 384, 512, 768}`, roughly 5M, 11M, 19M and 43M parameters at 6 total blocks. Heads = d/64. Core is 2 blocks tied by default, 1 block as an ablation.
+- **Size ladder.** **Cut to two models, `d in {384, 768}`, on 2026-09-01** (roughly 11M and 43M parameters). The four-model ladder `{256, 384, 512, 768}` is the original design and is what D-003 pre-authorised cutting if compute proved intermittent. It did: see `docs/decisions.md` D-023. Heads = d/64. Core is 2 blocks tied by default, 1 block as an ablation.
 - **Loop conditioning** (`conditioning.py`, three variants, this is where the loop-as-timestep question gets tested cheaply):
   - `none`: nothing added.
   - `embed`: learned embedding of the iteration index added to the state.

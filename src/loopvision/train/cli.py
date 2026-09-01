@@ -28,6 +28,7 @@ import yaml
 
 from loopvision.data import dataset as D
 from loopvision.model.loopvit import FeedforwardBaseline, LoopViT, LoopViTConfig
+from loopvision.train import loop_schedule
 from loopvision.train.checkpoint import (
     GracefulKiller,
     find_latest_checkpoint,
@@ -39,8 +40,13 @@ DEFAULTS = {
     "family": "A",
     "d_model": 384,
     "arch": "looped",  # looped | feedforward
-    "k_train": 1,  # fixed k for the gate; milestone 3 adds sampling
-    "k_eval": None,  # defaults to k_train
+    "k_schedule": "fixed",   # fixed | sampled, see train/loop_schedule.py
+    "k_train": 1,            # used when k_schedule is "fixed"
+    "k_mean_target": 8,      # used when k_schedule is "sampled"
+    "jitter_sigma": 0.5,     # the H4 sweep axis. 0.0 is the deterministic arm
+    "k_max_train": 32,
+    "k_eval": None,          # defaults to k_train
+    "eval_k_sweep": None,    # list of k to sweep at the end, for the M1 curve
     "depths": None,
     "breadths": None,
     "steps": 20000,
@@ -48,6 +54,11 @@ DEFAULTS = {
     "lr": 3e-4,
     "weight_decay": 0.05,
     "warmup": 2000,
+    # Decoupled from "steps" on purpose. lr_at previously derived the cosine
+    # length from the step budget, so a 20k run and a 200k run differed in
+    # learning rate schedule as well as in length, which confounded the two
+    # gate G1 attempts. None means "follow steps", as before.
+    "lr_schedule_steps": None,
     "grad_clip": 1.0,
     "bptt_window": 8,
     "eval_every": 500,
@@ -71,7 +82,9 @@ def load_config(path: str | None, overrides: dict) -> dict:
             cfg.update(yaml.safe_load(fh) or {})
     cfg.update({k: v for k, v in overrides.items() if v is not None})
     if cfg["k_eval"] is None:
-        cfg["k_eval"] = cfg["k_train"]
+        cfg["k_eval"] = (
+            cfg["k_mean_target"] if cfg["k_schedule"] == "sampled" else cfg["k_train"]
+        )
     return cfg
 
 
@@ -123,6 +136,20 @@ def get_pool(num_workers: int):
             ctx = mp.get_context("spawn")
         _POOL = ctx.Pool(num_workers)
     return _POOL
+
+
+def close_pool() -> None:
+    """Shut the worker pool down explicitly.
+
+    Leaving it to interpreter teardown raises an AttributeError from
+    multiprocessing during shutdown, which is harmless but looks like a
+    crash in a PBS log and would waste someone's time.
+    """
+    global _POOL
+    if _POOL is not None:
+        _POOL.close()
+        _POOL.join()
+        _POOL = None
 
 
 def make_batch(cfg: dict, split: str, cursor: int, device):
@@ -316,7 +343,8 @@ def write_provenance(run_dir: Path, cfg: dict) -> None:
 def lr_at(step: int, cfg: dict) -> float:
     if step < cfg["warmup"]:
         return cfg["lr"] * step / max(1, cfg["warmup"])
-    progress = (step - cfg["warmup"]) / max(1, cfg["steps"] - cfg["warmup"])
+    horizon = cfg.get("lr_schedule_steps") or cfg["steps"]
+    progress = (step - cfg["warmup"]) / max(1, horizon - cfg["warmup"])
     return cfg["lr"] * (0.1 + 0.9 * 0.5 * (1 + math.cos(math.pi * min(1.0, progress))))
 
 
@@ -391,8 +419,16 @@ def train(args) -> int:
         image, query, label, _, _ = make_batch(cfg, "train", cursor, device)
         cursor += cfg["batch_size"]
 
+        if cfg["k_schedule"] == "sampled":
+            k_step = loop_schedule.sample_loop_count(
+                step, cfg["steps"], cfg["k_mean_target"],
+                cfg["jitter_sigma"], cfg["k_max_train"],
+            )
+        else:
+            k_step = cfg["k_train"]
+
         with torch.autocast("cuda", dtype=torch.bfloat16, enabled=device.type == "cuda"):
-            logits = forward(model, image, query, cfg["k_train"], cfg["bptt_window"])
+            logits = forward(model, image, query, k_step, cfg["bptt_window"])
             loss = F.cross_entropy(logits.float(), label)
 
         optimizer.zero_grad(set_to_none=True)
@@ -401,8 +437,8 @@ def train(args) -> int:
         optimizer.step()
 
         if step % 50 == 0:
-            log.add(step, cfg["k_train"], "train", "loss", loss.item())
-            log.add(step, cfg["k_train"], "train", "grad_norm", float(grad_norm))
+            log.add(step, k_step, "train", "loss", loss.item())
+            log.add(step, k_step, "train", "grad_norm", float(grad_norm))
 
         if step % cfg["eval_every"] == 0 or step == cfg["steps"]:
             result = evaluate(model, cfg, "iid_val", device, cfg["eval_batches"])
@@ -433,6 +469,22 @@ def train(args) -> int:
             if killer.should_stop or stop_for_wall:
                 print(f"stopping cleanly at step {step}, checkpoint written")
                 return 0
+
+    sweep = cfg.get("eval_k_sweep")
+    if sweep:
+        # The M1 loop-count curve: one trained model, evaluated across k.
+        # This is why a variable-k model is worth more than one model per k.
+        print("loop-count curve (accuracy against k):", flush=True)
+        for k in sweep:
+            sub = dict(cfg)
+            sub["k_eval"] = k
+            r = evaluate(model, sub, "iid_val", device, cfg["eval_batches"] * 2)
+            log.add(cfg["steps"], k, "iid_val", "sweep_accuracy", r["accuracy"])
+            for cell, value in r["by_cell"].items():
+                d, b = cell.split("x")
+                log.add(cfg["steps"], k, "iid_val", "sweep_accuracy", value,
+                        depth=d, breadth=b)
+            print(f"    k={k:3d}  acc={r['accuracy']:.4f}", flush=True)
 
     result = evaluate(model, cfg, "iid_val", device, cfg["eval_batches"] * 4)
     log.add(cfg["steps"], cfg["k_eval"], "iid_val", "final_accuracy", result["accuracy"])

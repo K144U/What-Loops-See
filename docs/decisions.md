@@ -250,6 +250,16 @@ The visited-sprite exclusion in the walk is the part that matters most for the s
 
 **Note for the paper regardless of outcome.** That family C reaches 1.000 while family A depth 1 sits at chance under identical training is itself a finding about the two task families, and the gate table belongs in the task validity section either way.
 
+### D-023. Size ladder cut from four models to two
+**Date:** 2026-09-01
+**Milestone:** 3
+**Type:** fallback
+**Decision:** the size ladder is `d in {384, 768}`, roughly 11M and 43M parameters, not the four-model `{256, 384, 512, 768}` of IMPLEMENTATION.md Section 5. Approved by the user.
+**Reason:** this is the fallback D-003 pre-authorised, and the conditions it named have arrived. Two measurements forced it. First, gate G1 established that family A needs 100k to 200k steps rather than 20k, a five to ten times multiplier on every family A run. Second, the queue has never given us the four concurrent jobs the 16-core cap allows; one to two is what we actually get, because the node itself is saturated. The M1 sweep at four sizes is roughly 105 runs at 4 to 6 hours each, which is 420 to 630 GPU-hours and three to thirteen weeks of wall clock for milestone 5 alone. Ten weeks remain for milestones 3 through 11.
+**Consequence:** M1 drops to roughly 55 training runs and milestone 8 roughly halves. **The paper can no longer claim a smooth trend across four widths**, only a two-point comparison, and it must say so plainly rather than presenting two points as a ladder. If the two points disagree about the loop-count curve's shape, that is a reportable result and not a reason to reinstate the middle sizes without new compute.
+**Alternatives rejected.** Dropping below five seeds per cell would weaken exactly the statistics the pre-registration rests on. Cutting a family would mean losing family C, which is fatal to H1's breadth arm, or family B, our most reviewer-legible task. The ladder is the cheapest thing to lose.
+**Reversible:** yes, if compute frees up before the milestone 5 sweep launches. After that, adding sizes means re-running the sweep.
+
 ### D-003. Compute block, sixteen weeks on the cluster
 **Date:** open
 **Milestone:** blocks the pre-registration freeze at milestone 5
@@ -257,7 +267,7 @@ The visited-sprite exclusion in the walk is the part that matters most for the s
 **Decision:** OPEN. From Section 12 of the spec.
 **Question:** is a sixteen-week window on the Jaypee cluster realistic alongside the merging pipeline?
 **If access is intermittent:** cut the size ladder from four models to two (d=384 and d=768) and say so in the paper.
-**Resolve by:** before milestone 5, mid October 2026.
+**RESOLVED 2026-09-01: access is workable but throughput is not. The size ladder is cut to two models, see D-023.**
 **Evidence, 2026-08-31.** First real submission met a saturated queue: 40 running, 8 queued, 14 held on the gpu queue, with our four gate jobs waiting behind roughly four others. Jobs carry 24 hour walltimes, so a slot can be a day away. This is one observation and not yet a trend, but the M1 sweep at milestone 5 is 200 to 400 runs, and at this queue depth that is the binding constraint rather than GPU speed. Worth measuring queue latency over the next week before committing to the four-model ladder.
 
 ### D-004. Co-authorship and affiliation
