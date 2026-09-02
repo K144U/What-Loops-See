@@ -39,7 +39,8 @@ from loopvision.train.checkpoint import (
 DEFAULTS = {
     "family": "A",
     "d_model": 384,
-    "arch": "looped",  # looped | feedforward
+    "arch": "looped",        # looped | feedforward | echo | untied
+    "untied_copies": None,   # untied only. Defaults to the max k in use
     "k_schedule": "fixed",   # fixed | sampled, see train/loop_schedule.py
     "k_train": 1,            # used when k_schedule is "fixed"
     "k_mean_target": 8,      # used when k_schedule is "sampled"
@@ -193,8 +194,23 @@ def make_batch(cfg: dict, split: str, cursor: int, device):
 # ---------------------------------------------------------------------------
 
 
+def max_k_in_use(cfg: dict) -> int:
+    """Deepest iteration this run can ask for.
+
+    An untied model must be built with at least this many cores or it will
+    raise mid-run, so the number is derived rather than guessed.
+    """
+    candidates = [cfg["k_train"], cfg["k_eval"]]
+    if cfg["k_schedule"] == "sampled":
+        candidates.append(cfg["k_max_train"])
+    if cfg.get("eval_k_sweep"):
+        candidates.extend(cfg["eval_k_sweep"])
+    return max(int(k) for k in candidates if k)
+
+
 def build_model(cfg: dict, device):
     family = D.get_family(cfg["family"])
+    arch = cfg["arch"]
     model_cfg = LoopViTConfig(
         d_model=cfg["d_model"],
         num_classes=family.NUM_CLASSES,
@@ -203,13 +219,24 @@ def build_model(cfg: dict, device):
         state_init=cfg["state_init"],
         conditioning=cfg["conditioning"],
         inject=cfg["inject"],
+        core_mode="echo" if arch == "echo" else "blocks",
+        tied=arch != "untied",
+        untied_copies=cfg["untied_copies"] or max_k_in_use(cfg),
     )
-    if cfg["arch"] == "feedforward":
+    if arch == "feedforward":
         model = FeedforwardBaseline(model_cfg, k=cfg["k_train"])
-    elif cfg["arch"] == "looped":
+    elif arch in ("looped", "echo", "untied"):
+        if arch == "untied" and model_cfg.untied_copies > 16:
+            print(
+                f"warning: untied baseline with {model_cfg.untied_copies} cores is "
+                f"{model_cfg.untied_copies}x the core parameters of the tied model. "
+                f"Matched-parameter comparisons need a separate config."
+            )
         model = LoopViT(model_cfg)
     else:
-        raise ValueError(f"unknown arch {cfg['arch']!r}")
+        raise ValueError(
+            f"unknown arch {arch!r}, expected looped, feedforward, echo or untied"
+        )
     return model.to(device)
 
 

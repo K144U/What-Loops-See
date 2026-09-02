@@ -51,6 +51,21 @@ class LoopViTConfig:
     patch: int = 4
     inject: bool = True            # ablation control: False removes injection
     state_init: str = "randn"      # randn | zeros
+
+    # Baselines, IMPLEMENTATION.md Section 5. Implemented as modes of this
+    # model rather than as separate classes, so a baseline differs from the
+    # real thing in exactly one respect. A separate class can drift in some
+    # unrelated detail and then the comparison is confounded, which is
+    # precisely the failure a baseline exists to prevent.
+    #
+    #   core_mode "blocks"  the real model, a tied transformer core
+    #   core_mode "echo"    the core is the identity, injection is kept, so
+    #                       the state is refreshed but never learned-updated
+    core_mode: str = "blocks"      # blocks | echo
+    #   tied=False          untied cores, one per iteration, same total
+    #                       depth. Separates weight tying from depth
+    tied: bool = True
+    untied_copies: int = 8         # iterations an untied model can serve
     conditioning: str = "none"     # none | embed | adaln, milestone 3
     k_max_conditioning: int = 64
 
@@ -77,7 +92,23 @@ class LoopViT(nn.Module):
         self.segment = nn.Embedding(2, d)
 
         self.prelude = nn.ModuleList([Block(d) for _ in range(cfg.prelude_blocks)])
-        self.core = nn.ModuleList([Block(d) for _ in range(cfg.core_blocks)])
+        if cfg.core_mode == "echo":
+            # No core at all. The loop body is the adapter alone, so the
+            # state is refreshed from the input every iteration but nothing
+            # learned happens per iteration.
+            self.core = nn.ModuleList()
+            self.untied_cores = None
+        elif cfg.tied:
+            self.core = nn.ModuleList([Block(d) for _ in range(cfg.core_blocks)])
+            self.untied_cores = None
+        else:
+            # One distinct core per iteration, same compute per iteration as
+            # the tied model, many times the parameters.
+            self.core = nn.ModuleList()
+            self.untied_cores = nn.ModuleList(
+                nn.ModuleList([Block(d) for _ in range(cfg.core_blocks)])
+                for _ in range(cfg.untied_copies)
+            )
         self.coda = nn.ModuleList([Block(d) for _ in range(cfg.coda_blocks)])
 
         self.adapter = nn.Linear(2 * d, d, bias=False)
@@ -118,10 +149,12 @@ class LoopViT(nn.Module):
         """
         k_mean = 8
         scale = 1.0 / math.sqrt(2 * self.cfg.core_blocks * k_mean)
+        groups = [self.core] if self.untied_cores is None else list(self.untied_cores)
         with torch.no_grad():
-            for block in self.core:
-                block.attn.proj.weight.mul_(scale)
-                block.mlp.down.weight.mul_(scale)
+            for group in groups:
+                for block in group:
+                    block.attn.proj.weight.mul_(scale)
+                    block.mlp.down.weight.mul_(scale)
 
     def embed_input(self, image: torch.Tensor, query: torch.Tensor) -> torch.Tensor:
         B = image.shape[0]
@@ -141,6 +174,12 @@ class LoopViT(nn.Module):
     def _core_step(self, s, e, cos, sin, iteration: int):
         if self.cfg.inject:
             h = self.adapter(torch.cat([s, e], dim=-1))
+        elif self.cfg.core_mode == "echo":
+            raise ValueError(
+                "echo with inject=False has an empty loop body: no core and no "
+                "injection means the state never changes. That is not a "
+                "baseline, it is a bug."
+            )
         else:
             # Ablation: the core sees only its own state. Rules out the
             # possibility that looping merely re-reads the input.
@@ -160,7 +199,24 @@ class LoopViT(nn.Module):
                 for i in range(self.cfg.core_blocks)
             ]
 
-        for i, block in enumerate(self.core):
+        if self.cfg.core_mode == "echo":
+            # Identity core. h is already adapter([s ; e]), so the state is
+            # refreshed by the input and nothing else happens.
+            return h
+
+        if self.untied_cores is not None:
+            if iteration >= len(self.untied_cores):
+                raise ValueError(
+                    f"untied model has {len(self.untied_cores)} cores but was "
+                    f"asked for iteration {iteration}. Untied models cannot "
+                    f"extrapolate past the depth they were built for, which is "
+                    f"the point of the comparison, so raise rather than reuse."
+                )
+            blocks = self.untied_cores[iteration]
+        else:
+            blocks = self.core
+
+        for i, block in enumerate(blocks):
             ss = scale_shift_per_block[i] if scale_shift_per_block else None
             h = block(h, cos, sin, scale_shift=ss)
         return h
