@@ -144,6 +144,30 @@ Chance is 1/48 = 0.0208. ln(48) = 3.8712.
 
 **Consequence.** D-022 option 1 rescued gate G1 but did not make family A usable for the H1 measurement. Gate G1 asks whether depth 3 is unsolvable at k=1 and whether depth 1 is solvable at k=1; both are true, so the gate legitimately passes. It does not ask whether depth 3 becomes solvable **with** loops, and it turns out not to. That is a gap in the gate rather than a fault in it, and it argues for a G1.5 style check before milestone 5: at least one depth above 1 must be solvable at some k, or there is no curve to fit.
 
+### Models learn the abelian quotient first, milestone 3, 2026-09-01
+
+**Mid-run finding, from a checkpoint of `vark_famA_d2_1M_s1` at 180k of 1M steps.** Recorded now because it is the first mechanistic result in the project and it reframes the earlier depth-wall reading.
+
+| Order-independent bit | seed 1 | seed 0 |
+|---|---|---|
+| flip, D4 reflection parity | **1.0000** | 0.4907 |
+| rot mod 2, D4 rotation index | **1.0000** | 0.4907 |
+| sign, S3 permutation parity | 0.4980 | 0.5059 |
+| full 48-way accuracy | **0.1611** | 0.0449 |
+| distinct classes predicted | **16 of 48** | 2 of 48 |
+
+Chance is 1/48 = 0.0208. All three bits are verified Z2 homomorphisms of D4 x S3 by `analysis/parity_probe.py`, so each is computable from the operator multiset without knowing order.
+
+**What is established.** Seed 1 has learned both order-independent bits of the D4 factor, exactly and completely, while learning nothing about the S3 sign. It is the first run in the project to escape degenerate prediction: 16 distinct classes rather than the one or two every earlier run emitted. This is the abelian quotient of the group, the part that requires no sequential tracking at all, and the model acquires it first.
+
+**What does not add up, stated rather than glossed.** Two bits narrow 48 candidates to 12, which predicts accuracy 0.0833 and loss ln(12) = 2.485. Measured is 0.1611 and 1.78, about twice as good as those two bits can account for. Something further has been learned that is not any of the three homomorphisms. Open question, and worth resolving before this appears in the paper.
+
+**Correction to an earlier reading.** The 3.19 plateau seen in the 200k runs was interpreted as possibly ln(24) = 3.178, one learned bit. `parity_probe` measured all three bits at chance on those models and the hypothesis was recorded as refuted. That was premature rather than wrong: those models were degenerate one and two class predictors that had learned nothing, so the probe had nothing to detect and, for a two class predictor, is partly blind by construction. The hypothesis is now confirmed on a model that actually learned something.
+
+**Why this matters for H1.** Depth 1 plateaued at val_acc 0.165 from step 18k to 66k before grokking to 0.88 in under 8k steps. Seed 1 is at 0.161 now. If that plateau is the same abelian-quotient stage, then depth 2 is sitting where depth 1 sat immediately before it broke through, and the remaining question is whether 1M steps is enough budget for the second jump. That would make the family A depth wall a matter of budget rather than of task design, and would argue against reducing the group.
+
+**Not yet a result.** Seed 0 remains degenerate at the same step count, so seed variance is still severe and one seed reaching this stage is not the task being solved. Both runs are still training.
+
 ### Gate G2, loops beat baselines, milestone 4
 
 | Comparison | Requirement | Measured | run_id | Status |
