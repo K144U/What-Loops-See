@@ -229,6 +229,7 @@ class LoopViT(nn.Module):
         return_states: bool = False,
         bptt_window: int | None = None,
         s0: torch.Tensor | None = None,
+        state_hook=None,
     ):
         """Run the model for k loop iterations.
 
@@ -236,6 +237,13 @@ class LoopViT(nn.Module):
         per Section 6.2. None means full backpropagation through the loop.
         ``return_states`` additionally yields every s_i, which is what the
         M2, M3 and M4 instruments consume.
+
+        ``state_hook`` is called as ``hook(i, s)`` after the state s_i is
+        produced, and may return a replacement state. Its index matches the
+        ``return_states`` list, so ``hook(1, s)`` sees the state after one
+        core application. This is the single intervention point every
+        instrument uses; none of them reimplements the loop, which is what
+        keeps the measured path and the trained path identical.
 
         ``s0`` supplies the initial state explicitly. This matters for M2:
         with the default ``randn`` initialisation every call starts from a
@@ -255,19 +263,31 @@ class LoopViT(nn.Module):
             e = block(e, cos, sin)
 
         s = self.init_state(e) if s0 is None else s0
+        if state_hook is not None:
+            replaced = state_hook(0, s)
+            if replaced is not None:
+                s = replaced
         states = [s] if return_states else None
+
+        def step(s, i):
+            s = self._core_step(s, e, cos, sin, i)
+            if state_hook is not None:
+                replaced = state_hook(i + 1, s)
+                if replaced is not None:
+                    s = replaced
+            return s
 
         n_nograd = 0 if bptt_window is None else max(0, k - bptt_window)
         if n_nograd:
             with torch.no_grad():
                 for i in range(n_nograd):
-                    s = self._core_step(s, e, cos, sin, i)
+                    s = step(s, i)
                     if return_states:
                         states.append(s)
             s = s.detach()
 
         for i in range(n_nograd, k):
-            s = self._core_step(s, e, cos, sin, i)
+            s = step(s, i)
             if return_states:
                 states.append(s)
 
