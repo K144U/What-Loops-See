@@ -392,6 +392,62 @@ Available to nobody else, because it needs both oracles. Separates whether a cri
 
 ---
 
+### Both repaired tasks clear the control that caught them, milestone 3, 2026-09-03
+
+The two faults in the previous section were found by asking whether a
+perfect score was possible. Repairing them is only worth anything if the
+repaired tasks are then measured, so both were.
+
+**Family C, gate G1.4 re-run.** `g1_famC_fixed_s0`, 20000 steps, k=1.
+
+| | broken task | fixed task |
+|---|---|---|
+| accuracy at k=1, every breadth | 1.000 | 1.000 |
+| best constant baseline | 0.535 | **0.375** |
+| fraction of labels that are zero | 0.535 | **0.218** |
+| distinct labels | 3 | 9 |
+| blank-image accuracy | not measured | **0.218** |
+
+The headline accuracy is unchanged, which is exactly why the headline
+accuracy was never the point. What changed is what a score of 1.000 now
+means. Under the broken task a constant predictor reached 0.535; under the
+fixed one the same strategy reaches 0.375, and the label distribution
+carries 1.55 nats rather than collapsing onto "zero".
+
+The decisive number is the blank-image control: **0.218 against a best
+constant of 0.375**, a leak of **-0.157**. Blanking the image does not
+merely hurt the model, it drops it *below* the label prior. It is not
+falling back on guessing the common answer, it is answering a question it
+can no longer see. G1.4 passes on a task that is doing what it claims.
+
+**Family B, first honest look.** `varkB_fix_s0` at step 15000 of 200000,
+k=8, iid_val, on the repaired task and the widened depth range:
+
+| depth | 1 | 2 | 3 | 4 |
+|---|---|---|---|---|
+| accuracy | 1.000 | 0.997 | 0.986 | 0.902 |
+
+Chance is 0.077, so every cell is far above it, and accuracy falls
+monotonically with depth. **This is the first family B measurement where
+depth 1 scoring 1.000 is not suspicious**: under the old task it was a
+lookup of an answer the query had already given away.
+
+Whether this is a *loop-count* curve is still open and cannot be read from
+this table, because these evaluations all run at k=8. The k sweep from 1 to
+64 runs at the end of training, so the depth-versus-k surface arrives at
+step 200000. What the table establishes is only the precondition: family B
+now has cells that are hard enough to need something, across a depth axis
+that exists.
+
+**Family B chains cannot exceed depth 4 at breadths 6 to 9.** Rejection
+rises to 0.362 at depth 5 and 0.571 at depth 6, past the 0.30 ceiling, and
+the depths are reachable only by widening breadth, which would confound the
+two axes H1 depends on separating. Recorded as a property of the task
+rather than a limitation of the run, per D-027.
+
+Provenance: `runs/g1_famC_fixed_s0/blank_control.json`,
+`runs/g1_famC_fixed_s0/metrics.parquet`, `runs/varkB_fix_s0/metrics.parquet`.
+
 ## 4. Secondary and mechanism results
 
 ### Rays not fixed points: directional convergence against norm growth

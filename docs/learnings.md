@@ -196,3 +196,26 @@ Things caught before they cost anything. Worth recording because the catch mecha
 Filled in during milestone 9 and again before writing. If three entries in Section 3 share a cause, the cause is the real lesson and it belongs here.
 
 **Emerging already, three times in one week.** L-011 (a resume test that passed against a disabled RNG restore), N-001 (a paper whose two errors were each invisible without the other), and N-002 (a shortcut probe that leaked its own answer through a tie break). In every case a check returned a clean result that was wrong, and in every case the only thing that caught it was deliberately trying to make it fail. This is on track to be the methodological theme of the project, and it argues for treating "the validation passed" as the beginning of a check rather than the end of one.
+
+### L-013. A rule that lives in a document gets skipped, one that lives in a module does not
+
+L-012 made "a perfect score is a reason to look harder" a standing rule,
+and it was still a habit rather than a check: the blank-image control that
+found both faults was run by hand, twice, because someone thought to.
+
+The gap showed immediately. The family C gate re-run came back at 1.000 at
+every breadth, the same number the broken task produced, and nothing in the
+pipeline would have questioned it.
+
+`analysis/blank_control.py` now reports real, blank-image, and best-constant
+accuracy together, and names the gap between the last two as a leak. It
+compares against the best constant rather than chance on purpose: a model
+riding the label prior is not leaking, and flagging that as a fault would
+teach us to ignore the instrument. Mutation checked three ways, including
+one that widens the margin until nothing is ever flagged.
+
+**Why:** the faults were not caught by a failing test, they were caught by
+a question. Questions do not run in CI.
+
+**How to apply:** when a manual check finds something a test suite missed,
+the check becomes a module before the session ends. See [[l-012-a-perfect-score-is-a-reason-to-look-harder]].
