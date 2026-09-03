@@ -1,0 +1,149 @@
+#!/bin/bash
+#PBS -N loopmulti
+#PBS -q gpu
+#PBS -l select=1:ncpus=8:mem=96gb
+#PBS -l walltime=24:00:00
+#PBS -j oe
+
+# Run several training runs inside ONE PBS job, each pinned to its own GPU.
+#
+#   RUNS="id1|cfg1|0 id2|cfg2|1 id3|cfg3|2 id4|cfg4|3" qsub scripts/multirun.pbs
+#
+# Each entry is run_id|config_path|seed, separated by spaces.
+#
+# WHY THIS EXISTS, because it looks like premature complexity otherwise.
+#
+# The binding constraint on this cluster is cores, not GPUs. On 2026-09-03
+# the GPU node had 94 of 96 cores allocated while GPUs 2 and 5 sat at 0
+# percent utilisation: the cards were idle because nothing had cores left
+# to feed them. Submitting more PBS jobs does not help, they simply queue.
+# Running more training processes inside a core allocation we already hold
+# does.
+#
+# At ncpus=8 this launches four runs on four distinct cards with two cores
+# each, where submit.pbs would have given two runs on two cards with four
+# cores each. Same allocation, twice the throughput. Viable because at
+# k around 10 the runs are GPU bound, not generation bound: one worker
+# supplies roughly 4000 samples per second against a GPU consuming 1500 to
+# 3000. See docs/decisions.md D-025.
+#
+# For a single run, use submit.pbs. This is for sweeps.
+
+set -uo pipefail
+
+cd "$PBS_O_WORKDIR"
+mkdir -p logs
+
+source /etc/profile.d/modules.sh
+module load python311
+source .venv/bin/activate
+
+export RUNS="${RUNS:?RUNS must be set, as \"id|cfg|seed id|cfg|seed ...\"}"
+export MAX_HOURS="${MAX_HOURS:-23.0}"
+export CHAIN_SUBMIT_HOST="${CHAIN_SUBMIT_HOST:-<login-node>}"
+export PYTHONUNBUFFERED=1
+export WANDB_MODE=offline
+
+# Skip anything already finished, so a resubmitted sweep does not redo work.
+PENDING=""
+for entry in $RUNS; do
+    rid="${entry%%|*}"
+    if [ -f "runs/$rid/DONE" ]; then
+        echo "skip $rid, already has DONE"
+    else
+        PENDING="$PENDING $entry"
+    fi
+done
+PENDING=$(echo "$PENDING" | xargs || true)
+
+if [ -z "$PENDING" ]; then
+    echo "every run in this batch is already done, nothing to do"
+    exit 0
+fi
+
+NRUNS=$(echo "$PENDING" | wc -w)
+NCPUS="${NCPUS:-8}"
+# One core for the trainer itself, the rest become generation workers.
+PER_RUN=$(( NCPUS / NRUNS ))
+[ "$PER_RUN" -lt 1 ] && PER_RUN=1
+WORKERS=$(( PER_RUN - 1 ))
+[ "$WORKERS" -lt 0 ] && WORKERS=0
+
+N_GPUS="$NRUNS" source scripts/pick_gpus.sh || {
+    echo "FATAL could not obtain GPUs for $NRUNS runs" >&2
+    exit 1
+}
+GPUS=($LOOPVISION_GPUS)
+
+echo "launching $NRUNS run(s), ${PER_RUN} core(s) and ${WORKERS} worker(s) each"
+export OMP_NUM_THREADS="$PER_RUN"
+
+PIDS=()
+IDS=()
+i=0
+for entry in $PENDING; do
+    rid="${entry%%|*}"
+    rest="${entry#*|}"
+    cfg="${rest%%|*}"
+    seed="${rest##*|}"
+    gpu="${GPUS[$(( i % ${#GPUS[@]} ))]}"
+
+    echo "  -> $rid  config=$cfg  seed=$seed  GPU=$gpu"
+    CUDA_VISIBLE_DEVICES="$gpu" \
+        python -m loopvision.train.cli \
+            --config "configs/${cfg}" \
+            --run-id "$rid" \
+            --seed "$seed" \
+            --resume auto \
+            --max-hours "$MAX_HOURS" \
+            --num-workers "$WORKERS" \
+            > "logs/${rid}.$PBS_JOBID.log" 2>&1 &
+    PIDS+=($!)
+    IDS+=("$rid")
+    i=$(( i + 1 ))
+done
+
+# Wait for all, remembering who failed rather than taking the last status.
+FAILED=""
+for j in "${!PIDS[@]}"; do
+    if ! wait "${PIDS[$j]}"; then
+        FAILED="$FAILED ${IDS[$j]}"
+    fi
+done
+
+echo "=== batch finished ==="
+for rid in "${IDS[@]}"; do
+    if [ -f "runs/$rid/DONE" ]; then echo "  $rid DONE"; else echo "  $rid INCOMPLETE"; fi
+done
+
+# Chain if anything is unfinished. Same login-node indirection as
+# submit.pbs: this server refuses qsub from inside a running job.
+REMAINING=""
+for entry in $PENDING; do
+    rid="${entry%%|*}"
+    [ -f "runs/$rid/DONE" ] || REMAINING="$REMAINING $entry"
+done
+REMAINING=$(echo "$REMAINING" | xargs || true)
+
+if [ -n "$REMAINING" ]; then
+    echo "queueing successor for:$REMAINING"
+    Q="qsub -W depend=afterany:$PBS_JOBID -v RUNS=\"$REMAINING\",MAX_HOURS=$MAX_HOURS scripts/multirun.pbs"
+    set +e
+    eval "$Q"
+    rc=$?
+    if [ $rc -ne 0 ]; then
+        echo "direct qsub failed (rc=$rc), retrying via the login node"
+        ssh -o BatchMode=yes -o StrictHostKeyChecking=no "$CHAIN_SUBMIT_HOST" \
+            "cd '$PBS_O_WORKDIR' && $Q"
+        rc=$?
+    fi
+    set -e
+    if [ $rc -ne 0 ]; then
+        echo "FATAL could not queue the successor. The sweep will not finish" >&2
+        echo "on its own. Investigate rather than assuming it self-healed." >&2
+        exit 1
+    fi
+fi
+
+[ -n "$FAILED" ] && { echo "runs that exited non-zero:$FAILED" >&2; exit 1; }
+exit 0

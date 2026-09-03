@@ -383,6 +383,7 @@ def train(args) -> int:
             "seed": args.seed,
             "k_train": args.k,
             "batch_size": args.batch_size,
+            "num_workers": args.num_workers,
         },
     )
 
@@ -553,6 +554,9 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--seed", type=int, default=None)
     p.add_argument("--k", type=int, default=None)
     p.add_argument("--batch-size", type=int, default=None)
+    p.add_argument("--num-workers", type=int, default=None,
+                   help="generation worker processes. multirun.pbs sets this "
+                        "from the cores each run is given")
     p.add_argument("--force", action="store_true", help="overwrite a DONE run")
     return p
 

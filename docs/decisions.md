@@ -260,6 +260,28 @@ The visited-sprite exclusion in the walk is the part that matters most for the s
 **Alternatives rejected.** Dropping below five seeds per cell would weaken exactly the statistics the pre-registration rests on. Cutting a family would mean losing family C, which is fatal to H1's breadth arm, or family B, our most reviewer-legible task. The ladder is the cheapest thing to lose.
 **Reversible:** yes, if compute frees up before the milestone 5 sweep launches. After that, adding sizes means re-running the sweep.
 
+### D-024. GPU selection ranks by utilisation, not free memory
+**Date:** 2026-09-03
+**Milestone:** 3
+**Type:** deviation
+**Decision:** `pick_gpu.sh` keeps free memory as a hard floor but ranks eligible cards by **lowest utilisation**, breaking near-ties at random.
+**Reason:** the first version ranked by most free memory with utilisation only as a tiebreak, and it cost real time. Both 1M-step runs were found sharing GPU 2 at 100 percent utilisation with three other processes, while GPUs 1, 5 and 7 sat at 0 to 8 percent. An 80 GB A100 can have 60 GB free and still be compute saturated, so free memory says almost nothing about contention. Both our own jobs also chose the same card, hence the random tiebreak.
+**Consequence:** restarting the two runs onto idle cards gave about **1.3x**, from 21k to 27.6k steps per hour. Less than the 2x to 4x I estimated, because the "idle" cards still have other tenants. Every future run benefits, including the milestone 5 sweep, so the value compounds even though the single measurement is modest.
+**Reversible:** yes, one script.
+
+### D-025. Several runs per PBS job, because cores bind before GPUs do
+**Date:** 2026-09-03
+**Milestone:** 3
+**Type:** deviation
+**Decision:** added `scripts/multirun.pbs` and `analysis/orchestrator.py`. A single PBS job now runs several training processes, each pinned to its own GPU, sharing the job's core allocation. `submit.pbs` remains for single runs.
+**Reason:** measured cluster state on 2026-09-03: **94 of 96 cores allocated on the GPU node while GPUs 2 and 5 sat at 0 percent utilisation.** The idle cards were idle because nothing had cores left to feed them, not because nobody wanted them. Submitting more PBS jobs cannot fix that, they simply queue. Packing runs into a core allocation we already hold converts spare GPU capacity into throughput.
+
+At `ncpus=8` with four runs per job, the 16 core cap allows two such jobs, so **eight runs in flight against the four `submit.pbs` would manage**. Viable because at k around 10 the runs are GPU bound rather than generation bound: one worker supplies roughly 4000 samples per second against a GPU consuming 1500 to 3000.
+
+**Consequence:** each run gets two cores rather than four, so one generation worker rather than three. If a future configuration becomes generation bound again, at low k or a larger canvas, this trade inverts and `runs_per_job` must come down. The orchestrator prints a plan and requires `--submit` to act, because a sweep is tens of GPU-days and a typo in a config should not cost that.
+**What this does not do:** it cannot exceed the 16 concurrent core cap. PBS enforces that and no scheduling logic gets past it.
+**Reversible:** yes, `submit.pbs` is untouched and still the path for single runs.
+
 ### D-003. Compute block, sixteen weeks on the cluster
 **Date:** open
 **Milestone:** blocks the pre-registration freeze at milestone 5

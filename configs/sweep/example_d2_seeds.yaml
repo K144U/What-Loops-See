@@ -1,0 +1,7 @@
+# Example sweep: one config across several seeds.
+# Given the seed bimodality observed at 200k steps, where one seed escaped
+# the chance plateau and the other did not, seed count is a scientific
+# requirement here rather than a nicety.
+config: m3/vark_famA_d2_1M.yaml
+run_prefix: vark_famA_d2_1M
+seeds: [0, 1, 2, 3, 4]
