@@ -122,7 +122,48 @@ rather than deciding now.
 
 ---
 
-## 5. Practical notes
+## 5. Is Google working on this?
+
+Short answer: Google is active in this area, one of their papers is close to
+our territory, but none of them is asking our question. We checked the
+author affiliations directly rather than going on impression.
+
+**What is true.** Three Google papers sit in the looped-model space.
+
+- *Elastic Looped Transformers* (April 2026) is the closest. Three of its
+  six authors are Google, including the senior author: Prateek Jain and
+  Sujoy Paul of Google Research India, and Aditya Kusupati of Google
+  DeepMind. It is a looped model for images and video.
+- *Mixture-of-Recursions* (NeurIPS 2025) has two Google DeepMind authors,
+  Tal Schuster and Adam Fisch. It is about language.
+- *Recirculation* (August 2026) is from Google DeepMind, led by Michael
+  Mozer. Also language.
+
+**Why none of them competes with us.** The Google work is about making these
+models cheaper and more flexible: fewer parameters, an adjustable amount of
+computation at run time. Ours is about what the looping is actually doing
+and what decides how much of it a problem needs. Their vision paper
+generates images rather than reasoning about them, and none of the three can
+ask our question, because none of them has a way to know how much reasoning
+a given answer truly required. That is the gap our generated puzzles exist
+to fill.
+
+We are also building on their work rather than only racing it. If our
+training becomes unstable, the fallback written into our plan is a technique
+from that Google vision paper, and we cite it.
+
+**The competitor worth watching is not Google.** A group at Peking
+University and Fudan University published in July 2026 on almost exactly our
+scientific question, using the same family of puzzles we use, but in text
+rather than in pictures. Our defence is that we work in images, we can vary picture
+busyness independently of reasoning length, and we know the true answer
+depth. That is a real difference, but it is a difference we have to state
+clearly in the paper rather than hope reviewers overlook. It is already
+written into our plan to address them directly in the introduction.
+
+---
+
+## 6. Practical notes
 
 **The shared cluster is heavily contended.** At one point 94 of the 96
 processor cores on the machine were taken while three of its eight graphics
@@ -142,7 +183,7 @@ has to be reconstructed from memory at writing time.
 
 ---
 
-## 6. What we do not have
+## 7. What we do not have
 
 Being explicit, since the account above is mostly groundwork and problems
 found.

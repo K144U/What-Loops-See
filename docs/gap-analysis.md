@@ -213,6 +213,33 @@ Ordered by urgency. Each becomes a decisions.md entry if adopted.
 
 ---
 
+## 7b. Who is at Google, verified 2026-09-03
+
+Checked because "Google is competing with us" came up as a concern. It is
+partly true and the framing matters, so the affiliations were verified
+individually rather than inferred from author lists.
+
+| Paper | Google authors | Domain | Competes with us? |
+|---|---|---|---|
+| ELT, arXiv 2604.09168 | **Prateek Jain** and **Sujoy Paul** (Google Research India), **Aditya Kusupati** (Google DeepMind, senior author). Three of six, including the advising author | looped **vision**, generation | **No.** Parameter efficiency and elastic test-time compute for image and video synthesis. Does not ask what determines loop count, and has no ground-truth composition depth |
+| Mixture-of-Recursions, arXiv 2507.10524 | **Tal Schuster**, **Adam Fisch** (Google DeepMind). NeurIPS 2025 | language | No. Token-level adaptive recursion depth |
+| Recirculation, arXiv 2608.17981 | **Michael C. Mozer**, Siddiqui, Sawyer, Sanyal, **Rosanne Liu** (Google DeepMind), 2026-08-18 | language | No. An inference-time technique that **explicitly distinguishes itself from depth-recurrence looping**. New to this survey, added here |
+
+**Assessment.** Google is genuinely active in looped models and holds one
+paper in looped vision, so the concern is not baseless. But their line is
+efficiency and flexibility: fewer parameters, an adjustable compute knob.
+Ours is mechanism and measurement. None of the three can ask our question,
+because none has access to the true reasoning depth of an example. We also
+depend on ELT rather than merely competing with it: Intra-Loop Self
+Distillation is the milestone 3 stability fallback in IMPLEMENTATION.md.
+
+**The real competitor remains arXiv 2607.20594** (Zhang, Hu, Peng, Xie;
+Peking University and Fudan University), which uses group word problems in
+text, our family A in language. That is the paper the introduction must
+address directly, per D-007.
+
+---
+
 ## 8. Watch list
 
 Groups producing work that could scoop parts of this, worth checking monthly:
