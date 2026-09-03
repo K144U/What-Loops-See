@@ -129,7 +129,80 @@ def analyse(preds: np.ndarray, labels: np.ndarray) -> dict:
             "residual_accuracy_given_correct_parity": residual,
             "residual_chance": 1.0 / (G.GROUP_ORDER // 2),
         }
+    out["factors"] = factor_accuracy(preds, labels)
+    out["reading"] = interpret(out["factors"], out["parities"], out["full_accuracy"])
     return out
+
+
+
+# ---------------------------------------------------------------------------
+# Factor decomposition
+# ---------------------------------------------------------------------------
+#
+# The parities alone cannot tell two very different models apart, because
+# both predict accuracy 1/6 and loss ln(6):
+#
+#   A. the model knows all three parities, that is the abelianisation of
+#      D4 x S3, order 8, leaving 6 candidates. Order blind.
+#   B. the model knows the entire D4 factor, order 8, leaving the 6
+#      elements of S3. Requires composing in order, since D4 is not
+#      abelian.
+#
+# They differ on one reading: A predicts the S3 sign perfectly, because the
+# sign is one of the three parities it knows. B predicts it at chance. So
+# the factor accuracies below are what actually separates them, and the
+# distinction matters more than the number it explains: A is evidence
+# against sequential computation and B is evidence for it.
+
+
+def factor_accuracy(preds: np.ndarray, labels: np.ndarray) -> dict:
+    """Per factor accuracy of the predicted group element.
+
+    G is the direct product D4 x S3, so a predicted element carries a
+    predicted D4 part and a predicted S3 part, and each can be scored on
+    its own. Chance is 1/8 for the D4 part and 1/6 for the S3 part.
+    """
+    pd4 = np.array([G.d4_of(int(x)) for x in preds])
+    ld4 = np.array([G.d4_of(int(x)) for x in labels])
+    ps3 = np.array([G.s3_of(int(x)) for x in preds])
+    ls3 = np.array([G.s3_of(int(x)) for x in labels])
+
+    d4_hit = (pd4 == ld4).all(axis=1)
+    s3_hit = (ps3 == ls3).all(axis=1)
+    return {
+        "d4_accuracy": float(d4_hit.mean()),
+        "d4_chance": 1.0 / G.D4_ORDER,
+        "s3_accuracy": float(s3_hit.mean()),
+        "s3_chance": 1.0 / G.S3_ORDER,
+        # If a factor is known exactly, the other one should sit at its own
+        # chance level. Both being above chance would mean partial
+        # knowledge of each rather than one factor solved.
+        "s3_given_d4_correct": float(s3_hit[d4_hit].mean()) if d4_hit.any() else float("nan"),
+        "d4_given_s3_correct": float(d4_hit[s3_hit].mean()) if s3_hit.any() else float("nan"),
+    }
+
+
+def interpret(factors: dict, parities: dict, full_accuracy: float) -> str:
+    """Name which of the two readings the numbers support, or neither."""
+    d4, s3 = factors["d4_accuracy"], factors["s3_accuracy"]
+    sign = parities["sign (S3 permutation)"]["accuracy"]
+    if d4 > 0.95 and s3 < 0.25 and sign < 0.60:
+        return (
+            "the D4 factor is solved and S3 is not. D4 is non abelian, so "
+            "this REQUIRES sequential composition, and the model is doing "
+            "it on one factor while ignoring the other."
+        )
+    if sign > 0.95 and d4 < 0.95:
+        return (
+            "all three parities are known but neither factor is solved: the "
+            "abelianisation, which needs no order tracking."
+        )
+    if d4 > 0.95 and s3 > 0.95:
+        return "both factors solved, the task is solved."
+    return (
+        "neither reading fits cleanly. Report the numbers and do not label "
+        "the mechanism."
+    )
 
 
 def main() -> int:
@@ -163,6 +236,16 @@ def main() -> int:
             f"{r['residual_accuracy_given_correct_parity']:.4f} "
             f"(chance {r['residual_chance']:.4f})"
         )
+
+    f = result["factors"]
+    print()
+    print("  factor decomposition, G = D4 x S3:")
+    print(f"    D4 part                  {f['d4_accuracy']:.4f}  (chance {f['d4_chance']:.4f})")
+    print(f"    S3 part                  {f['s3_accuracy']:.4f}  (chance {f['s3_chance']:.4f})")
+    print(f"    S3 given D4 correct      {f['s3_given_d4_correct']:.4f}")
+    print(f"    D4 given S3 correct      {f['d4_given_s3_correct']:.4f}")
+    print()
+    print(f"  reading: {result['reading']}")
 
     if args.json:
         Path(args.json).parent.mkdir(parents=True, exist_ok=True)
