@@ -33,8 +33,15 @@ from pathlib import Path
 
 import yaml
 
-#: The gpu queue caps a user at this many concurrent cores. Not ours to change.
-CORE_CAP = 16
+# Hard limits read from the gpu queue with `qstat -Qf gpu` on 2026-09-03.
+# None of these are ours to change, and a request over any of them is
+# rejected outright with "Job violates queue and/or server resource limits",
+# which names no specific resource, so they are recorded here rather than
+# rediscovered by trial and error.
+CORE_CAP = 16          # max_run_res.ncpus, per user, across all running jobs
+MAX_JOBS = 5           # max_run, per user
+MAX_MEM_GB_PER_JOB = 64  # resources_max.mem
+MAX_CPUS_PER_JOB = 16    # resources_max.ncpus
 
 
 @dataclass(frozen=True)
@@ -100,7 +107,8 @@ def plan(
 ) -> dict:
     todo = pending(runs, runs_root)
     groups = batch(todo, runs_per_job)
-    concurrent_jobs = max(1, CORE_CAP // ncpus)
+    # Two independent caps: total cores, and total jobs.
+    concurrent_jobs = min(max(1, CORE_CAP // ncpus), MAX_JOBS)
     return {
         "total": len(runs),
         "done": len(runs) - len(todo),
@@ -121,12 +129,23 @@ def main() -> int:
     p.add_argument("--runs-root", default="runs")
     p.add_argument("--runs-per-job", type=int, default=4)
     p.add_argument("--ncpus", type=int, default=8)
-    p.add_argument("--mem", default="96gb")
+    p.add_argument("--mem", default="48gb",
+                   help=f"per job. The queue rejects anything over "
+                        f"{MAX_MEM_GB_PER_JOB}gb")
     p.add_argument("--max-hours", type=float, default=20.0)
     p.add_argument("--submit", action="store_true", help="actually qsub")
     p.add_argument("--limit", type=int, default=None, help="submit at most N jobs now")
     p.add_argument("--json", help="write the plan here")
     args = p.parse_args()
+
+    if int(args.mem.rstrip("gb")) > MAX_MEM_GB_PER_JOB:
+        raise SystemExit(
+            f"--mem {args.mem} exceeds the queue's {MAX_MEM_GB_PER_JOB}gb per-job "
+            f"limit. PBS would reject this without saying which resource was at "
+            f"fault."
+        )
+    if args.ncpus > MAX_CPUS_PER_JOB:
+        raise SystemExit(f"--ncpus {args.ncpus} exceeds the queue's {MAX_CPUS_PER_JOB}")
 
     runs = load_sweep(Path(args.sweep))
     result = plan(
