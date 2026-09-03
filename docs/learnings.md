@@ -219,3 +219,33 @@ a question. Questions do not run in CI.
 
 **How to apply:** when a manual check finds something a test suite missed,
 the check becomes a module before the session ends. See [[l-012-a-perfect-score-is-a-reason-to-look-harder]].
+
+### L-014. When two hypotheses predict the same number, the number is not the evidence
+
+The depth 2 plateau was recorded as "the model learns the abelian
+quotient", on the strength of accuracy 1/6 and loss ln(6). Both are also
+exactly what a model that has learned the whole D4 factor produces, because
+the abelianisation and the D4 factor both have order 8. The two readings
+are opposites: one says the model is avoiding sequential computation, the
+other says it is doing it. The finding asserted the first for three days.
+
+What broke it was not new data. The refuting measurement, the S3 sign at
+0.4999, was already in the original table. The abelian reading requires
+that number to be 1.0000, and nobody checked, because the headline
+accuracy already agreed with the story.
+
+The entry did flag a residual it could not explain, and that residual was
+the whole clue: it came from a prediction of 1/12 that assumed two bits
+when the hypothesis being defended implied three.
+
+**Why:** a hypothesis that explains the headline number can still be
+contradicted by a number already sitting next to it. Agreement with the
+statistic you were looking at is the weakest kind of evidence there is.
+
+**How to apply:** before recording a mechanism, write down what a rival
+mechanism would predict for every quantity already measured, not just the
+one that prompted the claim. If no measured quantity separates them, the
+mechanism is not established yet and the entry says so. `parity_probe.py`
+now does this in code: `interpret()` returns a refusal when the numbers fit
+neither reading cleanly. See [[l-012-a-perfect-score-is-a-reason-to-look-harder]]
+and [[l-013-a-rule-that-lives-in-a-document-gets-skipped]].

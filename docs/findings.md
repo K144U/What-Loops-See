@@ -144,7 +144,16 @@ Chance is 1/48 = 0.0208. ln(48) = 3.8712.
 
 **Consequence.** D-022 option 1 rescued gate G1 but did not make family A usable for the H1 measurement. Gate G1 asks whether depth 3 is unsolvable at k=1 and whether depth 1 is solvable at k=1; both are true, so the gate legitimately passes. It does not ask whether depth 3 becomes solvable **with** loops, and it turns out not to. That is a gap in the gate rather than a fault in it, and it argues for a G1.5 style check before milestone 5: at least one depth above 1 must be solvable at some k, or there is no curve to fit.
 
-### Models learn the abelian quotient first, milestone 3, 2026-09-01
+### SUPERSEDED 2026-09-04. Models learn the abelian quotient first, milestone 3, 2026-09-01
+
+> **Superseded 2026-09-04 by "The depth-2 model composes one non-abelian
+> factor exactly and the other not at all", in section 4.** The reading in this entry
+> is wrong. The residual it flags as unexplained was the clue: the model
+> had not learned the abelian quotient, it had learned the entire D4
+> factor, which requires operator order rather than avoiding it. The
+> measurements in the table are all correct and are reused below. Kept in
+> full because the mistaken interpretation is what the open question was
+> about, and deleting it would hide how the correction was reached.
 
 **Mid-run finding, from a checkpoint of `vark_famA_d2_1M_s1` at 180k of 1M steps.** Recorded now because it is the first mechanistic result in the project and it reframes the earlier depth-wall reading.
 
@@ -391,6 +400,47 @@ Available to nobody else, because it needs both oracles. Separates whether a cri
 **Resolution:** PENDING.
 
 ---
+
+### The depth-2 model composes one non-abelian factor exactly and the other not at all, milestone 3, 2026-09-04
+
+**This replaces the abelian-quotient reading above, and reverses what it said about sequential computation.**
+
+Family A's group is the direct product D4 x S3, order 48. Both factors are non-abelian. Probing `vark_famA_d2_1M_s0` and `_s1` at 850k of 1M steps, k=8, n=8192 each:
+
+| | seed 0 | seed 1 | chance |
+|---|---|---|---|
+| full 48-way accuracy | 0.1716 | 0.1667 | 0.0208 |
+| **D4 part of the composite** | **1.0000** | **1.0000** | 0.1250 |
+| **S3 part of the composite** | **0.1716** | **0.1667** | 0.1667 |
+| flip, a D4 function | 1.0000 | 1.0000 | 0.5 |
+| rot mod 2, a D4 function | 1.0000 | 1.0000 | 0.5 |
+| sign, an S3 function | 0.4999 | 0.5009 | 0.5 |
+
+The D4 factor is solved exactly. The S3 factor sits on its chance level to four decimals. Knowing D4 and nothing else leaves the 6 elements of S3, which predicts accuracy 1/6 = 0.1667 and loss ln(6) = 1.7918. Measured loss is 1.7939 and 1.7965. **The plateau both 1M runs have been sitting on for 800k steps is exactly this state**, not a partial or noisy one.
+
+**Why the earlier reading was wrong.** Knowing all three parities also leaves 6 candidates, so accuracy and loss cannot separate the two hypotheses. One reading is that the model knows the abelianisation, order 8, which needs no operator order. The other is that it knows the D4 factor, order 8, which cannot be computed without order. They differ on one number: the abelian reading requires the S3 sign to be predicted perfectly, since the sign is one of the three parities it would know. **The sign measures 0.4999.** The abelian reading is refuted by a measurement that was already in the table.
+
+**Control 1, is D4 = 1.0000 actually evidence of order?** The order-blind ceiling at depth 2, the best achievable from the operator multiset alone, computed exactly over all 1176 unordered pairs:
+
+| | order-blind ceiling | model | chance |
+|---|---|---|---|
+| full group | 0.6562 | 0.1716 | 0.0208 |
+| D4 factor | **0.8125** | **1.0000** | 0.1250 |
+| S3 factor | 0.7500 | 0.1667 | 0.1667 |
+
+432 of the 1176 unordered pairs have a D4 composite that the multiset does not determine. A model at 1.0000 is right on those too, so it is using operator order. **This is a positive result for sequential computation, not against it.**
+
+**Control 2, can the model see S3 at all?** S3 at chance could mean the S3 component is not visually decodable, which would make this a rendering fault rather than a compositional one. The depth 1 gate model `g1_famA_d1_looped_long_s0` reads every factor of a single operator perfectly: full accuracy 1.0000, D4 part 1.0000, **S3 part 1.0000**, sign 1.0000. S3 is fully visible. The depth 2 failure is compositional.
+
+**Control 3, both seeds.** Not one run. Both converge to the same state, to four decimals, from different initialisations. This is an attractor, not variance.
+
+**What is established.** A looped model given two non-abelian factors it can see equally well learns to compose one of them exactly and does not begin the other. It does not fall back on the order-blind shortcut for S3 either, which would have paid 0.75; it stays at 0.1667. The failure is total rather than partial.
+
+**What this does to the depth wall.** The wall is not a failure to compose. It is a failure to compose S3 specifically, while succeeding completely on D4 in the same forward pass, at the same depth, on the same image. That is a much narrower and more tractable phenomenon than "depth 2 is unlearnable", and it argues against the earlier reading that family A needs a smaller group. The group is not too hard as a whole. One factor of it is not being attempted.
+
+**Open, and the obvious next experiment.** Why D4 and not S3. The two are the same order to within 8 versus 6 and both non-abelian. Training family A on each factor alone would say whether S3 at depth 2 is unlearnable in isolation or only when D4 is available to solve first, which is the difference between a hard subtask and a gradient-competition effect.
+
+Provenance: `runs/vark_famA_d2_1M_s0/factor_probe.json`, `runs/vark_famA_d2_1M_s1/factor_probe.json`, `runs/g1_famA_d1_looped_long_s0/factor_probe.json`, `analysis/parity_probe.py`.
 
 ### Both repaired tasks clear the control that caught them, milestone 3, 2026-09-03
 
