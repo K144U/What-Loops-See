@@ -30,6 +30,7 @@ from loopvision.data.dataset import (
     QUERY,
     REL_BASE,
     SHAPE_BASE,
+    SIZE_BASE,
     Sample,
     TaskConfig,
     pad_query,
@@ -98,9 +99,17 @@ def resolve(sprites, anchor, chain: list[str]):
 
 
 def _attempt(rng: np.random.Generator, depth: int, breadth: int, split: str):
-    """One rejection-sampling attempt. Returns None if the chain dies."""
+    """One rejection-sampling attempt. Returns None if the chain dies.
+
+    The attribute is chosen **first**, and the anchor is then identified by
+    the other two. At depth 1 the target is the anchor, so describing it by
+    the attribute being asked about hands over the answer. Before this
+    ordering was fixed, two thirds of depth 1 samples were answerable from
+    the query alone.
+    """
     sprites = scenes.place_sprites(rng, breadth, split)
-    anchors = scenes.unique_anchors(sprites)
+    attribute = ATTRIBUTES[int(rng.integers(0, len(ATTRIBUTES)))]
+    anchors = scenes.unique_anchors(sprites, attribute)
     if not anchors:
         return None
 
@@ -116,8 +125,6 @@ def _attempt(rng: np.random.Generator, depth: int, breadth: int, split: str):
     if walked is None:
         return None
     chain, target = walked
-
-    attribute = ATTRIBUTES[int(rng.integers(0, len(ATTRIBUTES)))]
     return sprites, anchor, chain, target, attribute
 
 
@@ -141,9 +148,12 @@ def sample_scene(rng: np.random.Generator, depth: int, breadth: int, split: str)
 
 
 def build_program(anchor, chain, target, attribute, sprites, depth, breadth) -> str:
+    desc = "+".join(
+        f"{a}:{anchor.attribute(a)}" for a in scenes.DESCRIPTOR_FOR[attribute]
+    )
     return (
         f"B;d={depth};b={breadth};attr={attribute};"
-        f"anchor={anchor.colour}{anchor.shape};chain={'>'.join(chain) or '-'};"
+        f"anchor={desc};chain={'>'.join(chain) or '-'};"
         f"target={target.token()};scene={scenes.scene_program(sprites)}"
     )
 
@@ -162,13 +172,16 @@ def generate(idx: int, split: str, cfg: TaskConfig | None = None) -> Sample:
         rng, depth, breadth, split
     )
 
-    tokens = [
-        FAM_B,
-        QUERY,
-        ATTR_BASE + ATTRIBUTES.index(attribute),
-        COLOUR_BASE + anchor.colour,
-        SHAPE_BASE + render.SHAPES.index(anchor.shape),
-    ]
+    # One token per descriptor attribute. The token ranges differ per
+    # attribute type, so the model can tell which is which without a
+    # positional convention, and the queried attribute never appears.
+    base = {
+        "colour": lambda s: COLOUR_BASE + s.colour,
+        "shape": lambda s: SHAPE_BASE + render.SHAPES.index(s.shape),
+        "size": lambda s: SIZE_BASE + render.SIZES.index(s.size),
+    }
+    tokens = [FAM_B, QUERY, ATTR_BASE + ATTRIBUTES.index(attribute)]
+    tokens += [base[a](anchor) for a in scenes.DESCRIPTOR_FOR[attribute]]
     tokens += [REL_BASE + scenes.RELATIONS.index(r) for r in chain]
 
     return Sample(

@@ -168,6 +168,104 @@ Chance is 1/48 = 0.0208. All three bits are verified Z2 homomorphisms of D4 x S3
 
 **Not yet a result.** Seed 0 remains degenerate at the same step count, so seed variance is still severe and one seed reaching this stage is not the task being solved. Both runs are still training.
 
+### Two task-validity faults found and fixed, milestone 3, 2026-09-03
+
+Both were found by asking "is 100 percent accuracy even possible here", after
+family B returned 1.0000 on every run. Neither was caught by any existing
+test. Both are now fixed and covered.
+
+#### Fault 1: family B depth 1 handed the answer to the model
+
+At depth 1 the target sprite **is** the anchor, and the query identified the
+anchor by its colour and shape. So a question asking for colour or shape
+contained its own answer.
+
+| Question asked | Samples | Answerable from the query alone |
+|---|---|---|
+| colour | 1028 | **1028, 100 percent** |
+| shape | 976 | **976, 100 percent** |
+| size | 996 | 0 |
+| **overall** | 3000 | **66.8 percent** |
+
+Confirmed end to end by feeding the trained model a **blank image**:
+
+| Split | Real image | Blank image |
+|---|---|---|
+| depth 1 | 1.0000 | **0.8327** |
+| depth 2 | 1.0000 | 0.1706 |
+
+0.833 is exactly 0.668 plus half the remaining size questions, so the leak
+accounts for the entire result. **Family B depth 1 was measuring almost
+nothing.** Depth 2 is unaffected: only 10 percent of its answers coincide
+with the anchor, and stripping the image collapses it to 0.171, so depth 2
+genuinely requires vision and genuinely solves in a single pass.
+
+**Fix.** The attribute is chosen first and the anchor is described by the
+other two, so the queried attribute never appears in the query. Verified at
+0 of 1500 leaked. The cost is negligible: uniqueness on the tightest
+descriptor pair, (shape, size) with 10 combinations, still holds in 98
+percent of scenes at breadth 6 and 100 percent at breadth 8.
+
+#### Fault 2: family C was a presence detector, not a counting task
+
+No leak here, the query cannot contain a count. The problem was the label
+distribution produced by a two or three attribute conjunction, which almost
+never matches anything.
+
+| | Before | After |
+|---|---|---|
+| labels equal to 0 | **53.5 percent** | 9 to 26 percent |
+| labels in {0, 1} | **93.4 percent** | about 40 percent |
+| highest count seen | **4**, of a cap of 10 | 10 |
+| best constant answer | **0.535** | 0.211 at breadth 16 |
+| blank-image accuracy | **0.5352** | not applicable |
+
+Worse for its actual job. Family C exists to stress **breadth**, and a rare
+conjunction barely responds to it, so the axis existed in the data and not
+in the task. After the fix the count tracks scene size:
+
+| Breadth | Mean count |
+|---|---|
+| 4 | 1.15 |
+| 8 | 1.85 |
+| 12 | 2.53 |
+| 16 | 3.33 |
+
+**Fix.** Queries name one or two attributes rather than two or three, and
+half are drawn from a sprite actually present so genuine zeros stay in the
+distribution without dominating it. See `decisions.md` D-026.
+
+#### A test of ours was set at the wrong place
+
+`test_family_c_labels_are_not_degenerate` asserted that fewer than 75 percent
+of labels were zero and that at least three distinct counts appeared. It
+passed throughout, while the task was 93 percent binary and never produced a
+count above 4. The assertion was true and irrelevant: it checked that the
+label varied at all, not that it varied **with breadth**, which is the only
+property that makes family C a breadth stressor. Replaced by two tests, one
+requiring the mean count to rise with breadth and more than double from
+breadth 4 to 16, one requiring no constant answer to beat 0.35 and the count
+to reach at least 6.
+
+#### Related: family B depths 3 and 4 are genuinely harder
+
+Models trained on depths 1 and 2, evaluated on the held-out deeper split,
+before the leak fix:
+
+| Run | k=1 | k=2 | k=4 | k=8 | k=16 |
+|---|---|---|---|---|---|
+| trained depth 1 | 0.2389 | 0.2520 | 0.2461 | 0.2500 | 0.2539 |
+| trained depth 2, seed 0 | 0.3776 | 0.3802 | 0.3796 | 0.3789 | 0.3789 |
+| trained depth 2, seed 1 | 0.3587 | 0.3555 | 0.3568 | 0.3542 | 0.3548 |
+
+Chance is 0.0769. Depths 3 and 4 are well above chance but nowhere near
+solved, and **flat in k**, so extra loops buy nothing for a model that was
+not trained deep. The deeper chains do not come for free, which means family
+B has depth structure past depth 2. Whether a model trained directly on
+depths 3 and 4 needs more loops is untested, and is the obvious next
+experiment on the fixed task. These numbers come from pre-fix models and are
+indicative rather than final.
+
 ### Gate G2, loops beat baselines, milestone 4
 
 | Comparison | Requirement | Measured | run_id | Status |

@@ -149,6 +149,20 @@ Newest at the bottom. When adding an entry, check whether it is a repeat of some
 
 **Connection to N-001.** The same week, a paper entered the survey whose author reported two evaluation errors that were "mutually invisible", each concealing the other, requiring two independent checks to surface. This is the same shape: a single check that comes back clean is weak evidence. That is now twice in one week that the lesson has appeared from different directions, which is worth noticing.
 
+### L-012. A perfect score is a reason to look harder, not to celebrate
+**Source:** this project, milestone 3
+**What happened:** family B returned 1.0000 accuracy on all four runs, both depths, both seeds. The user asked whether 100 percent was even possible or whether something was wrong on our side. It was. At depth 1 the target sprite **is** the anchor, and the query identified the anchor by its colour and shape, so a question asking for colour or shape contained its own answer: 66.8 percent of samples were answerable from the query tokens alone, and a trained model scored **0.833 on a blank image**.
+**Cost:** four training runs wasted, and gate G1.4's number invalidated because the same review turned up a second fault in family C. Cheap only because it surfaced in week one.
+**Root cause:** the task was validated for *internal consistency*, never for *whether the image was needed*. Every family B test checked that the label followed correctly from the program, and they all passed, because the label did follow correctly. None asked whether the label could be obtained without looking at the picture.
+**Rule now:** every task family gets a **blank-image control**. Feed the trained model a blank canvas with the real query and record the score. Whatever it gets is the floor that needs no vision, and any claim about the task has to clear it. This is one forward pass and it should have existed from the first family.
+**Enforced by:** `test_anchor_never_names_the_attribute_being_asked_for` in `tests/test_families_bc.py`, and the blank-image measurement recorded in `findings.md` for both families.
+
+**The second fault, found in the same pass.** Family C had no leak but was not a counting task either: 53.5 percent of labels were zero, 93.4 percent were 0 or 1, the count never exceeded 4 of a cap of 10, and a constant "0" scored 0.535. It exists to stress **breadth**, and the answer barely moved when scene size went from 4 sprites to 16. The axis was in the data and not in the task.
+
+**And a test of ours was set at the wrong place.** `test_family_c_labels_are_not_degenerate` asserted fewer than 75 percent zeros and at least three distinct counts. It passed the whole time. It checked that the label varied *at all*, when the property that matters is that it varies *with breadth*. A test can be true, passing, and still not be testing the thing its name claims. Replaced with two that assert the mean count rises with breadth and that no constant answer beats 0.35.
+
+**Connection to the running theme.** This is the fourth time (see [[L-011]], N-001, N-002) that a clean-looking result was wrong and only deliberate adversarial checking found it. The pattern is now unmistakable: for this project, "the number looks good" carries almost no information until someone has tried to break it. The blank-image control is the cheapest instance of that discipline and now applies to every family.
+
 ---
 
 ## 4. Near misses

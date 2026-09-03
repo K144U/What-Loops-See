@@ -282,6 +282,23 @@ At `ncpus=8` with four runs per job, the 16 core cap allows two such jobs, so **
 **What this does not do:** it cannot exceed the 16 concurrent core cap. PBS enforces that and no scheduling logic gets past it.
 **Reversible:** yes, `submit.pbs` is untouched and still the path for single runs.
 
+### D-026. Family B anchor descriptor and family C query breadth
+**Date:** 2026-09-03
+**Milestone:** 3
+**Type:** deviation
+**Decision:** two task-design fixes, both prompted by asking whether family B's 1.0000 accuracy was even possible.
+
+1. **Family B.** The queried attribute is chosen first and the anchor is described by the other two, rather than always by colour and shape. IMPLEMENTATION.md Section 4.3 does not specify the descriptor, so this is a gap being filled rather than a contradiction.
+2. **Family C.** Queries name one or two attributes, not the two or three of Section 4.4, and half are drawn from a sprite actually present in the scene.
+
+**Reason.** Measured, not suspected. Family B depth 1 had the answer in the query for 66.8 percent of samples, because at depth 1 the target is the anchor; a trained model scored 0.833 on a blank image. Family C had 53.5 percent zero labels and 93.4 percent in {0, 1}, with the count never exceeding 4 of a cap of 10, so a constant "0" scored 0.535 and the task did not respond to breadth at all. Full numbers in `findings.md`.
+
+**Consequence.** Every family B and family C run before 2026-09-03 is invalid and must not be used for any claim. That is four family B runs and the family C gate run. **Gate G1.4 relied on the family C run**, so it needs re-running on the fixed task before milestone 5; the check itself, "solvable at k=1 at every breadth", is unaffected in principle, but the number behind it came from a task that was not doing what it claimed.
+
+The family C change also alters the breadth axis's meaning: the count now scales with scene size, which is what makes it a stressor rather than a constant.
+
+**Reversible:** no. Both fix real defects.
+
 ### D-003. Compute block, sixteen weeks on the cluster
 **Date:** open
 **Milestone:** blocks the pre-registration freeze at milestone 5

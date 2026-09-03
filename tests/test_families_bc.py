@@ -131,7 +131,7 @@ def test_chain_visits_distinct_sprites() -> None:
     checked = 0
     for _ in range(400):
         placed = scenes.place_sprites(rng, 9, "train")
-        anchors = scenes.unique_anchors(placed)
+        anchors = scenes.unique_anchors(placed, "size")
         if not anchors:
             continue
         walked = scenes.walk_chain(rng, placed, anchors[0], 3)
@@ -149,20 +149,55 @@ def test_chain_visits_distinct_sprites() -> None:
     assert checked > 100, f"only {checked} chains exercised"
 
 
+def parse_spec(text: str) -> dict:
+    """Parse an `attr:value+attr:value` descriptor from a program string."""
+    out = {}
+    for part in text.split("+"):
+        a, _, v = part.partition(":")
+        out[a] = int(v) if a == "colour" else v
+    return out
+
+
+def sprite_attrs(token: str) -> dict:
+    """Recover a sprite's attributes from its scene token."""
+    attrs, _, _ = token.partition("@")
+    return {
+        "colour": int(attrs[0]),
+        "shape": next(sh for sh in render.SHAPES if sh[0] == attrs[1]),
+        "size": next(z for z in render.SIZES if z[0] == attrs[2]),
+    }
+
+
 def test_anchor_is_unique_in_the_scene() -> None:
     """An ambiguous anchor makes the whole question ill-posed."""
     for split in sorted(FB.SUPPORTED_SPLITS):
         for i in range(100):
             s = D.generate("B", D.global_index(split, i), split)
-            anchor = s.program.split("anchor=")[1].split(";")[0]
-            colour, shape = int(anchor[0]), anchor[1:]
-            scene = s.program.split("scene=")[1]
-            matching = 0
-            for token in scene.split(","):
-                attrs, _, _ = token.partition("@")
-                if int(attrs[0]) == colour and attrs[1] == shape[0]:
-                    matching += 1
+            desc = parse_spec(s.program.split("anchor=")[1].split(";")[0])
+            matching = sum(
+                all(sprite_attrs(t)[a] == v for a, v in desc.items())
+                for t in s.program.split("scene=")[1].split(",")
+            )
             assert matching == 1, f"{split}[{i}]: anchor matches {matching} sprites"
+
+
+def test_anchor_never_names_the_attribute_being_asked_for() -> None:
+    """The leak that made depth 1 answerable without looking at the image.
+
+    At depth 1 the target IS the anchor, so describing the anchor by the
+    attribute under question writes the answer into the question. Measured
+    before the fix: 66.8 percent of depth 1 samples were answerable from the
+    query alone, and a trained model scored 0.833 on a blank image.
+    """
+    for split in sorted(FB.SUPPORTED_SPLITS):
+        for i in range(200):
+            s = D.generate("B", D.global_index(split, i), split)
+            attribute = s.program.split("attr=")[1].split(";")[0]
+            desc = parse_spec(s.program.split("anchor=")[1].split(";")[0])
+            assert attribute not in desc, (
+                f"{split}[{i}]: asked for {attribute} and the query names it"
+            )
+            assert len(desc) == 2, "an anchor needs both remaining attributes"
 
 
 def test_label_agrees_with_the_recorded_target() -> None:
@@ -236,19 +271,20 @@ def test_label_is_the_true_count() -> None:
     for split in sorted(FC.SUPPORTED_SPLITS):
         for i in range(150):
             s = D.generate("C", D.global_index(split, i), split)
-            query = s.program.split("query=")[1].split(";")[0]
-            colour = int(query[0])
-            shape = next(sh for sh in render.SHAPES if query[1:].startswith(sh))
-            rest = query[1 + len(shape) :]
-            size = None if rest == "*" else rest
-
-            counted = 0
-            for token in s.program.split("scene=")[1].split(","):
-                attrs, _, _ = token.partition("@")
-                if int(attrs[0]) == colour and attrs[1] == shape[0]:
-                    if size is None or attrs[2] == size[0]:
-                        counted += 1
+            spec = parse_spec(s.program.split("query=")[1].split(";")[0])
+            counted = sum(
+                all(sprite_attrs(t)[a] == v for a, v in spec.items())
+                for t in s.program.split("scene=")[1].split(",")
+            )
             assert s.label == min(counted, FC.COUNT_CAP)
+
+
+def test_family_c_query_names_one_or_two_attributes() -> None:
+    """Never three. A three-way conjunction almost never matches anything."""
+    for i in range(200):
+        s = D.generate("C", D.global_index("train", i), "train")
+        spec = parse_spec(s.program.split("query=")[1].split(";")[0])
+        assert 1 <= len(spec) <= 2, f"query names {len(spec)} attributes"
 
 
 def test_family_c_is_depth_one_everywhere() -> None:
@@ -264,14 +300,44 @@ def test_family_c_has_no_depth_ood_split() -> None:
         D.generate("C", 0, "depth_ood")
 
 
-def test_family_c_labels_are_not_degenerate() -> None:
-    """A counting task answered zero almost always is a presence detector."""
-    counts = [
-        D.generate("C", D.global_index("train", i), "train").label for i in range(1500)
+def test_family_c_count_scales_with_breadth() -> None:
+    """The property that makes family C a breadth stressor at all.
+
+    An earlier version of this test only asserted that fewer than 75 percent
+    of labels were zero and that three distinct counts appeared. It passed
+    while the task was 93 percent binary and the count never exceeded 4,
+    because a rare conjunction barely responds to scene size. Family C
+    exists to stress breadth, so the thing to assert is that the answer
+    actually moves when breadth does.
+    """
+    means = {}
+    for breadth, split in ((4, "train"), (8, "train"), (16, "breadth_ood")):
+        cfg = D.TaskConfig(breadths=(breadth,))
+        labels = [
+            D.generate("C", D.global_index(split, i), split, cfg).label
+            for i in range(800)
+        ]
+        means[breadth] = sum(labels) / len(labels)
+    assert means[4] < means[8] < means[16], f"count does not track breadth: {means}"
+    assert means[16] > 2 * means[4], f"count barely responds to breadth: {means}"
+
+
+def test_family_c_is_not_a_presence_detector() -> None:
+    """No constant answer should score well, and the range must be used."""
+    cfg = D.TaskConfig(breadths=(16,))
+    labels = [
+        D.generate("C", D.global_index("breadth_ood", i), "breadth_ood", cfg).label
+        for i in range(1500)
     ]
-    zeros = sum(1 for c in counts if c == 0)
-    assert zeros / len(counts) < 0.75, f"{zeros}/{len(counts)} labels are zero"
-    assert len(set(counts)) >= 3, f"only {len(set(counts))} distinct counts appear"
+    import collections
+
+    dist = collections.Counter(labels)
+    best_constant = dist.most_common(1)[0][1] / len(labels)
+    assert best_constant < 0.35, (
+        f"always answering {dist.most_common(1)[0][0]} scores {best_constant:.1%}"
+    )
+    assert len(dist) >= 6, f"only {len(dist)} distinct counts at breadth 16"
+    assert max(labels) >= 6, f"the count never exceeds {max(labels)} of a cap of 10"
 
 
 def test_family_c_count_is_capped() -> None:

@@ -53,14 +53,36 @@ SPLIT_RANGES = {
 }
 
 
-def matches(sprite, colour: int, shape: str, size: str | None) -> bool:
-    if sprite.colour != colour or sprite.shape != shape:
-        return False
-    return size is None or sprite.size == size
+#: Attribute subsets a query may specify. **One or two, never three.**
+#:
+#: IMPLEMENTATION.md Section 4.4 says "a conjunction of two or three
+#: attributes". That makes a match rare, and the consequence was measured:
+#: 53.5 percent of labels were 0 and 93.4 percent were 0 or 1, with the
+#: count never exceeding 4 despite a cap of 10. A model that always answered
+#: "0" scored 0.535. The task was a presence detector, not a counting task.
+#:
+#: Worse for its actual job: family C exists to stress **breadth**, and a
+#: rare conjunction barely responds to it. Going from 4 sprites to 16 left
+#: the answer almost unchanged, so the axis existed in the data and not in
+#: the task. Looser queries make the count scale with scene size, which is
+#: the whole point. See docs/decisions.md D-026.
+QUERY_SUBSETS = (
+    ("colour",),
+    ("shape",),
+    ("size",),
+    ("colour", "size"),
+    ("shape", "size"),
+    ("colour", "shape"),
+)
 
 
-def count_matching(sprites, colour: int, shape: str, size: str | None) -> int:
-    return min(sum(matches(s, colour, shape, size) for s in sprites), COUNT_CAP)
+def matches(sprite, spec: dict) -> bool:
+    """Does this sprite satisfy every attribute the query names?"""
+    return all(sprite.attribute(a) == v for a, v in spec.items())
+
+
+def count_matching(sprites, spec: dict) -> int:
+    return min(sum(matches(s, spec) for s in sprites), COUNT_CAP)
 
 
 def generate(idx: int, split: str, cfg: TaskConfig | None = None) -> Sample:
@@ -74,33 +96,38 @@ def generate(idx: int, split: str, cfg: TaskConfig | None = None) -> Sample:
     breadth = int(rng.choice(spec.breadth))
     sprites = scenes.place_sprites(rng, breadth, split)
 
-    # Query a conjunction of two or three attributes. Drawn from the pairs
-    # actually present about half the time, so the label is not almost
-    # always zero, which would make the task a presence detector.
-    use_size = bool(rng.integers(0, 2))
-    pairs = scenes.allowed_pairs(split)
-    if split == "combo_ood":
-        pairs = [p for p in pairs if p in scenes.HELDOUT_PAIRS]
+    attrs = QUERY_SUBSETS[int(rng.integers(0, len(QUERY_SUBSETS)))]
 
-    if rng.random() < 0.5 and sprites:
-        present = [s.key() for s in sprites if s.key() in pairs]
-        colour, shape = (
-            present[int(rng.integers(0, len(present)))]
-            if present
-            else pairs[int(rng.integers(0, len(pairs)))]
-        )
+    # Half the time, build the query from a sprite that is actually there,
+    # so the answer is not almost always zero. The other half is drawn
+    # freely, which keeps genuine zeros in the distribution.
+    if sprites is not None and rng.random() < 0.5:
+        source = sprites[int(rng.integers(0, len(sprites)))]
+        query_spec = {a: source.attribute(a) for a in attrs}
     else:
-        colour, shape = pairs[int(rng.integers(0, len(pairs)))]
+        pool = {
+            "colour": list(range(render.N_SPRITE_COLOURS)),
+            "shape": list(render.SHAPES),
+            "size": list(render.SIZES),
+        }
+        query_spec = {a: pool[a][int(rng.integers(0, len(pool[a])))] for a in attrs}
 
-    size = render.SIZES[int(rng.integers(0, len(render.SIZES)))] if use_size else None
-    label = count_matching(sprites, colour, shape, size)
+    label = count_matching(sprites, query_spec)
 
-    tokens = [FAM_C, QUERY, COLOUR_BASE + colour, SHAPE_BASE + render.SHAPES.index(shape)]
-    if size is not None:
-        tokens.append(SIZE_BASE + render.SIZES.index(size))
+    tokens = [FAM_C, QUERY]
+    for a in ("colour", "shape", "size"):
+        if a not in query_spec:
+            continue
+        if a == "colour":
+            tokens.append(COLOUR_BASE + query_spec[a])
+        elif a == "shape":
+            tokens.append(SHAPE_BASE + render.SHAPES.index(query_spec[a]))
+        else:
+            tokens.append(SIZE_BASE + render.SIZES.index(query_spec[a]))
 
+    desc = "+".join(f"{a}:{query_spec[a]}" for a in sorted(query_spec))
     program = (
-        f"C;d={depth};b={breadth};query={colour}{shape}{size or '*'};"
+        f"C;d={depth};b={breadth};query={desc};"
         f"scene={scenes.scene_program(sprites)}"
     )
 

@@ -199,16 +199,36 @@ def relate(sprites: list[Sprite], anchor: Sprite, relation: str) -> Sprite | Non
     raise ValueError(f"unknown relation {relation!r}")
 
 
-def unique_anchors(sprites: list[Sprite]) -> list[Sprite]:
-    """Sprites whose (colour, shape) pairing identifies them uniquely.
+#: Which two attributes describe an anchor when a given attribute is asked
+#: about. Never the queried one: at depth 1 the target IS the anchor, so
+#: naming the anchor by the attribute under question writes the answer into
+#: the question. Measured before this fix: 66.8 percent of depth 1 family B
+#: samples were answerable from the query tokens alone, and a trained model
+#: scored 0.833 on a blank image. See docs/findings.md.
+DESCRIPTOR_FOR = {
+    "colour": ("shape", "size"),
+    "shape": ("colour", "size"),
+    "size": ("colour", "shape"),
+}
 
-    An anchor that matched two sprites would make the whole chain
-    ambiguous, so only these can start a query.
+
+def descriptor(sprite: Sprite, asked: str) -> tuple:
+    """The sprite's identity under the two attributes not being asked about."""
+    return tuple(sprite.attribute(a) for a in DESCRIPTOR_FOR[asked])
+
+
+def unique_anchors(sprites: list[Sprite], asked: str) -> list[Sprite]:
+    """Sprites that their descriptor identifies uniquely.
+
+    An anchor matching two sprites makes the whole chain ambiguous, so only
+    these can start a query. ``asked`` is required rather than optional:
+    forgetting it is exactly the bug this signature exists to prevent.
     """
-    counts: dict[tuple[int, str], int] = {}
+    counts: dict[tuple, int] = {}
     for s in sprites:
-        counts[s.key()] = counts.get(s.key(), 0) + 1
-    return [s for s in sprites if counts[s.key()] == 1]
+        key = descriptor(s, asked)
+        counts[key] = counts.get(key, 0) + 1
+    return [s for s in sprites if counts[descriptor(s, asked)] == 1]
 
 
 def render_scene(sprites: list[Sprite], canvas_size: int = render.CANVAS) -> np.ndarray:
