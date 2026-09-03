@@ -1,4 +1,7 @@
 runs:
+- run_id: g1_famC_fixed_s0
+  config: gate/g1_famC_fixed.yaml
+  seed: 0
 - run_id: varkB_fix_s0
   config: m3/vark_famB_alldepths.yaml
   seed: 0
@@ -8,6 +11,3 @@ runs:
 - run_id: varkB_fix_s2
   config: m3/vark_famB_alldepths.yaml
   seed: 2
-- run_id: g1_famC_fixed_s0
-  config: gate/g1_famC_fixed.yaml
-  seed: 0
