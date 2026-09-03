@@ -299,6 +299,26 @@ The family C change also alters the breadth axis's meaning: the count now scales
 
 **Reversible:** no. Both fix real defects.
 
+### D-027. Family B trains across depths 1 to 4, and has no depth_ood arm
+**Date:** 2026-09-03
+**Milestone:** 3
+**Type:** deviation
+**Decision:** family B's `train` and `iid_val` span depths 1 to 4 at breadths 6 to 9, rather than depths 1 to 2 with 3 and 4 held out as `depth_ood`. The `depth_ood` split is removed from family B entirely. `breadth_ood` is unchanged in role: same depths, wider scenes.
+**Reason:** two measurements. First, the old training range contained no depth signal at all: depth 1 leaked the answer (D-026) and depth 2 solves in a single pass, so a model trained on 1 and 2 had nothing to learn a loop-count curve from. Second, depths 5 and 6 cannot be added at this breadth range without breaching the 30 percent rejection ceiling:
+
+| depth | b=6 | b=7 | b=8 | b=9 |
+|---|---|---|---|---|
+| 4 | 0.155 | 0.098 | 0.048 | 0.048 |
+| 5 | **0.362** | **0.310** | 0.167 | 0.084 |
+| 6 | **0.571** | **0.444** | 0.294 | 0.178 |
+
+They are reachable at wide breadth only, so a depth_ood arm using them would have to move the breadth range too. **That confounds depth with breadth and makes H1 unanswerable**, which is a worse failure than having no depth_ood arm. The same reasoning already forced train and depth_ood to share a breadth range when family B was first built.
+
+**Consequence:** family B's depth axis is 1 to 4, read inside a single split with breadth held fixed, rather than across a train and OOD boundary. The paper cannot claim depth extrapolation for family B, only a within-range curve. If depth extrapolation is wanted later it needs a scene design where deep chains are samplable at narrow breadth, which is a task change rather than a parameter change.
+
+Recorded as a property of the task, not a limitation of the run: **family B chains cannot exceed depth 4 at breadths 6 to 9.** That is worth stating in the paper's task section.
+**Reversible:** yes, but only by changing the scene sampler.
+
 ### D-003. Compute block, sixteen weeks on the cluster
 **Date:** open
 **Milestone:** blocks the pre-registration freeze at milestone 5

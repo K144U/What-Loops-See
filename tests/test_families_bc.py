@@ -246,20 +246,49 @@ def test_structurally_empty_cells_are_refused_not_retried() -> None:
 
 
 def test_depth_and_breadth_ranges_are_crossed_not_confounded() -> None:
-    """train and depth_ood must share one breadth range.
+    """The structural property H1 depends on, checked under the split design.
 
-    If the deeper split also used broader scenes, depth and breadth would
-    move together and H1 could not separate them. This is the single most
-    important structural property of the split design.
+    Depth must vary with breadth held fixed, and breadth must vary with
+    depth held fixed. If the deeper cells also used wider scenes, the two
+    axes would move together and no regression could separate them, which
+    is a worse failure than any rejection rate.
+
+    Family B now spans depths 1 to 4 inside `train` at one breadth range,
+    rather than splitting depth across train and depth_ood. Depths 5 and 6
+    are unavailable at this breadth range without breaching the rejection
+    ceiling, and buying them by widening breadth is exactly the confound
+    this test forbids. See docs/decisions.md D-027.
     """
     train = D.split_spec("B", "train")
-    deeper = D.split_spec("B", "depth_ood")
-    assert train.breadth == deeper.breadth
-    assert set(train.depth).isdisjoint(deeper.depth)
+    assert len(train.depth) >= 3, (
+        f"train spans only depths {train.depth}, too few to read a curve across"
+    )
+    assert len(set(train.breadth)) >= 2
 
     broader = D.split_spec("B", "breadth_ood")
-    assert broader.depth == train.depth
+    assert broader.depth == train.depth, "breadth_ood must hold depth fixed"
     assert set(broader.breadth).isdisjoint(train.breadth)
+
+    assert "depth_ood" not in FB.SUPPORTED_SPLITS, (
+        "family B has no depth_ood arm: depths 5 and 6 breach the rejection "
+        "ceiling at this breadth range, and widening breadth to reach them "
+        "would confound the axes"
+    )
+
+
+def test_family_b_depth_range_is_sampled_at_every_breadth() -> None:
+    """Every (depth, breadth) cell must actually be reachable.
+
+    An empty cell in the grid is a hole in the loop-count curve, and it
+    would show up as a missing point rather than as an error.
+    """
+    seen = set()
+    for i in range(1200):
+        s = D.generate("B", D.global_index("train", i), "train")
+        seen.add((s.depth, s.breadth))
+    spec = D.split_spec("B", "train")
+    expected = {(d, b) for d in spec.depth for b in spec.breadth}
+    assert seen == expected, f"cells never sampled: {sorted(expected - seen)}"
 
 
 # ---------------------------------------------------------------------------

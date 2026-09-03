@@ -44,9 +44,7 @@ FAMILY = "B"
 NUM_CLASSES = render.N_SPRITE_COLOURS + len(render.SHAPES) + len(render.SIZES)  # 13
 CHANCE = 1.0 / NUM_CLASSES
 
-SUPPORTED_SPLITS = frozenset(
-    {"train", "iid_val", "depth_ood", "breadth_ood", "combo_ood"}
-)
+SUPPORTED_SPLITS = frozenset({"train", "iid_val", "breadth_ood", "combo_ood"})
 
 #: (depth, breadth) per split. Chains run 1 to 4, not the 1 to 6 of family A.
 #
@@ -59,12 +57,29 @@ SUPPORTED_SPLITS = frozenset(
 # deeper split use broader scenes would confound the two axes and make H1
 # unanswerable, which is a worse failure than a high rejection rate.
 SPLIT_RANGES = {
-    "train": ((1, 2), (6, 7, 8, 9)),
-    "iid_val": ((1, 2), (6, 7, 8, 9)),
-    "depth_ood": ((3, 4), (6, 7, 8, 9)),
-    "breadth_ood": ((1, 2), (10, 11, 12, 13)),
-    "combo_ood": ((1, 2), (6, 7, 8, 9)),
+    "train": ((1, 2, 3, 4), (6, 7, 8, 9)),
+    "iid_val": ((1, 2, 3, 4), (6, 7, 8, 9)),
+    "breadth_ood": ((1, 2, 3, 4), (10, 11, 12, 13)),
+    "combo_ood": ((1, 2, 3, 4), (6, 7, 8, 9)),
 }
+
+# depth_ood is absent, and the reason is measured rather than assumed.
+# Rejection rate by (depth, breadth), against the 0.30 ceiling:
+#
+#            b=6     b=7     b=8     b=9
+#   depth 4  0.155   0.098   0.048   0.048     usable
+#   depth 5  0.362   0.310   0.167   0.084     breaches at narrow breadth
+#   depth 6  0.571   0.444   0.294   0.178     breaches badly
+#
+# Depths 5 and 6 are only samplable at wide breadth, so a depth_ood arm
+# using them would have to move the breadth range too. That confounds the
+# two axes and makes H1 unanswerable, which is a worse failure than having
+# no depth_ood arm. Train now spans depths 1 to 4 at one breadth range, so
+# the loop-count curve can be read across depth with breadth held fixed.
+#
+# Widened from (1, 2) on 2026-09-03: with depth 1 leaking and depth 2
+# solvable in a single pass, the old range contained no depth signal at
+# all. See docs/decisions.md D-027.
 
 MAX_ATTEMPTS = 200
 

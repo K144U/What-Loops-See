@@ -1,0 +1,19 @@
+arch: looped
+batch_size: 256
+breadths:
+- 4
+- 5
+- 6
+- 7
+- 8
+conditioning: none
+d_model: 384
+depths:
+- 1
+eval_batches: 16
+eval_every: 1000
+family: C
+inject: true
+k_train: 1
+state_init: randn
+steps: 20000
