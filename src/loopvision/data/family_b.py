@@ -48,14 +48,16 @@ SUPPORTED_SPLITS = frozenset({"train", "iid_val", "breadth_ood", "combo_ood"})
 
 #: (depth, breadth) per split. Chains run 1 to 4, not the 1 to 6 of family A.
 #
-# The breadth floor of 5 is forced, not chosen. A depth d chain visits d
+# The breadth floor is forced, not chosen. A depth d chain visits d
 # distinct sprites, so depth 4 is structurally impossible below breadth 4
 # and rare at exactly 4. Measured rejection was 56 percent at depth 3
 # breadth 3, and depth 4 breadth 3 could not be sampled at all.
 #
-# Crucially, train and depth_ood share one breadth range. Letting the
-# deeper split use broader scenes would confound the two axes and make H1
-# unanswerable, which is a worse failure than a high rejection rate.
+# Crucially, every split shares one breadth range except `breadth_ood`,
+# which is the one arm allowed to move breadth, and it holds depth fixed
+# while doing so. Letting a split move both axes at once would confound
+# them and make H1 unanswerable, which is a worse failure than a high
+# rejection rate. See the depth_ood note below for where that bit.
 SPLIT_RANGES = {
     "train": ((1, 2, 3, 4), (6, 7, 8, 9)),
     "iid_val": ((1, 2, 3, 4), (6, 7, 8, 9)),
