@@ -99,14 +99,15 @@ def generate(idx: int, split: str, cfg: TaskConfig | None = None) -> Sample:
     if breadth > render.MAX_BREADTH:
         raise ValueError(f"breadth {breadth} exceeds the {render.MAX_BREADTH} rows")
 
-    initial = [int(rng.integers(0, G.GROUP_ORDER)) for _ in range(breadth)]
+    members = G.subgroup_members(cfg.factor)
+    initial = [int(members[int(rng.integers(0, len(members)))]) for _ in range(breadth)]
     queried = int(rng.integers(0, breadth))
 
     # The label is drawn uniformly and the queried object's composite is
     # solved for, rather than the label falling out of a sampled composite.
     # Both give a uniform label here, but solving for it makes the
     # uniformity structural rather than a consequence to be re-derived.
-    label = int(rng.integers(0, G.GROUP_ORDER))
+    label = int(members[int(rng.integers(0, len(members)))])
 
     strips: list[list[int]] = []
     for b in range(breadth):
@@ -115,8 +116,8 @@ def generate(idx: int, split: str, cfg: TaskConfig | None = None) -> Sample:
         else:
             # Distractors are independent, so their strips carry no
             # information about the answer.
-            composite = int(rng.integers(0, G.GROUP_ORDER))
-        strips.append(G.random_factorisation(rng, composite, depth))
+            composite = int(members[int(rng.integers(0, len(members)))])
+        strips.append(G.random_factorisation_in(rng, composite, depth, members))
 
     assert G.multiply(G.compose_sequence(strips[queried]), initial[queried]) == label
 
@@ -156,9 +157,16 @@ def corrupted_twin(sample: Sample, cfg: TaskConfig | None = None, which: int = 0
     rng = np.random.default_rng(sample.layout_seed + 1)
     ops = list(strips[queried])
     position = which % len(ops)
-    replacement = int(rng.integers(0, G.GROUP_ORDER - 1))
-    if replacement >= ops[position]:
-        replacement += 1  # uniform over the 47 alternatives
+    # Uniform over the alternatives *within the same subgroup*. Drawing
+    # from the full group under a restricted factor would put an operator
+    # in the twin that the task never contains, so the patch would measure
+    # an out of distribution input rather than a counterfactual.
+    members = G.subgroup_members(cfg.factor)
+    here = members.index(ops[position])
+    replacement = int(rng.integers(0, len(members) - 1))
+    if replacement >= here:
+        replacement += 1
+    replacement = int(members[replacement])
     ops[position] = replacement
     strips[queried] = ops
 

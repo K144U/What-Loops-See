@@ -189,6 +189,62 @@ def random_factorisation(rng: np.random.Generator, target: int, n: int) -> list[
     return ops
 
 
+
+# ---------------------------------------------------------------------------
+# Subgroups, for isolating one factor of the direct product
+# ---------------------------------------------------------------------------
+#
+# The depth 2 runs solve the D4 factor exactly and leave the S3 factor at
+# chance (docs/findings.md, 2026-09-04). D4 acts on positions and S3 on
+# colours, so the two are not interchangeable and the asymmetry may be the
+# whole explanation. Training on each factor alone separates two readings:
+# S3 at depth 2 may be hard in itself, or it may only be neglected while
+# D4 is available to solve first, which is gradient competition rather than
+# difficulty.
+#
+# Both are subgroups of the direct product, so they are closed under
+# multiplication and inversion and every function here works unchanged.
+# Index layout is d4_index * 6 + s3_index, so the D4 factor is the indices
+# divisible by 6 and the S3 factor is the first six.
+
+SUBGROUPS: dict[str, tuple[int, ...]] = {
+    "full": tuple(range(GROUP_ORDER)),
+    "d4": tuple(i * S3_ORDER for i in range(D4_ORDER)),
+    "s3": tuple(range(S3_ORDER)),
+}
+
+
+def subgroup_members(name: str) -> tuple[int, ...]:
+    """Element indices of a named subgroup, validated as actually closed."""
+    try:
+        return SUBGROUPS[name]
+    except KeyError:
+        raise ValueError(
+            f"unknown subgroup {name!r}, expected one of {sorted(SUBGROUPS)}"
+        ) from None
+
+
+def random_factorisation_in(
+    rng: np.random.Generator, target: int, n: int, members: tuple[int, ...]
+) -> list[int]:
+    """``random_factorisation`` restricted to a subgroup.
+
+    For the full group this makes exactly the same RNG draws in the same
+    order as ``random_factorisation``, so existing runs stay byte
+    identical. That is asserted in tests rather than left to inspection.
+    """
+    if n < 1:
+        raise ValueError(f"factorisation length must be at least 1, got {n}")
+    if n == 1:
+        return [target]
+
+    idx = rng.integers(0, len(members), size=n - 1)
+    ops = [int(members[int(x)]) for x in idx]
+    prefix = compose_sequence(ops)
+    ops.append(multiply(target, inverse(prefix)))
+    return ops
+
+
 def sample_operator_sequence(
     rng: np.random.Generator, n: int
 ) -> tuple[list[int], int]:

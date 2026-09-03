@@ -108,6 +108,11 @@ class TaskConfig:
     depths: tuple[int, ...] | None = None
     breadths: tuple[int, ...] | None = None
 
+    # Restrict family A to one factor of D4 x S3. "full" is the real task
+    # and must stay byte identical to before this option existed, so that
+    # runs in flight are unaffected. See groups.SUBGROUPS.
+    factor: str = "full"
+
 
 # ---------------------------------------------------------------------------
 # Splits

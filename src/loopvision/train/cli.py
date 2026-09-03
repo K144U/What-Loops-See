@@ -48,6 +48,7 @@ DEFAULTS = {
     "k_max_train": 32,
     "k_eval": None,          # defaults to k_train
     "eval_k_sweep": None,    # list of k to sweep at the end, for the M1 curve
+    "factor": "full",        # family A only: full | d4 | s3, see groups.SUBGROUPS
     "depths": None,
     "breadths": None,
     "steps": 20000,
@@ -104,6 +105,7 @@ def task_config(cfg: dict) -> D.TaskConfig:
         master_seed=cfg["master_seed"],
         depths=tuple(cfg["depths"]) if cfg["depths"] else None,
         breadths=tuple(cfg["breadths"]) if cfg["breadths"] else None,
+        factor=cfg.get("factor", "full"),
     )
 
 
