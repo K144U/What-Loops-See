@@ -547,6 +547,41 @@ Provenance: `runs/g1_famC_fixed_s0/blank_control.json`,
 
 ---
 
+### FAILED. Family B has no loop-count curve at the current model size, milestone 3, 2026-09-04
+
+**H1 predicts that the loops needed rise with composition depth. On family B, they do not rise at all.**
+
+`varkB_fix_s0` and `_s1`, 200000 steps each on the repaired task, end-of-run sweep over k from 1 to 64, accuracy by depth:
+
+| depth | k=1 | k=2 | k=4 | k=8 | k=16 | k=64 |
+|---|---|---|---|---|---|---|
+| 1 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 |
+| 2 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 |
+| 3 | 0.999 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 |
+| 4 | **0.994** | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 |
+
+Seed 0 reads 0.997 at depth 4, k=1. **Every depth is solved in a single pass.** There is no k at which a deeper cell fails and a shallower one succeeds, so there is no curve to regress and nothing for H1 to measure on this family.
+
+**This is not a task fault.** The task was repaired and verified: the depth 1 leak is gone, and depth 4 is a genuine four hop chain. The model simply does not need to loop to walk it.
+
+**The cause is a budget arithmetic that should have been checked before the runs.** A looped model's sequential depth in one forward pass is `prelude + k * core + coda`. The configuration is 2/2/2, so k=1 already provides **six** transformer blocks. A depth 4 chain needs about four sequential attention steps, one per hop. Six is more than four, so k=1 suffices and no larger k can reveal anything.
+
+    k_min = ceil((D - prelude - coda) / core), floored at 1
+
+| configuration | blocks at k=1 | D=1 | D=2 | D=3 | D=4 |
+|---|---|---|---|---|---|
+| 2/2/2, as run | 6 | k=1 | k=1 | k=1 | k=1 |
+| 1/2/1 | 4 | k=1 | k=1 | k=1 | k=1 |
+| **1/1/1** | 3 | k=1 | k=1 | k=1 | **k=2** |
+
+Family B caps at depth 4 because deeper chains breach the rejection ceiling at fixed breadth (D-027), so the task cannot be pushed past the budget. **The budget has to come down instead.**
+
+**What this costs and what it does not.** It does not touch the H3 patching result or the family A factor result, neither of which depends on a k curve. It does mean that no family B run so far bears on H1, including the two 200k runs above and the four earlier ones. Six runs of family B produce no H1 evidence.
+
+**Why the fix is not tuning.** Shrinking the core is a change that could be made to manufacture a result, and the rule against tuning is there for exactly that. The distinction is that at 2/2/2 the experiment cannot measure the quantity it is for: k is not a binding constraint on any reachable cell, so every possible outcome of the sweep is 1.000 and the measurement carries no information either way. Reducing the budget restores the experiment's ability to come out either way. To keep that honest the prediction is stated in advance and quantitatively, before the runs: **at 1/1/1, depths 1 to 3 solve at k=1 and depth 4 requires k=2.** If depth 4 solves at k=1 anyway, the hop-per-block model of the task is wrong and that is a reportable result rather than a reason to shrink further.
+
+Provenance: `runs/varkB_fix_s0/metrics.parquet`, `runs/varkB_fix_s1/metrics.parquet`, metric `sweep_accuracy`.
+
 ## 6. Post-hoc claims awaiting confirmation
 
 Anything discovered by looking at the data rather than by pre-registration lands here first. It gets labelled post-hoc in the paper text, and it needs a confirming run scheduled in milestone 9. **A confirmation run that fails is reported as a failure**, and the claim moves to Section 5. The prior submission carried a confirmation sweep that had not run, and it did not confirm. That must not repeat.
