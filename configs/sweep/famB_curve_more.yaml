@@ -1,0 +1,16 @@
+runs:
+- run_id: famB_curve111_s3
+  config: m3/famB_curve_111.yaml
+  seed: 3
+- run_id: famB_curve111_s4
+  config: m3/famB_curve_111.yaml
+  seed: 4
+- run_id: famB_curve111_s5
+  config: m3/famB_curve_111.yaml
+  seed: 5
+- run_id: famB_curve111_s6
+  config: m3/famB_curve_111.yaml
+  seed: 6
+- run_id: famB_curve111_s7
+  config: m3/famB_curve_111.yaml
+  seed: 7
