@@ -75,3 +75,26 @@ def test_the_reached_threshold_sits_well_above_the_task_floor() -> None:
     """A hop counted as reached at the guessing floor would make every
     model look like it had walked the whole chain immediately."""
     assert CL.REACHED > FB.effective_chance() * 2
+
+
+def test_a_rate_of_zero_does_not_conflate_two_opposite_models() -> None:
+    """The first real run of this instrument reported 0.00 hops per pass
+    for all three seeds, which reads as "these models do nothing" and in
+    fact meant they reach the answer immediately. Same number, opposite
+    meanings, so the shape has to be reported alongside it.
+    """
+    stalled = [0, 0, 0, 0, 0]
+    immediate = [-1, 5, 5, 5, 5]
+    walks = [0, 1, 2, 3, 4, 5]
+
+    assert CL.traversal(stalled, 6) == "stalled"
+    assert CL.traversal(immediate, 6) == "immediate"
+    assert CL.traversal(walks, 6) == "walks"
+
+    assert CL.hop_rate(stalled) == pytest.approx(0.0)
+    assert CL.hop_rate(immediate) == pytest.approx(0.0)
+    assert CL.hop_rate(walks) == pytest.approx(1.0)
+    assert CL.traversal(stalled, 6) != CL.traversal(immediate, 6), (
+        "both give a rate of 0.0, so the shape is the only thing telling "
+        "them apart and it must not collapse them"
+    )

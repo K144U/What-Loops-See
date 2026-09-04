@@ -584,6 +584,40 @@ Family B caps at depth 4 because deeper chains breach the rejection ceiling at f
 
 Provenance: `runs/varkB_fix_s0/metrics.parquet`, `runs/varkB_fix_s1/metrics.parquet`, metric `sweep_accuracy`.
 
+### REFUTED. The models do not walk the chain hop by hop, milestone 3, 2026-09-04
+
+**A hypothesis of mine, tested and wrong.** The three curve seeds need different numbers of core passes for the same depth, and I proposed they were advancing the chain at different rates: roughly 1.8 hops per pass for seed 0 against 0.8 for seed 1, inferred from k_min. The coda lens measures that directly, and the picture is not a traversal at all.
+
+Decoding each intermediate state through the model's own output head, depth 6, k=8, n=1536 per cell. Columns are the answer *if the question had stopped after that many hops*, which is known by construction:
+
+| `famB_curve111_s0` | hop0 | hop1 | hop2 | hop3 | hop4 | **hop5 (real answer)** |
+|---|---|---|---|---|---|---|
+| pass 0 | 0.091 | 0.086 | 0.092 | 0.089 | 0.081 | 0.077 |
+| pass 1 | 0.179 | 0.193 | 0.204 | 0.197 | 0.261 | **0.651** |
+| pass 2 | 0.180 | 0.179 | 0.198 | 0.184 | 0.197 | **0.915** |
+| pass 3 | 0.180 | 0.173 | 0.200 | 0.182 | 0.190 | **0.991** |
+| pass 8 | 0.180 | 0.174 | 0.201 | 0.181 | 0.186 | **0.999** |
+
+**Every intermediate hop sits at the 0.1833 guessing floor, at every pass, in all three seeds.** The final answer is the only decodable thing, and it is decodable from the first pass onward, sharpening from 0.65 to 0.999 rather than arriving after a walk.
+
+**So the loops are not carrying a pointer along the chain.** Whatever the passes are doing, it is not "resolve hop 1, then hop 2". The intermediate states never encode a partial answer that the output head can read.
+
+**What the seeds actually differ in.** Not traversal rate but sharpening rate. Passes for the final answer to clear 0.90:
+
+| seed | pass 1 | pass 2 | pass 3 | pass 4 | pass 5 | passes to 0.90 |
+|---|---|---|---|---|---|---|
+| s0 | 0.651 | 0.915 | 0.991 | 0.997 | 0.999 | **2** |
+| s2 | 0.520 | 0.783 | 0.937 | 0.984 | 0.993 | **3** |
+| s1 | 0.308 | 0.503 | 0.743 | 0.898 | 0.944 | **5** |
+
+That ordering is exactly the k_min ordering, so the seed variance in the H1 result is real and has a single mechanism behind it. It is just a different mechanism than I proposed: **iterative refinement of one answer, not sequential traversal of a chain.**
+
+**The interpretive limit, which is severe here.** This is a logit lens, and it can only see what the *output head* can read. An intermediate hop could be represented in the state in a form the head does not decode, and would look exactly like the floor. **The correct conclusion is "no partial answer is decodable by the output head", not "no partial answer exists".** Distinguishing those needs a probe trained on intermediate states rather than the frozen head, which is milestone 7 work and is now clearly worth doing.
+
+**An instrument fault this exposed.** The first run reported "0.00 hops per core pass" for all three seeds, which reads as *these models do nothing* and meant the opposite: the frontier was pinned at the final hop from pass 1. A rate of zero is produced both by a model stalled at hop 0 and by one that reaches the answer immediately. `traversal()` now names the shape and the rate is only reported when the frontier actually rises.
+
+Provenance: `runs/famB_curve111_s{0,1,2}/coda_lens.json`, `analysis/coda_lens.py`.
+
 ### H1 SUPPORTED. Loops track composition depth and are flat in scene breadth, milestone 3, 2026-09-04
 
 **The project's primary hypothesis, on three seeds per arm, at a matched architecture.** Both families trained with a 1/1/1 core for 300000 steps, variable k, differing only in which axis varies.

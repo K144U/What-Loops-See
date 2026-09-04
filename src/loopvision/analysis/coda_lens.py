@@ -112,13 +112,42 @@ def lens(
     }
 
 
+def traversal(frontier: list[int], depth: int) -> str:
+    """Which shape the frontier has, since a rate alone cannot say.
+
+    A rate of zero is produced by two opposite situations and they must
+    not be reported with the same number:
+
+      "stalled"    the frontier sits at hop 0. The model parses the
+                   question and never advances.
+      "immediate"  the frontier is at the last hop from the first pass.
+                   No traversal is visible because the answer is already
+                   the most decodable thing in the state.
+      "walks"      the frontier rises across passes, which is the only
+                   case where a hops-per-pass rate means anything.
+
+    This exists because the first run of this instrument reported 0.00
+    hops per pass for all three seeds, which reads as "these models do
+    nothing" and actually meant the opposite.
+    """
+    seen = [f for f in frontier if f >= 0]
+    if not seen:
+        return "never_reached"
+    if max(seen) == 0:
+        return "stalled"
+    first = seen[0]
+    if first == depth - 1:
+        return "immediate"
+    return "walks"
+
+
 def hop_rate(frontier: list[int]) -> float | None:
     """Hops advanced per core pass, from the frontier's slope.
 
-    Fitted only over the passes where the frontier is still moving. Once
-    the chain is finished the frontier flattens, and including that tail
-    would drag the slope toward zero for exactly the models that solve the
-    question fastest.
+    Only meaningful when `traversal` says "walks". Fitted over the passes
+    where the frontier is still moving, since once the chain is finished
+    the frontier flattens and including that tail would drag the slope
+    toward zero for exactly the models that solve the question fastest.
     """
     pts = [(i, f) for i, f in enumerate(frontier) if f >= 0]
     if len(pts) < 2:
@@ -161,13 +190,23 @@ def main() -> int:
     for i, row in enumerate(r["grid"]):
         mark = "" if r["frontier"][i] < 0 else f"   frontier hop {r['frontier'][i]}"
         print(f"  pass{i:<2}" + "".join(f"{v:.3f}".rjust(8) for v in row) + mark)
+    shape = traversal(r["frontier"], r["depth"])
     rate = hop_rate(r["frontier"])
     print()
-    print(f"  measured hop rate: {rate if rate is None else round(rate, 2)} hops per core pass")
+    print(f"  traversal shape  : {shape}")
+    if shape == "walks":
+        print(f"  measured hop rate: {round(rate, 2)} hops per core pass")
+    elif shape == "immediate":
+        print("  the final answer is the most decodable hop from the first pass on,")
+        print("  so no chain traversal is visible to the output head. A hops-per-pass")
+        print("  rate would be meaningless here and is not reported.")
+    elif shape == "stalled":
+        print("  the frontier never leaves hop 0: the model parses and does not advance.")
 
     if args.json:
         Path(args.json).parent.mkdir(parents=True, exist_ok=True)
         r["hop_rate"] = rate
+        r["traversal"] = shape
         Path(args.json).write_text(json.dumps(r, indent=2), encoding="utf-8")
     return 0
 

@@ -249,3 +249,24 @@ mechanism is not established yet and the entry says so. `parity_probe.py`
 now does this in code: `interpret()` returns a refusal when the numbers fit
 neither reading cleanly. See [[l-012-a-perfect-score-is-a-reason-to-look-harder]]
 and [[l-013-a-rule-that-lives-in-a-document-gets-skipped]].
+
+### L-015. A summary statistic can report the same number for opposite mechanisms
+
+The coda lens was built to measure hops advanced per core pass. Its first
+real output was "0.00 hops per pass" for all three seeds, which reads as
+these models never advance. They in fact reach the final answer on the
+first pass and never need to advance, which is the opposite situation.
+
+Both produce a flat frontier and so both produce a slope of zero. The
+statistic was correct and the reading it invited was backwards.
+
+**Why:** a rate summarises a shape, and different shapes can share a rate.
+Reporting the rate without the shape hands the reader a number whose
+meaning depends on information that was discarded to compute it.
+
+**How to apply:** when an instrument reduces a curve to one number, it
+must also report which qualitative case produced it, and refuse to give
+the number in the cases where it does not apply. `traversal()` returns
+stalled, immediate or walks, and the hop rate is printed only for walks.
+See [[l-011-a-passing-test-that-could-not-fail]] and
+[[l-014-when-two-hypotheses-predict-the-same-number]].
