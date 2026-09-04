@@ -92,7 +92,7 @@ Mirrors `findings.md`. Kept here so the milestone view and the science view stay
 
 | ID | Type | Resolves at milestone | Status |
 |---|---|---|---|
-| H1 | pre-registered | 5 | UNRESOLVED. **At risk**: the only live path is family B at 1/1/1. Six family B runs superseded 2026-09-04, see D-028 |
+| H1 | pre-registered | 5 | **SUPPORTED 2026-09-04**, ahead of milestone 5. Depth raises k_min in 3 seeds of 3, breadth in 0 of 3, at matched architecture. Seed variance in magnitude is large and reported. See findings.md |
 | H2 | pre-registered | 8 | UNRESOLVED |
 | H3 | pre-registered | 6 | UNRESOLVED. Instruments built (`hooks.py`), M2 not run |
 | H4 | exploratory | 8 | UNRESOLVED |

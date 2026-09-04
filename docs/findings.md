@@ -584,6 +584,57 @@ Family B caps at depth 4 because deeper chains breach the rejection ceiling at f
 
 Provenance: `runs/varkB_fix_s0/metrics.parquet`, `runs/varkB_fix_s1/metrics.parquet`, metric `sweep_accuracy`.
 
+### H1 SUPPORTED. Loops track composition depth and are flat in scene breadth, milestone 3, 2026-09-04
+
+**The project's primary hypothesis, on three seeds per arm, at a matched architecture.** Both families trained with a 1/1/1 core for 300000 steps, variable k, differing only in which axis varies.
+
+Accuracy by axis and k, mean of three seeds:
+
+| family B, **depth** | k=1 | k=2 | k=3 | k=4 | k=8 |
+|---|---|---|---|---|---|
+| 1 | 0.998 | 1.000 | 1.000 | 1.000 | 1.000 |
+| 2 | 0.772 | 0.991 | 1.000 | 1.000 | 1.000 |
+| 3 | 0.699 | 0.947 | 0.996 | 1.000 | 1.000 |
+| 4 | 0.634 | 0.903 | 0.983 | 0.998 | 1.000 |
+| 5 | 0.564 | 0.824 | 0.952 | 0.987 | 0.998 |
+| 6 | **0.492** | 0.744 | 0.897 | 0.960 | 0.986 |
+
+| family C, **breadth** | k=1 | k=2 | k=3 | k=4 | k=8 |
+|---|---|---|---|---|---|
+| 4 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 |
+| 5 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 |
+| 6 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 |
+| 7 | 0.999 | 1.000 | 1.000 | 1.000 | 1.000 |
+| 8 | **0.999** | 1.000 | 1.000 | 1.000 | 1.000 |
+
+**Single-pass accuracy falls by half across the depth range and does not move at all across the breadth range.** 0.998 to 0.492 against 1.000 to 0.999. That statement needs no threshold, no fit and no k_min.
+
+**k_min at tau = 0.90, per seed, because the seeds disagree about magnitude:**
+
+| | d1 | d2 | d3 | d4 | d5 | d6 | slope |
+|---|---|---|---|---|---|---|---|
+| famB s0 | 1 | 1 | 1 | 2 | 2 | 2 | +0.257 |
+| famB s1 | 1 | 2 | 3 | 3 | 4 | 6 | +0.886 |
+| famB s2 | 1 | 1 | 2 | 2 | 3 | 3 | +0.457 |
+
+| | b4 | b5 | b6 | b7 | b8 | slope |
+|---|---|---|---|---|---|---|
+| famC s0 | 1 | 1 | 1 | 1 | 1 | **0.000** |
+| famC s1 | 1 | 1 | 1 | 1 | 1 | **0.000** |
+| famC s2 | 1 | 1 | 1 | 1 | 1 | **0.000** |
+
+**Depth raises the loop requirement in three seeds of three. Breadth raises it in zero of three.** The breadth arm is not merely a smaller effect, it is exactly flat: every cell at every breadth is solved in a single pass.
+
+**Seed variance is large and is reported rather than averaged away.** Family B slopes span 0.257 to 0.886, a factor of three. Seed 1 is qualitatively different: single-pass accuracy collapses to 0.366 at depth 2 and then stays roughly flat, so it does almost no multi-hop work in one pass, where seeds 0 and 2 degrade gradually. The direction is unanimous, the magnitude is not, and a mean slope of +0.533 would misrepresent that spread. Any regression in the paper needs a per-seed random effect rather than pooled points.
+
+**Controls.** Blank-image control on the final models, at k=1 where a shortcut would help most: family C seed 0 real 0.9998, blank 0.2179 against a best constant of 0.3751, leak -0.157. Family B seed 1 real 0.4452, blank 0.1032, leak -0.005. Both clean, and family C's blank score sits *below* its own label prior, so it is not falling back on guessing the modal count, it is answering a question it can no longer see.
+
+**The interpretive limit, stated rather than left implicit.** Family C is solved at k=1 at every breadth, so this shows that breadth does not create a loop requirement *at this difficulty*. It does not show that no counting task could. A harder breadth axis, more objects or a higher count cap, might yet demand loops. What the pair establishes is a dissociation at matched architecture and matched training: the same model, given more composition depth, needs more passes, and given more objects, does not.
+
+**What this settles.** H1's direction is supported. The earlier failed prediction stands: `k_min = max(1, depth - 2)`, slope +0.629, over-stated the effect for two of three seeds and under-stated it for the third.
+
+Provenance: `runs/famB_curve111_s{0,1,2}/metrics.parquet`, `runs/famC_breadth111_s{0,1,2}/metrics.parquet`, metric `sweep_accuracy`; blank controls in the respective run directories.
+
 ### PARTIALLY CONFIRMED. A loop-count curve exists, and the registered prediction over-stated its slope, milestone 3, 2026-09-04
 
 **First seed complete at 300000 steps. Two more running. No H1 claim until all three are in.**
