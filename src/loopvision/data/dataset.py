@@ -66,7 +66,12 @@ VOCAB_SIZE = _NEXT
 L_MAX = {
     # family, presentation variant -> padded query length
     "A": 2 + render.MAX_DEPTH,  # FAM_A, QUERY, then up to 6 operator tokens
-    "B": 8,
+    # FAM_B, QUERY, the asked attribute, two descriptor tokens naming the
+    # anchor, then one relation token per hop. A depth d chain has d-1
+    # hops, so the deepest chain needs 5. Written out rather than left as
+    # a literal because it was a literal 8, which silently capped family B
+    # at depth 4 and is part of why it had no loop-count curve.
+    "B": 3 + 2 + (render.MAX_DEPTH - 1),
     "C": 6,
 }
 

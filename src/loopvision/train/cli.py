@@ -49,6 +49,13 @@ DEFAULTS = {
     "k_eval": None,          # defaults to k_train
     "eval_k_sweep": None,    # list of k to sweep at the end, for the M1 curve
     "factor": "full",        # family A only: full | d4 | s3, see groups.SUBGROUPS
+    # Sequential depth in one forward pass is prelude + k*core + coda. If
+    # that already covers the task's composition depth at k=1 then k binds
+    # on nothing and the loop-count sweep is flat whatever the truth. See
+    # docs/decisions.md D-028.
+    "prelude_blocks": 2,
+    "core_blocks": 2,
+    "coda_blocks": 2,
     "depths": None,
     "breadths": None,
     "steps": 20000,
@@ -215,6 +222,9 @@ def build_model(cfg: dict, device):
     arch = cfg["arch"]
     model_cfg = LoopViTConfig(
         d_model=cfg["d_model"],
+        prelude_blocks=cfg["prelude_blocks"],
+        core_blocks=cfg["core_blocks"],
+        coda_blocks=cfg["coda_blocks"],
         num_classes=family.NUM_CLASSES,
         vocab_size=D.VOCAB_SIZE,
         query_len=D.L_MAX[cfg["family"]],

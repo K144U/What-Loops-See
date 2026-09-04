@@ -319,6 +319,32 @@ They are reachable at wide breadth only, so a depth_ood arm using them would hav
 Recorded as a property of the task, not a limitation of the run: **family B chains cannot exceed depth 4 at breadths 6 to 9.** That is worth stating in the paper's task section.
 **Reversible:** yes, but only by changing the scene sampler.
 
+### D-028. Family B: size is not askable, breadth moves to 12 to 16, depth runs to 6, core shrinks to 1/1/1
+**Date:** 2026-09-04
+**Milestone:** 3
+**Type:** deviation
+**Decision:** four changes to family B, made together because they fix one problem.
+
+1. `size` is no longer an attribute a question can ask about, only one that describes an anchor.
+2. Train and iid_val breadth moves from 6 to 9 up to 12 to 16. breadth_ood moves to 18 to 22.
+3. Depth runs 1 to 6 rather than 1 to 4, and `L_MAX["B"]` is derived from `MAX_DEPTH` rather than being the literal 8 that silently capped it.
+4. The core shrinks from prelude 2, core 2, coda 2 to 1/1/1 for the loop-count runs.
+
+**Reason:** the k sweep came back flat at 1.000 for every depth and every k from 1 to 64, so family B produced no H1 evidence at all. Auditing the data found three compounding causes.
+
+*The floor was misreported.* The label space is a union of three attribute spaces of different sizes, and only one attribute is asked per sample, so the floor is the average of 1/|attribute|, not 1/13. With size askable that is **0.2897, not the 0.0769 quoted everywhere**. A size question is a coin flip. Earlier family B models scoring 0.24 to 0.38 were recorded as showing partial difficulty; they were at or below chance and had learned nothing.
+
+*The chain was skippable.* A model ignoring the relation tokens entirely and guessing the most common answer among all reachable sprites scored **0.62 at depth 4**, with 19 percent of questions having only one possible answer regardless of the chain. Breadth 6 to 9 leaves only about 3.2 reachable sprites carrying about 2.2 distinct answers, so the nominal 13-way task was a 2-way discrimination.
+
+*Depth could not exceed the single-pass budget.* Sequential depth in one forward pass is `prelude + k*core + coda`, six blocks at k=1 under 2/2/2. A depth 4 chain needs about four hops. Six exceeds four, so k bound on no reachable cell and every possible sweep outcome was 1.000.
+
+Measured after the change, at breadth 12 to 16 with size unaskable: chain-blind accuracy at depth 4 falls from 0.62 to **0.44**, forced answers from 19 percent to under 1 percent, and the floor from 0.2897 to **0.1833**. Rejection at depth 6 falls from 0.571 to 0.020, because the ceiling was never about depth, it was about having enough sprites for a chain to have somewhere to go.
+
+**On whether this is tuning.** Shrinking a core until a curve appears is exactly what the no-tuning rule forbids, so the distinction has to be explicit. At 2/2/2 with depth capped at 4 the experiment could not measure its own quantity: every outcome was 1.000 whatever the truth. Restoring the ability to come out either way is not the same as selecting an outcome. To hold that line the prediction is registered in advance and quantitatively: **k_min = max(1, depth - 2)**, so depths 1 to 3 at k=1, depth 4 at k=2, depth 5 at k=3, depth 6 at k=4. If depth 6 solves at k=1 the hop-per-block model is wrong, and that is the reportable result rather than grounds for shrinking again.
+
+**Consequence:** every family B run before 2026-09-04 is superseded, six in total. No family B result may be quoted against 1/13. `effective_chance()` exists so the floor is computed rather than recalled.
+**Reversible:** yes, but the old configuration is known not to measure anything.
+
 ### D-003. Compute block, sixteen weeks on the cluster
 **Date:** open
 **Milestone:** blocks the pre-registration freeze at milestone 5

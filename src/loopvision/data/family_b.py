@@ -2,8 +2,8 @@
 
 A scene of sprites, and a question of the form "what is the <attribute> of
 the object <rel_k> of the object ... <rel_1> of the <colour> <shape>".
-Depth is the chain length: depth 1 is the anchor alone, depth 4 is the
-anchor plus three relational hops.
+Depth is the chain length: depth 1 is the anchor alone, depth 6 is the
+anchor plus five relational hops.
 
 Depth and breadth cross cleanly here, which is the point. Breadth is the
 number of sprites in the scene and has nothing to do with how many hops the
@@ -39,49 +39,94 @@ from loopvision.data.dataset import (
 
 FAMILY = "B"
 
+#: Which attributes a question may ask ABOUT. Deliberately not all three.
+#:
+#: `size` has only two values, so when it was askable, one question in
+#: three had a chance level of 0.5 and family B's real chance was 0.2897
+#: rather than the 1/13 = 0.0769 reported everywhere. Every family B number
+#: recorded before 2026-09-04 was compared against a floor 3.8 times too
+#: low, which made runs that had learned nothing look like partial
+#: successes. See docs/findings.md and D-028.
+#:
+#: `size` is still a descriptor: it helps name the anchor, it is just never
+#: the thing being asked for.
+ASKABLE_ATTRIBUTES = ("colour", "shape")
+
 # 6 colours, then 5 shapes, then 2 sizes. One flat label space so the head
 # is a single softmax regardless of which attribute was asked for.
 NUM_CLASSES = render.N_SPRITE_COLOURS + len(render.SHAPES) + len(render.SIZES)  # 13
 CHANCE = 1.0 / NUM_CLASSES
 
+
+def effective_chance() -> float:
+    """The floor a family B model must actually beat.
+
+    NOT 1/NUM_CLASSES. The label space is a union of three attribute
+    spaces of different sizes, and only one attribute is asked per sample,
+    so the reachable label set is the asked attribute's alone. A uniform
+    guess inside it succeeds with probability 1/|that attribute|, and the
+    floor is the average over which attribute gets asked.
+
+    With colour and shape askable this is 0.1833. With size askable too it
+    was 0.2897, because a size question is a coin flip. Quoting 1/13 =
+    0.0769 against either understates the floor by three to four times.
+    """
+    sizes = {
+        "colour": render.N_SPRITE_COLOURS,
+        "shape": len(render.SHAPES),
+        "size": len(render.SIZES),
+    }
+    return sum(
+        (1.0 / len(ASKABLE_ATTRIBUTES)) * (1.0 / sizes[a])
+        for a in ASKABLE_ATTRIBUTES
+    )
+
 SUPPORTED_SPLITS = frozenset({"train", "iid_val", "breadth_ood", "combo_ood"})
 
-#: (depth, breadth) per split. Chains run 1 to 4, not the 1 to 6 of family A.
+#: (depth, breadth) per split. Chains run 1 to 6, matching family A.
 #
-# The breadth floor is forced, not chosen. A depth d chain visits d
-# distinct sprites, so depth 4 is structurally impossible below breadth 4
-# and rare at exactly 4. Measured rejection was 56 percent at depth 3
-# breadth 3, and depth 4 breadth 3 could not be sampled at all.
+# A depth d chain visits d distinct sprites, so a cell is structurally
+# empty when breadth is below depth and merely hard to sample just above
+# it. That is the floor. The range sits well clear of it for a separate
+# reason recorded below: sparse scenes make the chain skippable.
 #
 # Crucially, every split shares one breadth range except `breadth_ood`,
 # which is the one arm allowed to move breadth, and it holds depth fixed
 # while doing so. Letting a split move both axes at once would confound
 # them and make H1 unanswerable, which is a worse failure than a high
-# rejection rate. See the depth_ood note below for where that bit.
+# rejection rate.
 SPLIT_RANGES = {
-    "train": ((1, 2, 3, 4), (6, 7, 8, 9)),
-    "iid_val": ((1, 2, 3, 4), (6, 7, 8, 9)),
-    "breadth_ood": ((1, 2, 3, 4), (10, 11, 12, 13)),
-    "combo_ood": ((1, 2, 3, 4), (6, 7, 8, 9)),
+    "train": ((1, 2, 3, 4, 5, 6), (12, 13, 14, 15, 16)),
+    "iid_val": ((1, 2, 3, 4, 5, 6), (12, 13, 14, 15, 16)),
+    "breadth_ood": ((1, 2, 3, 4, 5, 6), (18, 19, 20, 21, 22)),
+    "combo_ood": ((1, 2, 3, 4, 5, 6), (12, 13, 14, 15, 16)),
 }
 
-# depth_ood is absent, and the reason is measured rather than assumed.
-# Rejection rate by (depth, breadth), against the 0.30 ceiling:
+# Depth now runs to 6, and the breadth range moved up to reach it. Both
+# changes are forced by measurement rather than chosen.
 #
-#            b=6     b=7     b=8     b=9
-#   depth 4  0.155   0.098   0.048   0.048     usable
-#   depth 5  0.362   0.310   0.167   0.084     breaches at narrow breadth
-#   depth 6  0.571   0.444   0.294   0.178     breaches badly
+# Rejection rate against the 0.30 ceiling, at the new breadths:
 #
-# Depths 5 and 6 are only samplable at wide breadth, so a depth_ood arm
-# using them would have to move the breadth range too. That confounds the
-# two axes and makes H1 unanswerable, which is a worse failure than having
-# no depth_ood arm. Train now spans depths 1 to 4 at one breadth range, so
-# the loop-count curve can be read across depth with breadth held fixed.
+#            b=12    b=14    b=16
+#   depth 4  0.000   0.029   0.029
+#   depth 5  0.029   0.057   0.010
+#   depth 6  0.083   0.074   0.020
 #
-# Widened from (1, 2) on 2026-09-03: with depth 1 leaking and depth 2
-# solvable in a single pass, the old range contained no depth signal at
-# all. See docs/decisions.md D-027.
+# At the old breadths of 6 to 9 the same depths breached badly, 0.362 at
+# depth 5 and 0.571 at depth 6, which is why depth used to stop at 4. The
+# ceiling was never about depth, it was about having enough sprites for a
+# chain to have somewhere to go.
+#
+# Depth stopping at 4 was the reason family B had no loop-count curve to
+# show: a model with prelude 2, core 2 and coda 2 has six sequential
+# blocks at k=1, and a four hop chain needs about four. Depth 6 puts the
+# deepest cells outside a single pass for a small core.
+#
+# The breadth move is also what makes the chain load bearing. A model
+# ignoring the relation chain entirely scored 0.62 at depth 4 and breadth
+# 6 to 9, with 19 percent of questions having only one possible answer.
+# At breadth 12 to 16 with size unaskable that falls to 0.44 and near zero.
+# See D-028.
 
 MAX_ATTEMPTS = 200
 
@@ -125,7 +170,7 @@ def _attempt(rng: np.random.Generator, depth: int, breadth: int, split: str):
     the query alone.
     """
     sprites = scenes.place_sprites(rng, breadth, split)
-    attribute = ATTRIBUTES[int(rng.integers(0, len(ATTRIBUTES)))]
+    attribute = ASKABLE_ATTRIBUTES[int(rng.integers(0, len(ASKABLE_ATTRIBUTES)))]
     anchors = scenes.unique_anchors(sprites, attribute)
     if not anchors:
         return None
