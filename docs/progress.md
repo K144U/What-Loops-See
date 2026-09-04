@@ -92,9 +92,9 @@ Mirrors `findings.md`. Kept here so the milestone view and the science view stay
 
 | ID | Type | Resolves at milestone | Status |
 |---|---|---|---|
-| H1 | pre-registered | 5 | UNRESOLVED |
+| H1 | pre-registered | 5 | UNRESOLVED. **At risk**: the only live path is family B at 1/1/1. Six family B runs superseded 2026-09-04, see D-028 |
 | H2 | pre-registered | 8 | UNRESOLVED |
-| H3 | pre-registered | 6 | UNRESOLVED |
+| H3 | pre-registered | 6 | UNRESOLVED. Instruments built (`hooks.py`), M2 not run |
 | H4 | exploratory | 8 | UNRESOLVED |
 
 ---
@@ -121,6 +121,9 @@ Live risks with the trigger that would make each one real.
 
 | Risk | Trigger | Response | Status |
 |---|---|---|---|
+| **H1 has exactly one live path** | family B is the only family that can produce a loop-count curve | family A cannot supply one while depth 2 is unsolved at every k: with no k that solves it there is no k_min to regress. Family C is the null arm by design. So H1 rests entirely on the 1/1/1 family B runs. If those come back flat, H1 has no route and the contribution ordering has to change, with H3 and the family A factor result carrying the paper | **LIVE, triggered 2026-09-04** |
+| **Gate G2 is downstream of the same run** | G2 asks whether loops beat a matched-compute feedforward baseline | a task solvable at k=1 cannot show loops beating anything, so G2 could not have passed on the old family B whatever the truth. It is now gated on the corrected task showing k_min above 1. G2 and H1 therefore share a single point of failure rather than being independent checks | **LIVE, triggered 2026-09-04** |
+| **A config key parsed but never read** | any new config field | three appeared today. `eval_k_sweep` was wired, `factor` and the block counts were not, and the block counts would have trained a 2/2/2 model from a 1/1/1 config with nothing in the run directory to show it. Every new key now needs a test asserting on the built object, not on the config dict | live, standing |
 | Model does not train stably at k=8 on depth 3 | end of week 3 with no stable run | adopt ELT-style intra-loop self-distillation, re-run | not triggered |
 | Step budget makes the M1 sweep unaffordable | family A needs 100k to 200k steps, not 20k, measured at gate G1 | **LIVE.** A five to ten times multiplier on every family A run. Options: fewer seeds, a shorter ladder, or accept a longer milestone 5. Must be resolved before the sweep is launched | **triggered 2026-09-01** |
 | Still unstable after distillation | end of week 5 | drop to single-block core and 16x16 resolution | not triggered |
@@ -196,3 +199,22 @@ Also learned: driver is **525.147.05 exactly as the spec said**, so the cu121 pi
 Blocked by: nothing.
 
 Next: milestone 1. `groups.py` with the D4 x S3 multiplication table and unit tests for associativity, inverses and non-commutativity, then `render.py` and `family_a.py` with the anti-shortcut sampler.
+
+### Session, 2026-09-04
+
+**The day's real work was auditing, and most of it found faults rather than results.**
+
+Two things went right. The family C gate rerun passed G1.4 on the repaired task, and the blank-image control confirms it honestly: 0.218 with the image blanked against a 0.375 label prior, so the model drops below the prior rather than falling back on it. And the family A factor probe overturned the abelian-quotient reading: both 1M seeds predict the D4 factor at 1.0000 and the S3 factor at its chance level, which is evidence **for** sequential composition rather than against it, with three controls behind it.
+
+Four things went wrong, all found by looking rather than by a failing test.
+
+1. Family B's k sweep is flat at 1.000 for every depth and every k from 1 to 64. No H1 evidence exists in any family B run.
+2. Family B's floor was misreported as 1/13 = 0.0769 when it is 0.2897, because `size` has two values and was askable. Runs recorded at 0.24 to 0.38 as partial successes were at or below chance.
+3. The relation chain was skippable: 0.62 at depth 4 without reading it, 19 percent of questions with one possible answer.
+4. `L_MAX["B"]` was a literal 8, silently capping chains at depth 4, and the block counts never reached `build_model`.
+
+**Instruments added, each mutation checked:** `blank_control.py`, the factor decomposition in `parity_probe.py`, `registry.py` (which CLAUDE.md required and which did not exist, so every count in these documents had been typed by hand), and family B difficulty invariants.
+
+**Decisions:** D-027, D-028. **Learnings:** L-013, L-014.
+
+Milestone 3 continues. Nothing here changes the milestone schedule, which remains roughly three weeks ahead of the planned dates, but the science has one live path where it had two.
