@@ -440,7 +440,9 @@ The D4 factor is solved exactly. The S3 factor sits on its chance level to four 
 
 **Open, and the obvious next experiment.** Why D4 and not S3. The two are the same order to within 8 versus 6 and both non-abelian. Training family A on each factor alone would say whether S3 at depth 2 is unlearnable in isolation or only when D4 is available to solve first, which is the difference between a hard subtask and a gradient-competition effect.
 
-Provenance: `runs/vark_famA_d2_1M_s0/factor_probe.json`, `runs/vark_famA_d2_1M_s1/factor_probe.json`, `runs/g1_famA_d1_looped_long_s0/factor_probe.json`, `analysis/parity_probe.py`.
+**Confirmed at the full budget, 2026-09-04.** `vark_famA_d2_1M_s0` completed all 1000000 steps and finished in exactly this state: accuracy 0.1696, loss **1.7913** against ln(6) = 1.7918, D4 part **1.0000**, S3 part **0.1615** at a chance of 0.1667. The budget hypothesis is dead. Depth 2 was not parked before a second grokking transition, and a million steps was never the constraint. The plateau is where this model converges.
+
+Provenance: `runs/vark_famA_d2_1M_s0/factor_probe_final.json`, `runs/vark_famA_d2_1M_s0/factor_probe.json`, `runs/vark_famA_d2_1M_s1/factor_probe.json`, `runs/g1_famA_d1_looped_long_s0/factor_probe.json`, `analysis/parity_probe.py`.
 
 ### Both repaired tasks clear the control that caught them, milestone 3, 2026-09-03
 
@@ -581,6 +583,36 @@ Family B caps at depth 4 because deeper chains breach the rejection ceiling at f
 **Why the fix is not tuning.** Shrinking the core is a change that could be made to manufacture a result, and the rule against tuning is there for exactly that. The distinction is that at 2/2/2 the experiment cannot measure the quantity it is for: k is not a binding constraint on any reachable cell, so every possible outcome of the sweep is 1.000 and the measurement carries no information either way. Reducing the budget restores the experiment's ability to come out either way. To keep that honest the prediction is stated in advance and quantitatively, before the runs: **at 1/1/1, depths 1 to 3 solve at k=1 and depth 4 requires k=2.** If depth 4 solves at k=1 anyway, the hop-per-block model of the task is wrong and that is a reportable result rather than a reason to shrink further.
 
 Provenance: `runs/varkB_fix_s0/metrics.parquet`, `runs/varkB_fix_s1/metrics.parquet`, metric `sweep_accuracy`.
+
+### PRELIMINARY. A loop-count curve exists on the corrected family B, milestone 3, 2026-09-04
+
+**Mid-training, one seed, recorded because it is the first evidence for H1 in the project and it reverses the failed prediction above.**
+
+`famB_curve111_s0`, a 1/1/1 core on the corrected task, at checkpoint 108004 of 300000. Accuracy by depth and k, effective chance 0.1833:
+
+| depth | k=1 | k=2 | k=3 | k=4 | k=6 | k=8 |
+|---|---|---|---|---|---|---|
+| 1 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 |
+| 2 | 0.991 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 |
+| 3 | 0.937 | 0.999 | 0.999 | 0.999 | 0.999 | 0.999 |
+| 4 | **0.831** | 0.985 | 0.996 | 1.000 | 1.000 | 1.000 |
+| 5 | **0.776** | 0.962 | 0.993 | 0.997 | 1.000 | 0.999 |
+| 6 | **0.663** | 0.897 | 0.963 | 0.981 | 0.987 | 0.985 |
+
+**Accuracy falls monotonically with depth at fixed k, and rises with k at fixed depth.** That is the shape H1 predicts and the shape the previous configuration could not produce: the same sweep on the old task was 1.000 in every cell.
+
+Reading k_min as the smallest k reaching tau = 0.90:
+
+| depth | 1 | 2 | 3 | 4 | 5 | 6 |
+|---|---|---|---|---|---|---|
+| predicted, k_min = max(1, d-2) | 1 | 1 | 1 | 2 | 3 | 4 |
+| observed | 1 | 1 | 1 | **2** | **2** | **3** |
+
+Depths 1 to 4 match the registered prediction exactly. Depths 5 and 6 come in one below it, so the model gets more done per core pass at the deep end than one hop per block. The prediction was registered before the run and is reported as made, not adjusted.
+
+**What this is not yet.** One seed, at a third of the training budget, and k_min will likely fall further as training continues, which would weaken the slope without removing it. The threshold tau is a choice and the table would shift under a different one. Two more seeds are queued. **No H1 claim is made until the end-of-run sweep at 300000 steps on three seeds.**
+
+Provenance: `runs/famB_curve111_s0/checkpoints/step_000108004.pt`, evaluated over 24 batches per cell.
 
 ## 6. Post-hoc claims awaiting confirmation
 
