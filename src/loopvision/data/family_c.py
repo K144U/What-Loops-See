@@ -40,6 +40,29 @@ COUNT_CAP = 10
 NUM_CLASSES = COUNT_CAP + 1  # 0 through 10 inclusive
 CHANCE = 1.0 / NUM_CLASSES
 
+
+def effective_floor(split: str = "train", n: int = 5000) -> float:
+    """The score a model that has learned nothing actually gets.
+
+    NOT 1/NUM_CLASSES. Counts are not uniform: small counts are far more
+    common than large ones, so always answering the modal count beats
+    uniform guessing by a wide margin. Measured 0.377 on train and 0.255
+    on breadth_ood against a 1/11 = 0.0909 that means nothing here.
+
+    Family B was quoted against 1/NUM_CLASSES for weeks and it hid runs
+    that had learned nothing behind numbers that looked like partial
+    progress (D-028). The same mistake is available here, so the floor is
+    computed rather than recalled.
+    """
+    import collections
+
+    from loopvision.data import dataset as D
+
+    counts = collections.Counter(
+        generate(D.global_index(split, i), split).label for i in range(n)
+    )
+    return max(counts.values()) / sum(counts.values())
+
 # depth_ood is absent: depth is 1 by construction and there is nothing to
 # extrapolate along. A family C depth_ood split would be a relabelling of
 # the training distribution, which is worse than not having one.

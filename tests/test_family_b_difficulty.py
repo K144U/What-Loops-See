@@ -186,3 +186,26 @@ def test_the_block_counts_reach_the_built_model() -> None:
     assert len(model.prelude) == 1, f"prelude has {len(model.prelude)} blocks, wanted 1"
     assert len(model.core) == 1, f"core has {len(model.core)} blocks, wanted 1"
     assert len(model.coda) == 1, f"coda has {len(model.coda)} blocks, wanted 1"
+
+
+def test_family_c_floor_is_computed_not_one_over_num_classes() -> None:
+    """Family C is the breadth control, so its floor matters as much.
+
+    Counts are not uniform: small counts dominate, so answering the modal
+    count beats uniform guessing by a lot. Quoting 1/11 here would repeat
+    the family B mistake on the arm that is supposed to show no effect,
+    where a spurious rise would be even harder to spot.
+    """
+    from loopvision.data import family_c as FC
+
+    floor = FC.effective_floor("train", n=2000)
+    assert floor > FC.CHANCE * 3, (
+        f"floor {floor:.3f} vs 1/NUM_CLASSES {FC.CHANCE:.3f}: quoting the "
+        f"latter would make a model that learned nothing look competent"
+    )
+    assert 0.30 < floor < 0.50, floor
+    wide = FC.effective_floor("breadth_ood", n=2000)
+    assert wide < floor, (
+        "the floor must fall as scenes get busier, since counts spread out. "
+        "If it rose, breadth would be making the task easier to guess"
+    )
