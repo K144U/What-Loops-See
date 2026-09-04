@@ -21,10 +21,10 @@
 set +e
 
 STATE="${LOOPVISION_WATCH_STATE:-$HOME/.claude/loopvision-watch-state.txt}"
-RUNS="famB_curve111_s1 famB_curve111_s2
+RUNS="famB_curve111_s3 famB_curve111_s4 famB_curve111_s5
+      famB_curve111_s6 famB_curve111_s7
       famA_d2_d4only_s0 famA_d2_d4only_s1
-      famA_d2_s3only_s0 famA_d2_s3only_s1
-      famC_breadth111_s0 famC_breadth111_s1 famC_breadth111_s2"
+      famA_d2_s3only_s0 famA_d2_s3only_s1"
 
 # Collapse to one line before it is interpolated into the remote command.
 # The readable definition above spans several lines, and a newline inside

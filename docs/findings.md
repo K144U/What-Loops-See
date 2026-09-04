@@ -584,6 +584,37 @@ Family B caps at depth 4 because deeper chains breach the rejection ceiling at f
 
 Provenance: `runs/varkB_fix_s0/metrics.parquet`, `runs/varkB_fix_s1/metrics.parquet`, metric `sweep_accuracy`.
 
+### One factor is learnable alone and the other is not, milestone 3, 2026-09-04
+
+**At 270000 of 300000 steps, two seeds each. The numbers have not moved for 100000 steps and will be confirmed at 300000.**
+
+The depth 2 model solves the D4 factor exactly and leaves S3 at chance. Two explanations were available: S3 is genuinely hard, or S3 is merely neglected because D4 is easier and gets learned first, which would be gradient competition rather than difficulty. Training on each factor **alone** separates them, because a model given only S3 has nothing to compete with.
+
+| run | accuracy | loss | chance | loss at chance |
+|---|---|---|---|---|
+| `famA_d2_d4only_s0` | **1.0000** | 0.0000 | 0.1250 | ln(8) = 2.0794 |
+| `famA_d2_d4only_s1` | **1.0000** | 0.0000 | 0.1250 | 2.0794 |
+| `famA_d2_s3only_s0` | **0.1659** | 1.7916 | 0.1667 | **ln(6) = 1.7918** |
+| `famA_d2_s3only_s1` | **0.1659** | 1.7922 | 0.1667 | **1.7918** |
+
+**D4 alone is solved perfectly. S3 alone is at chance to three decimals, on both seeds, after 270000 steps with nothing else to learn.** It is not gradient competition. Removing the competitor changed nothing.
+
+**The model is not merely failing, it is ignoring the image.** Blank-image control on `s3only`: real 0.1676, blank 0.1676, best constant 0.1688. **The scores are identical.** Blanking the input costs it nothing, because it was never using the input. On `d4only` the same control gives real 1.0000 against blank 0.1234, leak -0.0055, so the instrument works and the contrast is not an artefact of it.
+
+**It does not even take the free shortcut.** The order-blind ceiling for the S3 factor at depth 2, computed exactly over all 1176 unordered operator pairs, is **0.75**. A model that ignored operator order entirely and answered from the multiset would score three times better than this one does. It reaches 0.167.
+
+**Three ways the task could have been impossible, all ruled out.**
+
+1. *The six elements might render identically.* They do not: 6 elements give 6 distinct glyph states, and the stabiliser is trivial, so every element is uniquely identifiable from the image. This is the check that caught the L-tromino earlier, and it passes here.
+2. *S3 might not be readable from a glyph at all.* The depth 1 gate model reads the S3 part of a single operator at **1.0000**. Perception is not the obstacle.
+3. *The labels might be degenerate.* They are uniform over the 6 elements by construction, and measured chance 0.1667 matches.
+
+**What this establishes.** Within a direct product of two non-abelian groups of nearly equal order, 8 and 6, one factor is learnable to perfection at depth 2 and the other is not learnable at all, in isolation, at ten times the budget that solves the first. The asymmetry is a property of the factors rather than of the optimisation.
+
+**What it does not establish, and this is the open question.** Why. D4 acts on positions and S3 on colours, so the two are not interchangeable and the explanation may be perceptual binding rather than group structure: tracking *where a thing went* may be easier for this architecture than tracking *which identity a thing carries*. A colour-permutation task built on positions, or a position task built on identities, would separate those. That is the experiment this finding calls for and it does not exist yet.
+
+Provenance: `runs/famA_d2_d4only_s{0,1}/metrics.parquet`, `runs/famA_d2_s3only_s{0,1}/metrics.parquet`, `runs/famA_d2_d4only_s0/blank_control.json`, `groups.subgroup_members`, `groups.stabiliser`.
+
 ### REFUTED. The models do not walk the chain hop by hop, milestone 3, 2026-09-04
 
 **A hypothesis of mine, tested and wrong.** The three curve seeds need different numbers of core passes for the same depth, and I proposed they were advancing the chain at different rates: roughly 1.8 hops per pass for seed 0 against 0.8 for seed 1, inferred from k_min. The coda lens measures that directly, and the picture is not a traversal at all.
