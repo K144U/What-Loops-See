@@ -584,35 +584,44 @@ Family B caps at depth 4 because deeper chains breach the rejection ceiling at f
 
 Provenance: `runs/varkB_fix_s0/metrics.parquet`, `runs/varkB_fix_s1/metrics.parquet`, metric `sweep_accuracy`.
 
-### PRELIMINARY. A loop-count curve exists on the corrected family B, milestone 3, 2026-09-04
+### PARTIALLY CONFIRMED. A loop-count curve exists, and the registered prediction over-stated its slope, milestone 3, 2026-09-04
 
-**Mid-training, one seed, recorded because it is the first evidence for H1 in the project and it reverses the failed prediction above.**
+**First seed complete at 300000 steps. Two more running. No H1 claim until all three are in.**
 
-`famB_curve111_s0`, a 1/1/1 core on the corrected task, at checkpoint 108004 of 300000. Accuracy by depth and k, effective chance 0.1833:
+`famB_curve111_s0`, a 1/1/1 core on the corrected task. End-of-run sweep, accuracy by depth and k, effective chance 0.1833:
 
-| depth | k=1 | k=2 | k=3 | k=4 | k=6 | k=8 |
-|---|---|---|---|---|---|---|
-| 1 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 |
-| 2 | 0.991 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 |
-| 3 | 0.937 | 0.999 | 0.999 | 0.999 | 0.999 | 0.999 |
-| 4 | **0.831** | 0.985 | 0.996 | 1.000 | 1.000 | 1.000 |
-| 5 | **0.776** | 0.962 | 0.993 | 0.997 | 1.000 | 0.999 |
-| 6 | **0.663** | 0.897 | 0.963 | 0.981 | 0.987 | 0.985 |
+| depth | k=1 | k=2 | k=3 | k=4 | k=8 | k=32 | k=64 |
+|---|---|---|---|---|---|---|---|
+| 1 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 |
+| 2 | 0.981 | 0.999 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 |
+| 3 | 0.913 | 0.999 | 1.000 | 1.000 | 1.000 | 0.999 | 0.999 |
+| 4 | 0.815 | 0.988 | 1.000 | 1.000 | 1.000 | 0.995 | 0.995 |
+| 5 | 0.753 | 0.962 | 0.999 | 0.999 | 0.999 | 0.996 | 0.993 |
+| 6 | **0.636** | 0.905 | 0.990 | 0.995 | 0.999 | 0.982 | 0.979 |
 
-**Accuracy falls monotonically with depth at fixed k, and rises with k at fixed depth.** That is the shape H1 predicts and the shape the previous configuration could not produce: the same sweep on the old task was 1.000 in every cell.
+**The threshold-free statement, which is the one to trust.** Single-pass accuracy falls monotonically with composition depth: 1.000, 0.981, 0.913, 0.815, 0.753, 0.636. No threshold, no k_min, no fitting. Depth costs a looped model accuracy when it is denied loops, and more depth costs more.
 
-Reading k_min as the smallest k reaching tau = 0.90:
+**k_min depends on the threshold, so the sensitivity is reported rather than one number.**
 
-| depth | 1 | 2 | 3 | 4 | 5 | 6 |
-|---|---|---|---|---|---|---|
-| predicted, k_min = max(1, d-2) | 1 | 1 | 1 | 2 | 3 | 4 |
-| observed | 1 | 1 | 1 | **2** | **2** | **3** |
+| tau | d1 | d2 | d3 | d4 | d5 | d6 | slope |
+|---|---|---|---|---|---|---|---|
+| 0.80 | 1 | 1 | 1 | 1 | 2 | 2 | +0.229 |
+| 0.90 | 1 | 1 | 1 | 2 | 2 | 2 | +0.257 |
+| 0.95 | 1 | 1 | 2 | 2 | 2 | 3 | +0.371 |
+| 0.99 | 1 | 2 | 2 | 3 | 3 | 3 | +0.400 |
+| **registered prediction** | 1 | 1 | 1 | 2 | 3 | 4 | **+0.629** |
 
-Depths 1 to 4 match the registered prediction exactly. Depths 5 and 6 come in one below it, so the model gets more done per core pass at the deep end than one hop per block. The prediction was registered before the run and is reported as made, not adjusted.
+**The slope is positive at every threshold, and below the registered prediction at every threshold.** The direction of H1 survives; the magnitude we predicted does not. `k_min = max(1, depth - 2)`, one hop per block, over-states how much work each core pass has to do. The model gets more done per pass than that, and the excess grows with depth.
 
-**What this is not yet.** One seed, at a third of the training budget, and k_min will likely fall further as training continues, which would weaken the slope without removing it. The threshold tau is a choice and the table would shift under a different one. Two more seeds are queued. **No H1 claim is made until the end-of-run sweep at 300000 steps on three seeds.**
+Recording this as the prediction was made. At tau = 0.90 the observed 1, 1, 1, 2, 2, 2 matched on depths 1 to 4 and missed low on 5 and 6.
 
-Provenance: `runs/famB_curve111_s0/checkpoints/step_000108004.pt`, evaluated over 24 batches per cell.
+**Not an artefact of an easy task.** Blank-image control on the final model: at k=8, real 0.9997 against blank 0.0883 with a best constant of 0.1082, leak -0.0199. At k=1, where the model is weakest and a shortcut would matter most, real 0.8492 against blank 0.1029, leak -0.0053. Clean at both. The model cannot answer without the image at any k.
+
+**Stable under training rather than a transient.** k_min at tau = 0.90 was identical at 108k, 235k and 300k steps for depths 1 to 4, and single-pass accuracy *fell* over that span at every depth past 3 (depth 6: 0.663 to 0.601 to 0.636). The model commits harder to its loops as it trains rather than learning its way out of them. This was the stated risk that would have destroyed the result, and it did not happen.
+
+**What is still missing.** Two seeds. A breadth arm, which is the other half of H1: depth must raise k_min while breadth does not, and only the depth half is measured here. Family C is the breadth control and has not been run at 1/1/1.
+
+Provenance: `runs/famB_curve111_s0/metrics.parquet` metric `sweep_accuracy`, `runs/famB_curve111_s0/blank_control.json`.
 
 ## 6. Post-hoc claims awaiting confirmation
 
