@@ -1,0 +1,4 @@
+runs:
+- run_id: famB_curve111_s0
+  config: m3/famB_curve_111.yaml
+  seed: 0
