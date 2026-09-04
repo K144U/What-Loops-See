@@ -1,0 +1,7 @@
+runs:
+- run_id: famC_breadth111_s1
+  config: m3/famC_breadth_111.yaml
+  seed: 1
+- run_id: famC_breadth111_s2
+  config: m3/famC_breadth_111.yaml
+  seed: 2
