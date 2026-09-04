@@ -258,6 +258,48 @@ def generate(idx: int, split: str, cfg: TaskConfig | None = None) -> Sample:
     )
 
 
+def hop_labels(idx: int, split: str, cfg: TaskConfig | None = None) -> list[int]:
+    """The label at every point along the chain, not just the end.
+
+    Element j is what the answer would be if the question stopped after j
+    hops, so element 0 is the anchor and the last element is the real
+    answer. A depth d sample returns d labels.
+
+    This is what turns the coda lens from a picture into a measurement.
+    Decoding an intermediate state tells you what the model currently
+    believes; comparing that against these tells you **how far along the
+    chain it has got**, which is the quantity that explains why one seed
+    needs more core passes than another.
+
+    Regenerates the sample rather than storing the labels on it, so the
+    Sample type stays the same shape for every family and nothing about
+    the training path changes to support an instrument.
+    """
+    cfg = cfg or TaskConfig()
+    from loopvision.data.dataset import split_spec
+
+    spec = split_spec(FAMILY, split, cfg)
+    rng = sample_rng(FAMILY, split, idx, cfg)
+    depth = int(rng.choice(spec.depth))
+    breadth = int(rng.choice(spec.breadth))
+    (sprites, anchor, chain, target, attribute), _ = sample_scene(
+        rng, depth, breadth, split
+    )
+
+    labels = [encode_label(attribute, anchor.attribute(attribute))]
+    current = anchor
+    for relation in chain:
+        current = scenes.relate(sprites, current, relation)
+        labels.append(encode_label(attribute, current.attribute(attribute)))
+
+    if current.token() != target.token():
+        raise RuntimeError(
+            "hop_labels walked to a different sprite than generate() did, so "
+            "the regeneration has drifted from the real sample"
+        )
+    return labels
+
+
 def rejection_rate(split: str, depth: int, breadth: int, trials: int = 400) -> float:
     """Fraction of attempts rejected at one (depth, breadth) cell.
 
