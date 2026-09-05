@@ -1,0 +1,7 @@
+runs:
+- run_id: famA_d2_s3spatial_s0
+  config: m3/famA_d2_s3spatial.yaml
+  seed: 0
+- run_id: famA_d2_s3spatial_s1
+  config: m3/famA_d2_s3spatial.yaml
+  seed: 1
