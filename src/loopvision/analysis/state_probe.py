@@ -63,19 +63,32 @@ def s3_index(element: int) -> int:
     return element % G.S3_ORDER
 
 
-def targets_for(program: str) -> dict[str, int]:
-    """The five S3 quantities for one sample, from its stored program."""
+def d4_index(element: int) -> int:
+    """The D4 factor of a group element, as 0..7."""
+    return element // G.S3_ORDER
+
+
+#: Which factor to probe for, and how many classes it has. The D4 entry
+#: exists to make the S3 null falsifiable: a probe that reads nothing is
+#: only evidence of absence if the same probe reads a factor the model is
+#: known to have. Running it on the solved d4only model is that control.
+FACTORS = {"s3": (s3_index, G.S3_ORDER), "d4": (d4_index, G.D4_ORDER)}
+
+
+def targets_for(program: str, factor: str = "s3") -> dict[str, int]:
+    """The five quantities for one sample, in the chosen factor."""
+    index, _ = FACTORS[factor]
     initial, strips, queried, _, _ = FA.parse_program(program)
     ops = strips[queried]
     start = initial[queried]
     partial = G.multiply(ops[0], start)
     composite = G.compose_sequence(ops)
     return {
-        "initial": s3_index(start),
-        "op1": s3_index(ops[0]),
-        "op2": s3_index(ops[1]) if len(ops) > 1 else s3_index(ops[0]),
-        "partial": s3_index(partial),
-        "composite": s3_index(G.multiply(composite, start)),
+        "initial": index(start),
+        "op1": index(ops[0]),
+        "op2": index(ops[1]) if len(ops) > 1 else index(ops[0]),
+        "partial": index(partial),
+        "composite": index(G.multiply(composite, start)),
     }
 
 
@@ -120,7 +133,8 @@ def fit_probe(
 
 
 @torch.no_grad()
-def collect(run_dir: Path, k: int, batches: int, split: str = "iid_val"):
+def collect(run_dir: Path, k: int, batches: int, split: str = "iid_val",
+            factor: str = "s3"):
     """Pooled states at every core pass, plus the five targets per sample."""
     cfg = yaml.safe_load((run_dir / "config.yaml").read_text(encoding="utf-8"))
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -148,7 +162,7 @@ def collect(run_dir: Path, k: int, batches: int, split: str = "iid_val"):
         image, query, _, _, _ = make_batch(cfg, split, cursor, device)
         for i in range(image.shape[0]):
             s = FA.generate(D.global_index(split, cursor + i), split, tcfg)
-            for name, v in targets_for(s.program).items():
+            for name, v in targets_for(s.program, factor).items():
                 ys[name].append(v)
 
         s0 = hooks.shared_init_state(model, image, query)
@@ -164,18 +178,21 @@ def collect(run_dir: Path, k: int, batches: int, split: str = "iid_val"):
     return X, Y, len(states)
 
 
-def run(run_dir: Path, k: int = 8, batches: int = 12, split: str = "iid_val") -> dict:
-    X, Y, n_states = collect(run_dir, k, batches, split)
+def run(run_dir: Path, k: int = 8, batches: int = 12, split: str = "iid_val",
+        factor: str = "s3") -> dict:
+    X, Y, n_states = collect(run_dir, k, batches, split, factor)
+    classes = FACTORS[factor][1]
     n = len(next(iter(Y.values())))
     cut = int(n * 0.8)
 
-    out: dict = {"run": run_dir.name, "k": k, "n": n, "n_train": cut, "probes": {}}
+    out: dict = {"run": run_dir.name, "k": k, "n": n, "n_train": cut,
+                 "factor": factor, "chance": 1.0 / classes, "probes": {}}
     for it in range(n_states):
         for site in SITES:
             feat = X[(it, site)]
             for target in TARGETS:
                 y = Y[target]
-                acc = fit_probe(feat[:cut], y[:cut], feat[cut:], y[cut:])
+                acc = fit_probe(feat[:cut], y[:cut], feat[cut:], y[cut:], classes)
                 out["probes"][f"pass{it}|{site}|{target}"] = acc
     return out
 
@@ -185,13 +202,15 @@ def main() -> int:
     p.add_argument("--run", required=True)
     p.add_argument("--k", type=int, default=8)
     p.add_argument("--batches", type=int, default=12)
+    p.add_argument("--factor", default="s3", choices=sorted(FACTORS))
     p.add_argument("--json")
     args = p.parse_args()
 
-    r = run(Path(args.run), args.k, args.batches)
-    chance = 1.0 / G.S3_ORDER
+    r = run(Path(args.run), args.k, args.batches, factor=args.factor)
+    chance = r["chance"]
     print(f"\n{r['run']}  k={r['k']}  n={r['n']} ({r['n_train']} train)")
-    print(f"  linear probe accuracy for the S3 factor, chance {chance:.4f}")
+    print(f"  linear probe accuracy for the {r['factor'].upper()} factor, "
+          f"chance {chance:.4f}")
     for site in SITES:
         print(f"\n  pooled at the {site} tokens")
         print("        " + "".join(t.rjust(11) for t in TARGETS))
