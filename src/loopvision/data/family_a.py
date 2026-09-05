@@ -72,14 +72,23 @@ def render_scene(
     strips: list[list[int]],
     queried: int,
     canvas_size: int = render.CANVAS,
+    substrate: str = "native",
 ) -> np.ndarray:
     """Draw the scene. Pure function of the program, no randomness."""
     canvas = render.blank_canvas(canvas_size)
     for row, (state, ops) in enumerate(zip(initial, strips)):
-        render.paste_patch(canvas, render.render_element(state), row, render.STATE_COL)
+        render.paste_patch(
+            canvas,
+            render.render_element(state, substrate=substrate),
+            row,
+            render.STATE_COL,
+        )
         for j, op in enumerate(ops):
             render.paste_patch(
-                canvas, render.render_element(op), row, render.FIRST_OP_COL + j
+                canvas,
+                render.render_element(op, substrate=substrate),
+                row,
+                render.FIRST_OP_COL + j,
             )
     render.paste_patch(canvas, render.render_marker(), queried, render.MARKER_COL)
     return canvas
@@ -99,7 +108,7 @@ def generate(idx: int, split: str, cfg: TaskConfig | None = None) -> Sample:
     if breadth > render.MAX_BREADTH:
         raise ValueError(f"breadth {breadth} exceeds the {render.MAX_BREADTH} rows")
 
-    members = G.subgroup_members(cfg.factor)
+    members = G.subgroup_members(G.substrate_subgroup(cfg.substrate, cfg.factor))
     initial = [int(members[int(rng.integers(0, len(members)))]) for _ in range(breadth)]
     queried = int(rng.integers(0, breadth))
 
@@ -121,7 +130,7 @@ def generate(idx: int, split: str, cfg: TaskConfig | None = None) -> Sample:
 
     assert G.multiply(G.compose_sequence(strips[queried]), initial[queried]) == label
 
-    image = render_scene(initial, strips, queried, cfg.canvas)
+    image = render_scene(initial, strips, queried, cfg.canvas, cfg.substrate)
 
     tokens = [FAM_A, QUERY]
     if cfg.presentation == "tokens":
@@ -161,7 +170,7 @@ def corrupted_twin(sample: Sample, cfg: TaskConfig | None = None, which: int = 0
     # from the full group under a restricted factor would put an operator
     # in the twin that the task never contains, so the patch would measure
     # an out of distribution input rather than a counterfactual.
-    members = G.subgroup_members(cfg.factor)
+    members = G.subgroup_members(G.substrate_subgroup(cfg.substrate, cfg.factor))
     here = members.index(ops[position])
     replacement = int(rng.integers(0, len(members) - 1))
     if replacement >= here:
@@ -172,7 +181,7 @@ def corrupted_twin(sample: Sample, cfg: TaskConfig | None = None, which: int = 0
 
     label = G.multiply(G.compose_sequence(ops), initial[queried])
     return Sample(
-        image=render_scene(initial, strips, queried, cfg.canvas),
+        image=render_scene(initial, strips, queried, cfg.canvas, cfg.substrate),
         query=sample.query,
         label=label,
         depth=depth,

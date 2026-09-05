@@ -38,10 +38,17 @@ BACKGROUND = (15, 15, 15)
 MARKER_COLOUR = (255, 214, 40)
 
 #: Index by colour id. G.NEUTRAL_COLOUR maps to the grey entry.
+#:
+#: Entry 3 exists only for the d4_colour substrate, where D4 acts on four
+#: labels rather than three. The native glyph uses 0 to 2 and is unchanged
+#: by its presence, so adding it cannot alter any existing task's pixels.
+#: Yellow is deliberately not reused from MARKER_COLOUR: the query marker
+#: has to stay distinguishable from glyph content.
 COLOURS: dict[int, tuple[int, int, int]] = {
     0: (222, 58, 58),
     1: (54, 200, 88),
     2: (62, 104, 232),
+    3: (186, 84, 220),
     G.NEUTRAL_COLOUR: (205, 205, 205),
 }
 
@@ -54,7 +61,9 @@ def blank_canvas(size: int = CANVAS) -> np.ndarray:
     return canvas
 
 
-def render_element(index: int, patch: int = PATCH) -> np.ndarray:
+def render_element(
+    index: int, patch: int = PATCH, substrate: str = "native"
+) -> np.ndarray:
     """Draw a group element as a (3, patch, patch) uint8 tile.
 
     The element is applied to the reference glyph and the result is
@@ -62,7 +71,7 @@ def render_element(index: int, patch: int = PATCH) -> np.ndarray:
     given the cell set, so distinct elements give distinct tiles. That is
     asserted rather than assumed, in tests/test_render.py.
     """
-    cells = G.act_on_glyph(index)
+    cells = G.glyph_action(substrate)(index)
     xs = [x for x, _, _ in cells]
     ys = [y for _, y, _ in cells]
     width = max(xs) + 1

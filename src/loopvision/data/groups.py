@@ -402,11 +402,19 @@ def act_on_glyph(
 # geometric action. Recolouring three cells at fixed positions is a genuine
 # appearance action. Neither is a relabelling of the other.
 
-#: Directions the three arms of the S3 spatial glyph point in, and their
-#: lengths. Distinct lengths are what make the six permutations six
-#: distinct pictures without using colour at all.
-S3_ARM_DIRECTIONS: tuple[tuple[int, int], ...] = ((1, 0), (0, 1), (-1, 0))
-S3_ARM_LENGTHS: tuple[int, ...] = (1, 2, 3)
+#: Three slots and three blobs, for S3 acting on geometry.
+#:
+#: Radiating arms of lengths 1, 2 and 3 were the first design and did not
+#: fit: they spanned 6 by 4 against a 4 by 4 tile, and widening the tile
+#: would have changed the rendering of every other task in the project.
+#: Three blobs of one, two and three cells in three quadrants span exactly
+#: 4 by 4 and are still distinguished by geometry alone.
+S3_SLOT_ORIGINS: tuple[tuple[int, int], ...] = ((0, 0), (2, 0), (0, 2))
+S3_BLOBS: tuple[tuple[tuple[int, int], ...], ...] = (
+    ((0, 0),),
+    ((0, 0), (1, 0)),
+    ((0, 0), (1, 0), (0, 1)),
+)
 
 #: Fixed positions for the D4 appearance glyph, the four corners of a
 #: square in cyclic order. They never move: only the colours permute.
@@ -431,18 +439,19 @@ def d4_corner_permutation(index: int) -> tuple[int, int, int, int]:
 
 
 def act_s3_spatial(index: int) -> frozenset[tuple[int, int, int]]:
-    """S3 permuting three spatially extended arms. No colour anywhere.
+    """S3 permuting three blobs between three slots. No colour anywhere.
 
-    Arm i is placed along direction perm[i], so the group moves geometry
-    and nothing else. Every cell is neutral, which is what makes this an
-    appearance-free task.
+    Blob i is placed in slot perm[i], so the group rearranges geometry and
+    nothing else. Every cell is neutral, which is what makes this an
+    appearance-free task and keeps it from being the colour task wearing a
+    different label.
     """
     perm = s3_of(index)
-    cells = [(0, 0, NEUTRAL_COLOUR)]
-    for i, length in enumerate(S3_ARM_LENGTHS):
-        dx, dy = S3_ARM_DIRECTIONS[perm[i]]
-        for step in range(1, length + 1):
-            cells.append((dx * step, dy * step, NEUTRAL_COLOUR))
+    cells = []
+    for i, blob in enumerate(S3_BLOBS):
+        ox, oy = S3_SLOT_ORIGINS[perm[i]]
+        for dx, dy in blob:
+            cells.append((ox + dx, oy + dy, NEUTRAL_COLOUR))
     return _normalise(cells)
 
 
@@ -466,6 +475,43 @@ SUBSTRATE_ACTIONS = {
     "d4_colour": (act_d4_colour, "d4"),
 }
 
+
+
+def glyph_action(substrate: str):
+    """The picture-making function for a substrate.
+
+    "native" is the real task: D4 moves the figure and S3 recolours it,
+    both at once. The others isolate one of those.
+    """
+    if substrate == "native":
+        return act_on_glyph
+    try:
+        return SUBSTRATE_ACTIONS[substrate][0]
+    except KeyError:
+        raise ValueError(
+            f"unknown substrate {substrate!r}, expected 'native' or one of "
+            f"{sorted(SUBSTRATE_ACTIONS)}"
+        ) from None
+
+
+def substrate_subgroup(substrate: str, factor: str) -> str:
+    """Which subgroup a substrate draws its elements from.
+
+    A substrate implies its factor: s3_spatial has no D4 content to vary
+    and d4_colour has no S3 content, so letting a config ask for
+    substrate=s3_spatial with factor=d4 would be asking for a task that
+    cannot exist. The substrate wins and the combination is rejected rather
+    than silently reinterpreted.
+    """
+    if substrate == "native":
+        return factor
+    implied = SUBSTRATE_ACTIONS[substrate][1]
+    if factor not in ("full", implied):
+        raise ValueError(
+            f"substrate {substrate!r} acts on the {implied} factor, but the "
+            f"config asks for factor {factor!r}. These cannot both hold."
+        )
+    return implied
 
 def substrate_states(name: str) -> int:
     """How many visually distinct states a substrate glyph has.

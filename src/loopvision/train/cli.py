@@ -54,6 +54,9 @@ DEFAULTS = {
     # cursor all start fresh, so this is a different run and not a
     # continuation of the donor.
     "init_from": None,
+    # native | s3_spatial | d4_colour. Crosses group against substrate,
+    # see docs/experiment-substrate.md.
+    "substrate": "native",
     # Sequential depth in one forward pass is prelude + k*core + coda. If
     # that already covers the task's composition depth at k=1 then k binds
     # on nothing and the loop-count sweep is flat whatever the truth. See
@@ -118,6 +121,7 @@ def task_config(cfg: dict) -> D.TaskConfig:
         depths=tuple(cfg["depths"]) if cfg["depths"] else None,
         breadths=tuple(cfg["breadths"]) if cfg["breadths"] else None,
         factor=cfg.get("factor", "full"),
+        substrate=cfg.get("substrate", "native"),
     )
 
 

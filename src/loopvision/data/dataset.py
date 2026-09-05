@@ -118,6 +118,11 @@ class TaskConfig:
     # runs in flight are unaffected. See groups.SUBGROUPS.
     factor: str = "full"
 
+    # Which substrate the group acts on, for the crossed design that
+    # separates "which group" from "geometry or appearance". See
+    # docs/experiment-substrate.md. "native" is the real task.
+    substrate: str = "native"
+
 
 # ---------------------------------------------------------------------------
 # Splits
