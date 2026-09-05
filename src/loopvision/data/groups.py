@@ -378,6 +378,105 @@ def act_on_glyph(
     return _normalise(moved)
 
 
+
+# ---------------------------------------------------------------------------
+# Substrates: the same group acting on geometry or on appearance
+# ---------------------------------------------------------------------------
+#
+# The native glyph confounds two things. D4 moves the figure in the plane
+# and S3 recolours it, so "D4 is learnable and S3 is not" could be about
+# the groups or about geometry versus appearance. Separating them needs the
+# same group acting both ways.
+#
+# There is a trap here worth stating, because the obvious design falls into
+# it. If a group permutes three slots and three colours sit in bijection
+# with those slots, then "move the contents between slots" and "relabel the
+# colours in place" generate the SAME set of images, differing only by
+# whether the element or its inverse produced each one. Inverse is a
+# bijection, so the two tasks are isomorphic and equally hard. Nothing is
+# measured.
+#
+# The fix is to make the permuted items spatially extended. Three arms of
+# lengths 1, 2 and 3 are distinguishable by geometry alone, carry no
+# colour, and permuting them changes the figure's shape. That is a genuine
+# geometric action. Recolouring three cells at fixed positions is a genuine
+# appearance action. Neither is a relabelling of the other.
+
+#: Directions the three arms of the S3 spatial glyph point in, and their
+#: lengths. Distinct lengths are what make the six permutations six
+#: distinct pictures without using colour at all.
+S3_ARM_DIRECTIONS: tuple[tuple[int, int], ...] = ((1, 0), (0, 1), (-1, 0))
+S3_ARM_LENGTHS: tuple[int, ...] = (1, 2, 3)
+
+#: Fixed positions for the D4 appearance glyph, the four corners of a
+#: square in cyclic order. They never move: only the colours permute.
+D4_COLOUR_POSITIONS: tuple[tuple[int, int], ...] = ((0, 0), (1, 0), (1, 1), (0, 1))
+
+
+def d4_corner_permutation(index: int) -> tuple[int, int, int, int]:
+    """How a D4 element permutes the four corners of a square.
+
+    Faithful: all eight elements give distinct permutations, asserted in
+    tests. That is what lets D4 act on four colour labels without the
+    action collapsing.
+    """
+    d4 = d4_of(index)
+    moved = [d4_apply_cell(d4, x, y) for x, y in D4_COLOUR_POSITIONS]
+    # Corners are on a unit square, so a rigid motion maps the corner set
+    # to itself up to translation. Normalise before matching.
+    dx = min(x for x, _ in moved)
+    dy = min(y for _, y in moved)
+    moved = [(x - dx, y - dy) for x, y in moved]
+    return tuple(D4_COLOUR_POSITIONS.index(c) for c in moved)
+
+
+def act_s3_spatial(index: int) -> frozenset[tuple[int, int, int]]:
+    """S3 permuting three spatially extended arms. No colour anywhere.
+
+    Arm i is placed along direction perm[i], so the group moves geometry
+    and nothing else. Every cell is neutral, which is what makes this an
+    appearance-free task.
+    """
+    perm = s3_of(index)
+    cells = [(0, 0, NEUTRAL_COLOUR)]
+    for i, length in enumerate(S3_ARM_LENGTHS):
+        dx, dy = S3_ARM_DIRECTIONS[perm[i]]
+        for step in range(1, length + 1):
+            cells.append((dx * step, dy * step, NEUTRAL_COLOUR))
+    return _normalise(cells)
+
+
+def act_d4_colour(index: int) -> frozenset[tuple[int, int, int]]:
+    """D4 permuting four colour labels at four positions that never move.
+
+    The geometric content is constant across all eight elements: only the
+    colouring changes. That is the appearance counterpart of the native
+    glyph's rigid motion.
+    """
+    perm = d4_corner_permutation(index)
+    return _normalise(
+        [(x, y, perm[i]) for i, (x, y) in enumerate(D4_COLOUR_POSITIONS)]
+    )
+
+
+#: Name to (action, subgroup) for the crossed design. "native" is the real
+#: task and uses the full group with the original glyph.
+SUBSTRATE_ACTIONS = {
+    "s3_spatial": (act_s3_spatial, "s3"),
+    "d4_colour": (act_d4_colour, "d4"),
+}
+
+
+def substrate_states(name: str) -> int:
+    """How many visually distinct states a substrate glyph has.
+
+    A collapsed action makes the task impossible and would be read as the
+    model failing, which is the L-tromino failure again. Checked in tests
+    against the subgroup order.
+    """
+    action, sub = SUBSTRATE_ACTIONS[name]
+    return len({action(g) for g in subgroup_members(sub)})
+
 def stabiliser(cells=GLYPH_CELLS) -> list[int]:
     """Group elements that leave the glyph unchanged.
 
