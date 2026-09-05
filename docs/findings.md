@@ -624,7 +624,7 @@ Provenance: `runs/famA_d2_s3only_s0/state_probe.json`, `runs/famA_d2_d4only_s0/s
 
 ### One factor is learnable alone and the other is not, milestone 3, 2026-09-04
 
-**At 270000 of 300000 steps, two seeds each. The numbers have not moved for 100000 steps and will be confirmed at 300000.**
+**Complete. All four runs finished 300000 steps, two seeds each.**
 
 The depth 2 model solves the D4 factor exactly and leaves S3 at chance. Two explanations were available: S3 is genuinely hard, or S3 is merely neglected because D4 is easier and gets learned first, which would be gradient competition rather than difficulty. Training on each factor **alone** separates them, because a model given only S3 has nothing to compete with.
 
@@ -632,8 +632,10 @@ The depth 2 model solves the D4 factor exactly and leaves S3 at chance. Two expl
 |---|---|---|---|---|
 | `famA_d2_d4only_s0` | **1.0000** | 0.0000 | 0.1250 | ln(8) = 2.0794 |
 | `famA_d2_d4only_s1` | **1.0000** | 0.0000 | 0.1250 | 2.0794 |
-| `famA_d2_s3only_s0` | **0.1659** | 1.7916 | 0.1667 | **ln(6) = 1.7918** |
+| `famA_d2_s3only_s0` | **0.1725** | 1.7916 | 0.1667 | **ln(6) = 1.7918** |
 | `famA_d2_s3only_s1` | **0.1659** | 1.7922 | 0.1667 | **1.7918** |
+
+Final at 300000 steps. Seed 0 reads 0.1725 against a chance of 0.1667, which is z = +1.02 on an evaluation of 4096 samples and therefore within noise; it is not a trace of learning and is not reported as one.
 
 **D4 alone is solved perfectly. S3 alone is at chance to three decimals, on both seeds, after 270000 steps with nothing else to learn.** It is not gradient competition. Removing the competitor changed nothing.
 
