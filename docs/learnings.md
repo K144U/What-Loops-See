@@ -338,3 +338,29 @@ announced itself.
 **How to apply:** when a rule names a command, the command's existence is
 part of the rule. Every path and command named in CLAUDE.md should be
 checked to resolve. See [[l-003-a-hand-typed-count-that-was-wrong]].
+
+### L-019. Eliminating one of two explanations does not establish the other
+
+The factor experiment asked whether S3 is hard in itself or merely
+neglected because D4 is easier and gets learned first. S3 alone, with
+nothing competing, stayed at chance. Competition was ruled out, so I
+concluded the alternative: genuinely hard.
+
+A curriculum run then solved the same task in 10000 steps by starting from
+a depth 1 version of itself, against 300000 steps of chance from a cold
+start, with a wrong-donor control staying at chance. S3 was never hard. It
+was a deadlock: the composition cannot be learned without the extraction,
+the extraction gets no gradient without the composition, and removing a
+competitor does nothing about that because the deadlock is internal.
+
+**Why:** the experiment was sound and the inference was not. Two named
+hypotheses feel exhaustive when both are stated, and the space of
+mechanisms is not covered by the two that occurred to me. Eliminating one
+leaves the other **plus everything unlisted**.
+
+**How to apply:** when an experiment eliminates one of two explanations,
+write down what would distinguish the survivor from *an unnamed third*
+before recording the conclusion. Here that test was cheap and obvious in
+hindsight: if the subtask is genuinely hard, handing the model a head start
+should not rescue it. That is one run. See
+[[l-014-when-two-hypotheses-predict-the-same-number]].

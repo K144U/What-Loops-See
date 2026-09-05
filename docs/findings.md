@@ -635,7 +635,43 @@ The probe reads the D4 composite at **0.896 against a chance of 0.125**. It work
 
 Provenance: `runs/famA_d2_s3only_s0/state_probe.json`, `runs/famA_d2_d4only_s0/state_probe_d4.json`, `analysis/state_probe.py`.
 
-### One factor is learnable alone and the other is not, milestone 3, 2026-09-04
+### CORRECTION. S3 is not a hard subtask, it is a bootstrapping deadlock, milestone 3, 2026-09-04
+
+**This overturns "One factor is learnable alone and the other is not", written earlier today. That entry's measurements stand. Its conclusion does not.**
+
+**Preliminary: the curriculum runs are at 10000 of 300000 steps. Recorded now because the contrast is already unambiguous and because it corrects a conclusion in this file.**
+
+| depth 2, S3 factor, identical in every respect except the starting weights | step | accuracy | loss |
+|---|---|---|---|
+| cold start | 300000 | 0.1725 / 0.1659 | 1.7916 |
+| **initialised from a depth 1 S3 model** | **10000** | **1.0000** | **0.0000** |
+| initialised from a depth 1 D4 model (control) | 10000 | 0.1664 | 1.8040 |
+
+**A task that never moved off chance in 300000 steps is solved in 10000 when the model starts from a depth 1 version of itself.** The control rules out generic warm starting: a depth 1 D4 donor, same architecture, same amount of prior training, leaves it exactly at chance.
+
+**What was actually wrong with S3, stated mechanically.** At depth 2 the model must extract the S3 component of each operator and then compose them. Neither half can be learned first:
+
+- The composition is unlearnable while the extraction is absent, because its inputs are noise.
+- The extraction is unlearnable while the composition is absent, because nothing downstream uses it, so no gradient reaches it.
+
+That is a **deadlock, not a difficulty.** Depth 1 breaks it, because at depth 1 the extraction *is* the answer and gets gradient directly. Once extraction exists, composition follows in a few thousand steps.
+
+**Why the earlier conclusion was wrong, and the reasoning error behind it.** The factor runs asked whether S3 is hard in itself or merely neglected while D4 is available to learn first. S3 alone stayed at chance, so gradient competition was ruled out and I concluded the remaining option: genuinely hard. **The question was posed as a binary and the truth was a third thing.** Removing the competitor does not break the deadlock, because the deadlock is internal to S3 and needs no competitor to exist. The experiment was sound and the inference from it was not.
+
+**What this does to the binding framing.** It sharpens it rather than weakening it. The claim is no longer that a looped model cannot bind appearance features. It is that **a looped model will not learn to bind them, from a standing start, on a task that requires composing them**, while learning the spatial equivalent without difficulty. That is a statement about learnability rather than capacity, it is more specific, and it comes with a demonstrated intervention.
+
+**What is still needed before this is a result.** Both curriculum seeds to 300000, the blank-image control on a checkpoint (none exists yet at 17 minutes of training), and the state probe rerun to confirm the S3 information is now extracted where before it was absent. If the probe shows extraction present in the curriculum model and absent in the cold-start model, the mechanism is closed end to end.
+
+Provenance: `runs/famA_d2_s3only_curr_s0`, `runs/famA_d2_s3only_currctrl_s0`, `runs/famA_d1_s3only_s{0,1}`, `runs/famA_d1_d4only_s0`.
+
+### PARTLY SUPERSEDED. One factor is learnable alone and the other is not, milestone 3, 2026-09-04
+
+> **The measurements below stand. The conclusion drawn from them does not.**
+> A curriculum run initialised from a depth 1 S3 model solves this task in
+> 10000 steps, so S3 is not a hard subtask but a bootstrapping deadlock.
+> See the correction entry above. The error was posing the question as
+> hard-versus-neglected and treating the elimination of one as proof of
+> the other.
 
 **Complete. All four runs finished 300000 steps, two seeds each.**
 
@@ -745,7 +781,9 @@ Accuracy by axis and k, mean of three seeds:
 
 **Depth raises the loop requirement in three seeds of three. Breadth raises it in zero of three.** The breadth arm is not merely a smaller effect, it is exactly flat: every cell at every breadth is solved in a single pass.
 
-**Seed variance is large and is reported rather than averaged away.** Family B slopes span 0.257 to 0.886, a factor of three. Seed 1 is qualitatively different: single-pass accuracy collapses to 0.366 at depth 2 and then stays roughly flat, so it does almost no multi-hop work in one pass, where seeds 0 and 2 degrade gradually. The direction is unanimous, the magnitude is not, and a mean slope of +0.533 would misrepresent that spread. Any regression in the paper needs a per-seed random effect rather than pooled points.
+**Seed variance is large and is reported rather than averaged away.** Across **eight** seeds the slopes are 0.229, 0.257, 0.257, 0.371, 0.429, 0.457, 0.600, 0.886, a spread of 3.9 times. **All eight are positive, so H1's direction is unanimous at eight of eight.**
+
+**The spread is continuous, not bimodal, and the extra five seeds were queued to test exactly that.** Gaps between consecutive sorted slopes are 0.029, 0.000, 0.114, 0.057, 0.029, 0.143 and then 0.286. The one large gap is at the top, isolating seed 1 alone, which makes it a right tail rather than a second mode. Eight points cannot establish bimodality and this does not claim it; what it does rule out is the clean two-cluster picture that three seeds hinted at. The paper reports a per-seed random effect and does not pool. Seed 1 is qualitatively different: single-pass accuracy collapses to 0.366 at depth 2 and then stays roughly flat, so it does almost no multi-hop work in one pass, where seeds 0 and 2 degrade gradually. The direction is unanimous, the magnitude is not, and a mean slope of +0.533 would misrepresent that spread. Any regression in the paper needs a per-seed random effect rather than pooled points.
 
 **Controls.** Blank-image control on the final models, at k=1 where a shortcut would help most: family C seed 0 real 0.9998, blank 0.2179 against a best constant of 0.3751, leak -0.157. Family B seed 1 real 0.4452, blank 0.1032, leak -0.005. Both clean, and family C's blank score sits *below* its own label prior, so it is not falling back on guessing the modal count, it is answering a question it can no longer see.
 
