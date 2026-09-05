@@ -345,6 +345,18 @@ Measured after the change, at breadth 12 to 16 with size unaskable: chain-blind 
 **Consequence:** every family B run before 2026-09-04 is superseded, six in total. No family B result may be quoted against 1/13. `effective_chance()` exists so the floor is computed rather than recalled.
 **Reversible:** yes, but the old configuration is known not to measure anything.
 
+### D-029. The D4 versus S3 asymmetry gets a crossed design before it gets a paper section
+**Date:** 2026-09-04
+**Milestone:** 3
+**Type:** experiment design
+**Decision:** the finding that D4 is learnable alone and S3 is not will not be written up as a claim about group structure until a 2x2 crossing group against substrate has been run. Design in `docs/experiment-substrate.md`, predictions registered there before building.
+**Reason:** D4 and S3 differ in two ways at once. They are different groups, and D4 rearranges the glyph in space while S3 permutes its colours. The current result is equally consistent with "S3 the group is harder" and with "permuting identities is harder than moving things". The second is a claim about perceptual binding in a vision transformer and is the more interesting of the two, so choosing between them by assertion would be choosing the conclusion.
+
+Two new arms settle it: S3 acting on three spatial slots, and D4 acting on four colour labels. The two existing runs are the other two cells. D4's action on the four corners of a square is faithful, kernel size 1, so four labels suffice and the renderer's six colours are enough.
+
+**Consequence:** the S3 section of the paper waits on two runs, roughly 15 hours of wall clock. A linear probe on the existing s3only checkpoints comes first and costs no training: it separates "the information is never computed" from "it is computed and the head cannot read it", which the coda lens cannot distinguish because a logit lens only sees what the head decodes.
+**Reversible:** yes, but writing the section first would mean writing it twice.
+
 ### D-003. Compute block, sixteen weeks on the cluster
 **Date:** open
 **Milestone:** blocks the pre-registration freeze at milestone 5
