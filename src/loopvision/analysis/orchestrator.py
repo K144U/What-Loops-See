@@ -88,10 +88,24 @@ def batch(runs: list[Run], runs_per_job: int) -> list[list[Run]]:
     return [runs[i : i + runs_per_job] for i in range(0, len(runs), runs_per_job)]
 
 
-def qsub_command(group: list[Run], ncpus: int, max_hours: float, mem: str) -> str:
+def qsub_command(
+    group: list[Run], ncpus: int, max_hours: float, mem: str,
+    depend: str | None = None,
+) -> str:
+    """The qsub line for one job.
+
+    `depend` holds the job until another finishes successfully, which is
+    what a curriculum needs: stage 2 must not start while its donor is
+    still training. It is a convenience and not a correctness guarantee.
+    A self chained job exits at the wall clock boundary and its successor
+    is a new id, so `afterok` can fire while the work is still going. The
+    real guard is in the trainer, which refuses a donor with no DONE
+    sentinel.
+    """
     specs = " ".join(r.spec() for r in group)
+    dep = f"-W depend=afterok:{depend} " if depend else ""
     return (
-        f'qsub -l select=1:ncpus={ncpus}:mem={mem} '
+        f'qsub {dep}-l select=1:ncpus={ncpus}:mem={mem} '
         f'-v RUNS="{specs}",MAX_HOURS={max_hours},NCPUS={ncpus} '
         f'scripts/multirun.pbs'
     )
@@ -104,6 +118,7 @@ def plan(
     ncpus: int,
     max_hours: float,
     mem: str,
+    depend: str | None = None,
 ) -> dict:
     todo = pending(runs, runs_root)
     groups = batch(todo, runs_per_job)
@@ -119,7 +134,7 @@ def plan(
         "concurrent_jobs_allowed": concurrent_jobs,
         "runs_in_flight": concurrent_jobs * runs_per_job,
         "groups": groups,
-        "commands": [qsub_command(g, ncpus, max_hours, mem) for g in groups],
+        "commands": [qsub_command(g, ncpus, max_hours, mem, depend) for g in groups],
     }
 
 
@@ -135,6 +150,7 @@ def main() -> int:
     p.add_argument("--max-hours", type=float, default=20.0)
     p.add_argument("--submit", action="store_true", help="actually qsub")
     p.add_argument("--limit", type=int, default=None, help="submit at most N jobs now")
+    p.add_argument("--depend", help="hold until this PBS job id finishes successfully")
     p.add_argument("--json", help="write the plan here")
     args = p.parse_args()
 
@@ -150,7 +166,7 @@ def main() -> int:
     runs = load_sweep(Path(args.sweep))
     result = plan(
         runs, Path(args.runs_root), args.runs_per_job, args.ncpus,
-        args.max_hours, args.mem,
+        args.max_hours, args.mem, args.depend,
     )
 
     print(f"\nsweep: {args.sweep}")

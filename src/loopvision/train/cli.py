@@ -461,6 +461,16 @@ def train(args) -> int:
                 f"curriculum run that quietly started from scratch would be "
                 f"indistinguishable from its own control."
             )
+        if not (donor_dir / "DONE").is_file():
+            raise RuntimeError(
+                f"init_from names {cfg['init_from']}, which has no DONE "
+                f"sentinel and is therefore still training. Initialising from "
+                f"a partial donor would hand this run a half learned "
+                f"extraction and the curriculum would measure the donor's "
+                f"training progress rather than the effect being tested. "
+                f"Correctness cannot depend on the queue happening to order "
+                f"these two jobs correctly, so this is checked here."
+            )
         payload = torch.load(donor_ckpt, map_location=device.type, weights_only=False)
         model.load_state_dict(payload["model"])
         print(

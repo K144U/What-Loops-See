@@ -128,3 +128,36 @@ def test_checkpoints_carry_what_the_curriculum_needs(tmp_path) -> None:
     payload = torch.load(ckpt, map_location="cpu", weights_only=False)
     assert "model" in payload, "init_from loads payload['model']"
     assert payload.get("step") == 1234
+
+
+def test_a_partial_donor_is_refused() -> None:
+    """A donor still in training has a checkpoint but a half learned
+    extraction. Initialising from it would measure the donor's training
+    progress rather than the effect being tested, and the queue ordering
+    is not something correctness can rest on: a self chained job exits at
+    the wall clock boundary, so a PBS afterok dependency can fire while
+    the work is still going.
+    """
+    src = pathlib.Path("src/loopvision/train/cli.py").read_text(encoding="utf-8")
+    block = src[src.index('if start_step == 0 and cfg.get("init_from")'):]
+    block = block[: block.index("if start_step == 0:")]
+    assert 'DONE' in block, "the donor must be checked for a DONE sentinel"
+    assert block.index('DONE') < block.index("torch.load"), (
+        "the DONE check must come before the weights are loaded"
+    )
+
+
+def test_the_dependency_flag_is_a_convenience_not_the_guard() -> None:
+    """--depend orders the jobs, it does not make the experiment correct.
+
+    Both must exist: without the trainer check a mis-ordered submission
+    silently produces a wrong result, and without the flag someone has to
+    sit and watch for stage 1 to end.
+    """
+    from loopvision.analysis.orchestrator import Run, qsub_command
+
+    g = [Run("a", "cfg.yaml", 0)]
+    assert "depend" not in qsub_command(g, 4, 20.0, "48gb")
+    with_dep = qsub_command(g, 4, 20.0, "48gb", depend="5169")
+    assert "-W depend=afterok:5169" in with_dep
+    assert with_dep.index("depend") < with_dep.index("scripts/multirun.pbs")
