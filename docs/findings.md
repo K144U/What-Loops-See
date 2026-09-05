@@ -584,6 +584,44 @@ Family B caps at depth 4 because deeper chains breach the rejection ceiling at f
 
 Provenance: `runs/varkB_fix_s0/metrics.parquet`, `runs/varkB_fix_s1/metrics.parquet`, metric `sweep_accuracy`.
 
+### S3 is never computed, not computed and mislaid, milestone 3, 2026-09-04
+
+The coda lens showed the output head decodes nothing about S3 at any core pass. A logit lens sees only what the frozen head reads, so that left two very different failures open: the model never extracts S3, or it extracts it and never routes it to where the answer is assembled. A linear probe trained on the residual stream separates them, because it is not restricted to what the head can use.
+
+Five targets, decomposing the computation rather than only asking for the answer, at two pooling sites. `famA_d2_s3only_s0`, chance 0.1667:
+
+| pooled at **query** tokens | initial | op1 | op2 | partial | composite |
+|---|---|---|---|---|---|
+| pass 1 | 0.207 | 0.170 | 0.152 | 0.139 | 0.180 |
+| pass 4 | 0.207 | 0.184 | 0.148 | 0.168 | 0.170 |
+
+| pooled at **patch** tokens | initial | op1 | op2 | partial | composite |
+|---|---|---|---|---|---|
+| pass 1 | 0.154 | 0.127 | 0.191 | 0.154 | 0.178 |
+| pass 4 | 0.178 | 0.158 | 0.168 | 0.191 | 0.166 |
+
+**Nothing is readable anywhere.** Not the composite, not the halfway state, and **not the individual operators**, which are simply present in the image and require no composition at all. The model never extracts S3 from the pixels.
+
+**The positive control, which is what makes that a finding rather than a null.** The same probe, same code, same sample count, run for the D4 factor on the solved `famA_d2_d4only_s0`, chance 0.1250:
+
+| pooled at **query** tokens | initial | op1 | op2 | partial | composite |
+|---|---|---|---|---|---|
+| pass 0 | 0.131 | 0.098 | 0.100 | 0.094 | 0.133 |
+| pass 1 | 0.369 | 0.348 | 0.326 | 0.367 | **0.896** |
+| pass 4 | 0.445 | 0.340 | 0.383 | 0.357 | **0.871** |
+
+The probe reads the D4 composite at **0.896 against a chance of 0.125**. It works on real residual streams, at this sample size, with this code. So the S3 table is evidence of absence rather than absence of evidence.
+
+**Conclusion: the failure is upstream of routing.** S3 is not sitting unused in the residual stream. It is never computed. That rules out the more optimistic reading, in which the architecture has the information and merely fails to move it, and it makes the substrate question in `experiment-substrate.md` sharper: the thing to explain is why colour permutations are not extracted at all, when spatial rearrangements are.
+
+**Two things fell out that were not the point.**
+
+*The model represents its answer better than its inputs.* In the solved D4 run the composite reads at 0.896 while the individual operators sit at 0.33 to 0.52. Whatever it is doing, it is not building a clean representation of each operator and then combining them. This agrees with the coda lens, which found the final answer decodable and every intermediate hop at the floor, and the two instruments reach it by different routes.
+
+*Nothing is readable before the first core pass.* At pass 0, on the solved model, every target sits at chance. The prelude alone does not extract D4; it appears during the loop. The loops are doing perceptual extraction, not only composition, which is worth knowing before anyone describes the core as a pure reasoning module.
+
+Provenance: `runs/famA_d2_s3only_s0/state_probe.json`, `runs/famA_d2_d4only_s0/state_probe_d4.json`, `analysis/state_probe.py`.
+
 ### One factor is learnable alone and the other is not, milestone 3, 2026-09-04
 
 **At 270000 of 300000 steps, two seeds each. The numbers have not moved for 100000 steps and will be confirmed at 300000.**
