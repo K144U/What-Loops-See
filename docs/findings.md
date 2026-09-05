@@ -635,6 +635,29 @@ The probe reads the D4 composite at **0.896 against a chance of 0.125**. It work
 
 Provenance: `runs/famA_d2_s3only_s0/state_probe.json`, `runs/famA_d2_d4only_s0/state_probe_d4.json`, `analysis/state_probe.py`.
 
+### The deadlock closes: the curriculum model extracts what the cold start never did, milestone 3, 2026-09-04
+
+**The mechanism, end to end, on the same probe with the same code.** S3 factor, chance 0.1667, pooled at the query tokens.
+
+| | initial | op1 | op2 | partial | composite |
+|---|---|---|---|---|---|
+| **cold start**, 300k steps, at chance | 0.207 | 0.184 | 0.148 | 0.168 | 0.170 |
+| **curriculum**, 45k steps, solved | **0.795** | **0.568** | **0.773** | 0.383 | **0.764** |
+
+At the patch tokens the curriculum model reads the initial state at **0.865** and the operators at 0.60 to 0.81, where the cold-start model sat between 0.127 and 0.191 everywhere.
+
+**This is what a bootstrapping deadlock looks like from the inside.** The cold-start model never extracted the S3 content of its inputs, so its composition had nothing to compose. The curriculum model, handed extraction by a depth 1 donor, has all of it: the initial state, both operators, and the answer. Nothing about the architecture changed. Nothing about the task changed. Only where the optimiser started.
+
+**Blank-image control on the curriculum model:** real 1.0000, blank 0.1626 against a best constant of 0.1688, leak -0.0062. Clean, so the perfect score is not a shortcut.
+
+**Two details worth keeping.**
+
+*Extraction happens inside the loop, not before it.* At pass 0, before any core pass, every target sits at chance in both models. The same was true of the solved D4 model. The core is doing perceptual extraction and not only composition, which matters for anyone describing these architectures as a reasoning module bolted onto a perception front end.
+
+*The halfway state is the least readable thing in a solved model.* `partial` reads 0.383 while both operators and the final composite read above 0.75. So the model goes from inputs to answer without a decodable intermediate, exactly as the coda lens found for family B, where every intermediate hop sat at the floor while the answer sharpened. **Three instruments, two task families, the same shape: these models compute answers rather than trajectories.**
+
+Provenance: `runs/famA_d2_s3only_curr_s0/state_probe.json`, `runs/famA_d2_s3only_curr_s0/blank_control.json`, `runs/famA_d2_s3only_s0/state_probe.json`. Curriculum run at checkpoint 45609 of 300000, still training.
+
 ### CORRECTION. S3 is not a hard subtask, it is a bootstrapping deadlock, milestone 3, 2026-09-04
 
 **This overturns "One factor is learnable alone and the other is not", written earlier today. That entry's measurements stand. Its conclusion does not.**
