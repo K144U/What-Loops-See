@@ -662,15 +662,18 @@ Provenance: `runs/famA_d2_s3only_curr_s0/state_probe.json`, `runs/famA_d2_s3only
 
 **This overturns "One factor is learnable alone and the other is not", written earlier today. That entry's measurements stand. Its conclusion does not.**
 
-**Preliminary: the curriculum runs are at 10000 of 300000 steps. Recorded now because the contrast is already unambiguous and because it corrects a conclusion in this file.**
+**Updated at 100000 of 300000 steps, two curriculum seeds and one control. Still running, so the final numbers are not in, but the contrast has held for 90000 steps and both seeds agree.**
 
 | depth 2, S3 factor, identical in every respect except the starting weights | step | accuracy | loss |
 |---|---|---|---|
-| cold start | 300000 | 0.1725 / 0.1659 | 1.7916 |
-| **initialised from a depth 1 S3 model** | **10000** | **1.0000** | **0.0000** |
-| initialised from a depth 1 D4 model (control) | 10000 | 0.1664 | 1.8040 |
+| cold start, seeds 0 and 1 | 300000 | 0.1725 / 0.1659 | 1.7916 |
+| **from a depth 1 S3 model, seed 0** | **100650** | **1.0000** | **0.0000** |
+| **from a depth 1 S3 model, seed 1** | **70400** | **1.0000** | **0.0000** |
+| from a depth 1 D4 model, control | 102500 | 0.1659 | **1.9408** |
 
-**A task that never moved off chance in 300000 steps is solved in 10000 when the model starts from a depth 1 version of itself.** The control rules out generic warm starting: a depth 1 D4 donor, same architecture, same amount of prior training, leaves it exactly at chance.
+**A task that never moved off chance in 300000 steps is solved by 10000 steps when the model starts from a depth 1 version of itself, on both seeds.** The control rules out generic warm starting: a depth 1 D4 donor, same architecture and the same amount of prior training, leaves it at chance after 102500 steps.
+
+**The control is not slowly learning either.** Its loss reads 1.9408 against ln(6) = 1.7918, so it sits *above* the chance floor rather than creeping below it. A wrong-factor head start is worth less than nothing here, which is what makes the right-factor head start a statement about the extraction being handed over rather than about optimisation being warmed up.
 
 **What was actually wrong with S3, stated mechanically.** At depth 2 the model must extract the S3 component of each operator and then compose them. Neither half can be learned first:
 
@@ -683,7 +686,7 @@ That is a **deadlock, not a difficulty.** Depth 1 breaks it, because at depth 1 
 
 **What this does to the binding framing.** It sharpens it rather than weakening it. The claim is no longer that a looped model cannot bind appearance features. It is that **a looped model will not learn to bind them, from a standing start, on a task that requires composing them**, while learning the spatial equivalent without difficulty. That is a statement about learnability rather than capacity, it is more specific, and it comes with a demonstrated intervention.
 
-**What is still needed before this is a result.** Both curriculum seeds to 300000, the blank-image control on a checkpoint (none exists yet at 17 minutes of training), and the state probe rerun to confirm the S3 information is now extracted where before it was absent. If the probe shows extraction present in the curriculum model and absent in the cold-start model, the mechanism is closed end to end.
+**What is still needed before this is a result.** Both curriculum seeds to 300000. The blank-image control and the state probe are done and are reported in the entry above: the curriculum model reads its own inputs where the cold start model reads nothing, and its perfect score survives the blank-image control. The mechanism is closed end to end; what remains is the full budget.
 
 Provenance: `runs/famA_d2_s3only_curr_s0`, `runs/famA_d2_s3only_currctrl_s0`, `runs/famA_d1_s3only_s{0,1}`, `runs/famA_d1_d4only_s0`.
 
@@ -861,6 +864,23 @@ Recording this as the prediction was made. At tau = 0.90 the observed 1, 1, 1, 2
 **What is still missing.** Two seeds. A breadth arm, which is the other half of H1: depth must raise k_min while breadth does not, and only the depth half is measured here. Family C is the breadth control and has not been run at 1/1/1.
 
 Provenance: `runs/famB_curve111_s0/metrics.parquet` metric `sweep_accuracy`, `runs/famB_curve111_s0/blank_control.json`.
+
+### In flight, 2026-09-04. The crossed substrate design
+
+Recorded so the file says what is running and what it would mean, before any of it can be read as a result.
+
+The S3 asymmetry is confounded: D4 moves the figure in the plane and S3 recolours it, so "D4 is learnable and S3 is not" could be about the groups or about geometry versus appearance. Four runs cross the two:
+
+| | acts on geometry | acts on appearance |
+|---|---|---|
+| **D4** | done, solved cold | `famA_d2_d4colour_s{0,1}`, running |
+| **S3** | `famA_d2_s3spatial_s{0,1}`, queued | done, deadlocks |
+
+The construction holds every group-theoretic property fixed and moves only the substrate. The order-blind ceiling at depth 2 is **0.8125 for both D4 arms** and **0.7500 for both S3 arms**, identical within each row because each row is the same group. So a difference between the two cells of a row cannot be about the algebra.
+
+**Registered before the runs.** If the cause is the substrate, `s3_spatial` solves cold and `d4_colour` deadlocks. If the cause is the group, the reverse. The two built cells are consistent with both readings, which is exactly why they cannot settle it.
+
+**Current state, explicitly not a finding.** `d4_colour` sits at 0.1277 with loss 2.0786 against ln(8) = 2.0794 at 30000 steps, which is the chance floor. That is uninformative: the native D4 run was also near chance this early and then solved. The number worth watching is whether the loss leaves 2.0794 by 150000 steps.
 
 ## 6. Post-hoc claims awaiting confirmation
 
