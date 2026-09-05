@@ -265,3 +265,52 @@ One further paper was verified and added while clearing the debt:
 | 2606.18023 | LoopCoder-v2: Only Loop Once for Efficient Test-Time Computation Scaling | 2026-06-16 | Yang et al. Finds two loops optimal and **additional loops degrading performance due to positional mismatch**. A concrete overthinking mechanism, and a caution for our k up to 64 extrapolation arm. | VERIFIED |
 
 **Standing requirement.** This status is true as of 2026-08-31 and decays. Re-run verification on any citation added after this date, and re-check the whole list before the bibliography freezes at milestone 12. Version numbers matter: 2604.09870 was clean at v1 and carries an erratum at v2, so confirm the version being cited, not only the identifier.
+
+---
+
+## 10. Update, 2026-09-04. Three papers that change where the novelty sits
+
+All three VERIFIED by fetching the arXiv abstract page.
+
+### 10.1 Our coda lens result is a replication, not a discovery
+
+**Lu, Yang, Lee, Li, Liu, "Latent Chain-of-Thought? Decoding the Depth-Recurrent Transformer", arXiv 2507.02199, v1 2025-07-02, v2 2025-09-28.**
+
+They probe Huginn-3.5B on arithmetic **using the Logit Lens and the Coda Lens**, the same two instruments under the same names we use, and report "limited evidence of interpretable latent CoT" from rank trajectories of intermediate result tokens. They also report "significant probing inconsistencies across recurrent blocks", where interpretability depends on layer index and decoding method, and that increasing recurrence depth yields only marginal gains.
+
+**Consequences, stated plainly.**
+
+1. **Our finding that the models do not walk the chain replicates theirs in another modality.** It is convergent evidence, not a discovery, and the entry in `findings.md` must cite them. Presenting it as novel is an error a reviewer in this area would catch immediately.
+2. **What is ours is the ground truth.** They track intermediate result tokens in arithmetic, a proxy for the intermediate state. We know the answer after every hop by construction, so we score the lens against the real intermediate rather than a stand-in for it.
+3. **They leave open exactly what our state probe answers.** Their probing inconsistency across blocks means they cannot separate absent information from undecodable information. Our trained probe with the D4 positive control does separate them. That is a methodological contribution built on top of their result, and it is the strongest kind: it answers a question their paper raises and does not settle.
+
+### 10.2 The binding problem is where the S3 result belongs
+
+**Huang, Li, Salehi, Chang, Soni, Kording, "Formalizing the Binding Problem", arXiv 2606.03976, v1 2026-06-02.**
+
+An information-theoretic formalisation of binding plus a probing method for measuring binding information in representations. Tested on **Vision Transformers only**, all feedforward. The abstract does not separate binding of spatial features from binding of appearance features.
+
+This reframes the S3 finding. The standing explanation for feedforward binding failure is that such models must resolve every concept simultaneously in one pass, where biological vision uses serial attention over time. **A looped model is the obvious remedy, being serial by construction.**
+
+Our result says the remedy does not work, and says it with a sharp asymmetry: the same looped model composes spatial rearrangements perfectly and never even extracts the colour permutation. That is a claim about the binding problem, made on the architecture the binding literature has not tested, separating two feature types their formalisation does not separate.
+
+**This is now the strongest thing in the project, ahead of H1.** H1 is a measurement contribution that several groups are circling. This is a negative result about the architecture everyone assumes is the fix, inside a problem that acquired a formal definition three months ago.
+
+### 10.3 Gate G2 is riskier, and more interesting, than recorded
+
+**Gao, Chen, Xiao, Yang, Tao, Zhou, Dai, "Loop the Loopies!", arXiv 2607.16051, v1 2026-07-17, v2 2026-07-20.**
+
+They state the standing expectation directly: given an N times increase in pre-training compute, increasing parameter count by N usually beats looping N times. They then overturn it at scale with a mixture-of-experts design, 20B and 6B, against a 30B baseline.
+
+So the compute-matched question is live, was recently believed settled against looping, and turns on design rather than on looping as such. If G2 fails at d=384 with a simple tied core, the correct reading is not "loops do not help" but "loops do not help at this design and scale", and the honest framing cites both this result and the expectation it overturned.
+
+### 10.4 What this does to the plan
+
+| item | before | after |
+|---|---|---|
+| S3 asymmetry | a curiosity inside family A | **the headline**, positioned in the binding problem |
+| coda lens result | novel finding | replication of 2507.02199, cite it |
+| state probe | supporting instrument | **the methodological contribution**, answers what 2507.02199 leaves open |
+| Huginn graft | confirm in the wild | bring ground truth to a model already probed without it |
+| H1 | the paper | the measurement contribution the rest rests on |
+| G2 | a formality | a live question with recent literature on both sides |

@@ -670,7 +670,9 @@ Provenance: `runs/famA_d2_d4only_s{0,1}/metrics.parquet`, `runs/famA_d2_s3only_s
 
 ### REFUTED. The models do not walk the chain hop by hop, milestone 3, 2026-09-04
 
-**A hypothesis of mine, tested and wrong.** The three curve seeds need different numbers of core passes for the same depth, and I proposed they were advancing the chain at different rates: roughly 1.8 hops per pass for seed 0 against 0.8 for seed 1, inferred from k_min. The coda lens measures that directly, and the picture is not a traversal at all.
+**Independently replicates a published text result, and a hypothesis of mine tested and wrong.** Lu et al., arXiv 2507.02199, probe Huginn-3.5B with the Logit Lens and the Coda Lens on arithmetic and report limited evidence of interpretable latent chain of thought. This entry finds the same in vision, so it is **convergent evidence rather than a discovery** and must be written up citing them. What is ours is that we score the lens against intermediate answers **known by construction**, where they track rank trajectories of intermediate result tokens as a proxy.
+
+The three curve seeds need different numbers of core passes for the same depth, and I proposed they were advancing the chain at different rates: roughly 1.8 hops per pass for seed 0 against 0.8 for seed 1, inferred from k_min. The coda lens measures that directly, and the picture is not a traversal at all.
 
 Decoding each intermediate state through the model's own output head, depth 6, k=8, n=1536 per cell. Columns are the answer *if the question had stopped after that many hops*, which is known by construction:
 
@@ -696,7 +698,7 @@ Decoding each intermediate state through the model's own output head, depth 6, k
 
 That ordering is exactly the k_min ordering, so the seed variance in the H1 result is real and has a single mechanism behind it. It is just a different mechanism than I proposed: **iterative refinement of one answer, not sequential traversal of a chain.**
 
-**The interpretive limit, which is severe here.** This is a logit lens, and it can only see what the *output head* can read. An intermediate hop could be represented in the state in a form the head does not decode, and would look exactly like the floor. **The correct conclusion is "no partial answer is decodable by the output head", not "no partial answer exists".** Distinguishing those needs a probe trained on intermediate states rather than the frozen head, which is milestone 7 work and is now clearly worth doing.
+**The interpretive limit, which is severe here, and which Lu et al. also hit.** They report probing inconsistencies across recurrent blocks, where interpretability depends on layer index and decoding method, and so cannot separate absent information from undecodable information. Neither can this entry on its own. The state probe entry does separate them, which is why the probe is the contribution and the lens is the observation. This is a logit lens, and it can only see what the *output head* can read. An intermediate hop could be represented in the state in a form the head does not decode, and would look exactly like the floor. **The correct conclusion is "no partial answer is decodable by the output head", not "no partial answer exists".** Distinguishing those needs a probe trained on intermediate states rather than the frozen head, which is milestone 7 work and is now clearly worth doing.
 
 **An instrument fault this exposed.** The first run reported "0.00 hops per core pass" for all three seeds, which reads as *these models do nothing* and meant the opposite: the frontier was pinned at the final hop from pass 1. A rate of zero is produced both by a model stalled at hop 0 and by one that reaches the answer immediately. `traversal()` now names the shape and the rate is only reported when the frontier actually rises.
 
