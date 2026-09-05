@@ -218,3 +218,39 @@ Four things went wrong, all found by looking rather than by a failing test.
 **Decisions:** D-027, D-028. **Learnings:** L-013, L-014.
 
 Milestone 3 continues. Nothing here changes the milestone schedule, which remains roughly three weeks ahead of the planned dates, but the science has one live path where it had two.
+
+### Session addendum, 2026-09-04, later
+
+**H1 resolved, two milestones early.** Depth raises k_min in three seeds of
+three, breadth in zero of three, at matched architecture and matched
+budget. Single-pass accuracy falls from 0.998 to 0.492 across the depth
+range and moves from 1.000 to 0.999 across the breadth range.
+
+**Three mechanism results, two of which contradict something we believed.**
+
+The factor runs finished: D4 alone is solved perfectly, S3 alone sits at
+chance after 300000 steps with nothing competing. A linear probe then
+showed S3 is not merely unread by the output head, it is never extracted
+from the image at all, with the same probe reading D4's composite at 0.896
+against a chance of 0.125 as the control.
+
+The coda lens refuted a hypothesis of mine outright: the models do not
+walk the chain hop by hop. Every intermediate hop sits at the guessing
+floor at every pass while the final answer sharpens from 0.65 to 0.999.
+What differs between seeds is sharpening rate, not traversal rate.
+
+**Failures and mistakes recorded rather than quietly fixed.** L-016, a mock
+that ignored the command it was given, hiding a watcher that would have
+reported UNREACHABLE forever. L-017, three config keys parsed but never
+read, two of them live faults, one of which would have trained a 2/2/2
+model from a 1/1/1 config with nothing in the run directory to show it.
+L-018, a CLAUDE.md rule naming a tool that did not exist, so every count in
+these documents had been hand typed for weeks.
+
+**Superseded entries kept in place with pointers rather than deleted:** the
+abelian quotient reading, the family A depth wall as originally stated, and
+the single-seed curve result. The wrong version is how the right one was
+reached and deleting it would hide the reasoning.
+
+**Open and unchanged:** gate G2 has not run, and the substrate experiment
+in `experiment-substrate.md` is designed but not built.

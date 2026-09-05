@@ -270,3 +270,71 @@ the number in the cases where it does not apply. `traversal()` returns
 stalled, immediate or walks, and the hop rate is printed only for walks.
 See [[l-011-a-passing-test-that-could-not-fail]] and
 [[l-014-when-two-hypotheses-predict-the-same-number]].
+
+### L-016. A mock that ignores its input tests only the code after the mock
+
+The cluster run watcher was verified against a fake `ssh` that printed a
+canned reply and never looked at the command it was handed. Every test
+passed. The command was broken: the run list spans several lines for
+readability, and those newlines were interpolated into `for r in $RUNS; do`
+on the far side, where a newline ends the list early. The remote shell
+answered with a syntax error, stderr was discarded, and an empty reply is
+exactly how the script detects an unreachable cluster.
+
+So it would have reported UNREACHABLE on every firing, forever, while ssh
+was perfectly healthy, and the tests would have kept passing. It was caught
+only because the user asked for a manual run.
+
+The same shape had already been used for the blank-image control's tests,
+where it happened not to matter. That is luck, not design.
+
+**Why:** a mock replaces the boundary. Whatever crosses that boundary is
+then untested by construction, and the thing crossing it is usually the
+thing most likely to be wrong, because it is the part written in another
+language for another interpreter.
+
+**How to apply:** a mock must assert on what it received, or the suite must
+include one real call. For anything built as a string and executed
+elsewhere, prefer the real call: it costs a second and it is the only test
+of the string. See [[l-011-a-passing-test-that-could-not-fail]].
+
+### L-017. A config key that is parsed but never read
+
+Three appeared in a single day. `eval_k_sweep` was wired correctly.
+`factor`, which selects a subgroup of D4 x S3, was not. `prelude_blocks`,
+`core_blocks` and `coda_blocks` were not.
+
+The last of those was the dangerous one. A config asking for a 1/1/1 core
+would have trained a 2/2/2 model, produced another flat loop-count sweep,
+and left nothing in the run directory to say why: the yaml would have read
+1/1/1, the run would have honoured 2/2/2, and the conclusion would have
+been that shrinking the core does not help.
+
+**Why:** a key that is parsed has a plausible value everywhere it is
+inspected. It is only wrong where it is used, and it is not used anywhere,
+so nothing looks wrong.
+
+**How to apply:** a new config key gets a test asserting on the **built
+object**, not on the config dict. Copying a field into a dataclass is not
+the same as the model being built with it. `test_the_block_counts_reach_the_built_model`
+constructs the model and counts its blocks; it fails if the key is dropped
+in `build_model`. See [[l-013-a-rule-that-lives-in-a-document-gets-skipped]].
+
+### L-018. A rule that names a tool is violated by the tool not existing
+
+CLAUDE.md lists `python -m loopvision.analysis.registry` as a command and
+makes it a non-negotiable that counts and totals in prose come from its
+output rather than being typed by hand. The module did not exist.
+
+So the rule had been silently unenforceable since it was written, and
+every count in the documents had been typed by hand, which is exactly the
+failure L-003 already records happening once.
+
+**Why:** a rule stated as a prohibition reads as satisfied when nobody is
+doing the forbidden thing on purpose. Nobody was hand-typing counts *in
+defiance* of the rule; there was simply no alternative and the gap never
+announced itself.
+
+**How to apply:** when a rule names a command, the command's existence is
+part of the rule. Every path and command named in CLAUDE.md should be
+checked to resolve. See [[l-003-a-hand-typed-count-that-was-wrong]].
