@@ -49,6 +49,11 @@ DEFAULTS = {
     "k_eval": None,          # defaults to k_train
     "eval_k_sweep": None,    # list of k to sweep at the end, for the M1 curve
     "factor": "full",        # family A only: full | d4 | s3, see groups.SUBGROUPS
+    # Curriculum: start from another run's weights instead of from scratch.
+    # Model weights only. The optimizer, the step counter and the data
+    # cursor all start fresh, so this is a different run and not a
+    # continuation of the donor.
+    "init_from": None,
     # Sequential depth in one forward pass is prelude + k*core + coda. If
     # that already covers the task's composition depth at k=1 then k binds
     # on nothing and the loop-count sweep is flat whatever the truth. See
@@ -438,6 +443,31 @@ def train(args) -> int:
             print(f"resumed from {ckpt.name} at step {start_step}")
         else:
             print("no checkpoint found, cold start")
+
+    if start_step == 0 and cfg.get("init_from"):
+        # Deliberately after the resume block. A self-chained successor
+        # resumes at a nonzero step and must NOT be re-seeded from the
+        # donor: its own checkpoint already carries everything the donor
+        # gave it plus whatever it has learned since. Re-initialising there
+        # would silently throw away the run's progress at every wall clock
+        # boundary, and the metrics would look like a run that kept
+        # restarting for no reason.
+        donor_dir = Path(args.runs_root) / cfg["init_from"]
+        donor_ckpt = find_latest_checkpoint(donor_dir)
+        if donor_ckpt is None:
+            raise FileNotFoundError(
+                f"init_from names {cfg['init_from']} but no checkpoint exists "
+                f"under {donor_dir}. Refusing to cold start silently: a "
+                f"curriculum run that quietly started from scratch would be "
+                f"indistinguishable from its own control."
+            )
+        payload = torch.load(donor_ckpt, map_location=device.type, weights_only=False)
+        model.load_state_dict(payload["model"])
+        print(
+            f"initialised weights from {cfg['init_from']} at step "
+            f"{payload.get('step')} ({donor_ckpt.name}). Optimizer, step and "
+            f"data cursor start fresh."
+        )
 
     if start_step == 0:
         write_provenance(run_dir, cfg)

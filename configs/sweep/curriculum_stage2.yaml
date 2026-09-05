@@ -1,0 +1,10 @@
+runs:
+- run_id: famA_d2_s3only_curr_s0
+  config: m3/famA_d2_s3only_curriculum.yaml
+  seed: 0
+- run_id: famA_d2_s3only_curr_s1
+  config: m3/famA_d2_s3only_curriculum.yaml
+  seed: 1
+- run_id: famA_d2_s3only_currctrl_s0
+  config: m3/famA_d2_s3only_curriculum_ctrl.yaml
+  seed: 0

@@ -24,6 +24,27 @@ Depth-recurrent vision models are being built and shipped (ELT, HIVE, RecursiveV
 
 Nobody has been able to check those heuristics against ground truth, because on natural images nobody knows how much sequential computation the answer actually required. We can measure it here because we generate the images from programs whose composition depth is known exactly rather than estimated. That single property is what makes the rest of the paper possible, and it is the thing to lead with.
 
+## 3a. Pivot, 2026-09-04, after the survey update in gap-analysis.md Section 10
+
+Three verified papers moved where the defensible novelty sits. The contribution list below is kept intact because it is what the plan was built on, and this section says what changes and why, rather than quietly rewriting history.
+
+**What weakened.** Our coda lens result replicates Lu et al. 2507.02199, who ran the Logit Lens and the Coda Lens on Huginn-3.5B and found limited evidence of interpretable latent reasoning. Presenting it as a discovery would be an error, and it is now written up as convergent evidence with the citation.
+
+**What that opened.** Lu et al. report probing inconsistency across recurrent blocks, so they cannot separate *the information was never computed* from *the decoder cannot read it*. **That ambiguity is not theirs alone. It is load bearing in every logit-lens negative result.** We can settle it, because we have ground-truth intermediates and a trained probe with a positive control that reads D4 at 0.896 while reading S3 at chance on the same states. A protocol that makes negative results about latent computation trustworthy is a larger contribution than the negative result it was built to check.
+
+**Where the S3 asymmetry belongs.** Huang et al. 2606.03976 formalised the binding problem in June 2026 with an information-theoretic measure, on feedforward Vision Transformers only, and without separating spatial from appearance features. The standing account of feedforward binding failure is that everything must resolve in a single pass. **A looped model is the obvious remedy, being serial by construction, and nobody has tested it.** Our result is that the remedy fails, asymmetrically: the same model composes spatial rearrangements exactly and never extracts the colour permutation at all.
+
+**Two new contributions, inserted rather than appended.**
+
+- **A protocol for trustworthy claims about absent latent computation.** Logit lens for what the head reads, trained probe for what is linearly present, a positive control for whether the probe works on these states at all, and ground-truth intermediates so the lens is scored against the real answer rather than a proxy. Demonstrated on a case where the protocol changes the conclusion. Delivered: `analysis/coda_lens.py`, `analysis/state_probe.py`, already built.
+- **Looping does not rescue appearance binding.** Delivered by the factor runs, already complete, **conditional on the crossed design in `experiment-substrate.md`.** Until that runs, the group and the substrate are confounded and the claim cannot be made. Stated here as the intended headline and not as a result.
+
+**Revised order, once the substrate experiment lands.** Benchmark, then the protocol, then the binding result, then patching, then the H1 dissociation, then halting, then scale. If the substrate experiment says the cause is the *group* rather than the substrate, the binding claim is withdrawn entirely and the order reverts to the list below with patching leading. **That decision is made by the experiment, not by preference.**
+
+**What does not change.** The benchmark stays first: it is what makes every other claim readable, and it is the only contribution that survives every possible outcome. The patching grid over (loop, spatial position) is still untouched by anyone and is still the visual centrepiece when milestone 6 delivers it.
+
+---
+
 ## 3. Contributions, in the order they should appear
 
 Each contribution names the instrument that produces it and the milestone that delivers it, so nothing enters the paper without a run behind it.
@@ -99,7 +120,10 @@ Seven figures maximum in the main text. Each one is produced by a script in `ana
 - **F6** Extrapolation curves with both oracles marked, `k*_task` and `k*_model`, and every halting criterion's firing point overlaid against them. The reader should see the gap without being told it is there. The practical figure.
 - **F7** Stage 2 comparison, small model signature against 3.5B signature.
 
-F3, F2 and F6 are the three that must be excellent, in that order of priority. The others can be workmanlike.
+- **F8** The absent-versus-undecodable panel. Logit-lens row and trained-probe row on the same states, with the positive control beside them. The figure exists to show that the null is a measurement and not a failure to measure, so the control must be as prominent as the result.
+- **F9** The binding asymmetry. Spatial factor solved against appearance factor at chance, with the probe row underneath showing the appearance factor is never extracted rather than extracted and dropped. One panel, two factors, matched group order.
+
+F9, F8 and F3 are now the three that must be excellent, in that order, if the substrate experiment supports the binding claim. If it does not, the priority reverts to F3, F2, F6. The others can be workmanlike.
 
 Figure numbering follows the section order in Section 5, not the contribution order in Section 3. The contributions list is ordered by defensibility, the body is ordered by exposition, and the mechanism section needs the loop-count curves already on the page to be motivated. If that turns out to bury the lead when the draft exists, reordering sections 5 and 6 is a writing-time decision for milestone 12, not one to make now.
 
