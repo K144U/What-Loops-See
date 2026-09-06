@@ -24,6 +24,9 @@ Full spec: docs/IMPLEMENTATION.md. Read the relevant section before writing code
 - Counts and totals in prose come from analysis/registry.py output, never typed by hand.
 - No citation enters a draft until its arXiv abstract page has been fetched and the version confirmed.
 - Family C is never cut. It is the breadth arm, and without it H1 is a replication rather than a dissociation.
+- After any state-changing cluster command, read the state back and assert on
+  what it actually says. An exit code of 0 means the command ran, not that it
+  did what was asked. See L-021.
 
 ## Environment
 - PyTorch cu121 only (driver 525, CUDA 12.0). Never install cu124 or later builds.

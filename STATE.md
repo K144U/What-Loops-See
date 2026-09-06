@@ -71,14 +71,23 @@ all verified from their arXiv abstract pages.
 
 | job | experiment | what it decides |
 |---|---|---|
-| 5180, 5181 | s3_spatial seeds 0 and 1 | closes the 2x2. Substrate reading predicts it solves cold. At 54600 of 300000 |
-| 5188 | d4_colour depth 1 donor | feeds 5189 |
-| 5189 (held) | d4_colour curriculum and control | does the rescue generalise across groups |
+| 5180, 5181 (running) | s3_spatial seeds 0 and 1 | closes the 2x2. Substrate reading predicts it solves cold. At 110000 and 103350 of 300000, both reading 1.0000 |
+| 5188 (running) | d4_colour depth 1 donor | feeds 5218. At 80050 of 300000, reading 1.0000, about 8 hours left |
+| 5217 | d4_colour curriculum **control** | the wrong-donor arm. No dependency: its donor `famA_d1_d4only_s0` is already DONE |
+| 5218 (held on `afterany:5188`) | d4_colour curriculum | does the rescue generalise across groups |
 | 5190 | scale control, wide, deep, big | the reviewer objection: was the model too small |
 | 5191 | depth ladder, d4only depths 3 to 6 | could give family A a usable depth axis, which H1 lacks |
-| 5206 (running), 5207 | gate G2 baselines, feedforward and echo | the hard-stop gate |
+| 5206 (running), 5207 | gate G2 baselines, feedforward and echo | the hard-stop gate. ffwd is at 49 percent reading 0.9961 and 0.9968 |
 | 5211 | d4_colour feedforward control, two seeds | is the deadlock about looping or about composition |
 | 5212 | s3only feedforward control, two seeds | the same question in the group the deadlock was found in |
+
+**5189 and 5216 no longer exist.** 5189 held the curriculum and its control
+in one job behind `afterok:5188`, which can hang forever if the donor exits
+non-zero. Replaced by 5217 and 5218 on 6 September. They were split because
+the two runs init from **different donors**: the control starts from
+`famA_d1_d4only_s0`, which finished long ago, so it never needed to wait for
+5188 at all and is queued now rather than in eight hours. Splitting also buys
+each run two cores and one generation worker instead of one core and none.
 
 **5202 no longer exists.** It asked for four cores to run four G2 baselines
 and was replaced on 6 September by 5206 and 5207, two cores each, because
@@ -97,14 +106,16 @@ colour for both. Neither s3_spatial run has written DONE, and a near
 perfect score still owes the three controls described in section 5, so
 that half is not a finding yet.
 
-**5180 and 5181 will probably not finish inside their wall.** They are at
-18.2 percent of the step budget having spent 18.3 percent of `MAX_HOURS=20`,
-so a straight extrapolation needs about 20.1 hours against a 20.0 hour
-limit. They will most likely stop a few thousand steps short and chain.
-The chain itself is sound, but the successor queues into a node with no
+**5180 and 5181 are marginal against their wall, and the estimate has
+improved.** At 07:01 elapsed they are at 110000 steps, about 15700 per hour,
+so 300000 needs roughly 19.1 hours against a 20.0 hour `MAX_HOURS`. That is
+inside the budget by about four percent, where an earlier reading put them
+0.1 hours outside it. Treat it as could-go-either-way rather than settled,
+and re-measure rather than trusting either number. If they do stop short
+they chain, which is sound, but the successor queues into a node with no
 free cores, so the 2x2 could stall for days over the last one percent.
-Nothing can be done to a running job here: `qalter` is blocked and
-`MAX_HOURS` is fixed at submit time.
+Nothing can be done to a running job here: `MAX_HOURS` is fixed at submit
+time.
 
 ---
 
@@ -171,6 +182,13 @@ safe by the same rule, because the copy the job runs was taken at `qsub`.
 existed in the working tree or anywhere in git history. Writing and
 freezing it is milestone 5 work and milestone 5 is NOT STARTED. CLAUDE.md
 asserted the freeze in the present tense until 6 September.
+
+**Use `afterany` for dependencies, never `afterok`, and do not trust
+`qalter` to change one.** `afterok` never fires if the job it waits on exits
+non-zero, and a held job produces no error, no output and no completion, so
+it fails by going quiet. `qalter -W depend=...` returns 0 and **appends**
+rather than replaces, leaving both conditions in force. The fix is `qdel`
+and resubmit, which is free before a run directory exists. See L-021.
 
 **The cluster remote is a file that has to be placed.** `origin` on the
 cluster points at `/home/<cluster-user>/loopvision.bundle`, which does not
