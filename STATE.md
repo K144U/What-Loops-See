@@ -78,8 +78,9 @@ all verified from their arXiv abstract pages.
 | 5220 | scale control, wide, deep, big | the reviewer objection: was the model too small |
 | 5221 | depth ladder, d4only depths 3 to 6 | could give family A a usable depth axis, which H1 lacks |
 | 5206 (running), 5207 | gate G2 baselines, feedforward and echo | the hard-stop gate. ffwd is at 49 percent reading 0.9961 and 0.9968 |
-| 5211 | d4_colour feedforward control, two seeds | is the deadlock about looping or about composition |
-| 5212 | s3only feedforward control, two seeds | the same question in the group the deadlock was found in |
+| 5211 | d4_colour feedforward control, matched compute, two seeds | is the deadlock about looping or about composition |
+| 5212 | s3only feedforward control, matched compute, two seeds | the same question in the group the deadlock was found in |
+| 5222, 5223 | feedforward control, **matched parameters**, two seeds each | separates architecture from capacity. Only informative read against 5211 and 5212, see D-037 |
 
 **Every job is now a two core job, and that was the whole problem.** 5190
 and 5191 sat queued for an entire day at four cores while every two core
@@ -152,14 +153,13 @@ time.
    substrate result rests on; s3only is the group the deadlock and its
    curriculum rescue were originally found in, so the control covers both.
 
-   **The matched-parameter arm is built and not yet queued.**
-   `famA_d2_{d4colour,s3only}_ffwd_mp`, the same control at k=1, six blocks
-   against the looped model's six distinct blocks, 0.973x its parameters.
-   It exists because the matched-compute arm carries 3.23x the parameters,
-   so on its own it cannot separate architecture from capacity. The two
-   arms bracket the looped model, and **D-037 says what each of the three
-   possible outcomes means.** Read it before reporting either. Queue with
-   `configs/sweep/ffwd_control_mp.yaml`, two cores.
+   **The matched-parameter arm is queued as 5222 and 5223.** The same
+   control at k=1, six blocks against the looped model's six distinct
+   blocks, 0.973x its parameters. It exists because the matched-compute arm
+   carries 3.23x the parameters, so alone it cannot separate architecture
+   from capacity. The two arms bracket the looped model, and **D-037 says
+   what each of the three possible outcomes means.** Read it before
+   reporting either arm: neither is interpretable without the other.
 3. **Read the depth ladder.** If d4only solves depths 3 to 6, family A
    gains a depth axis and H1 gets a second independent family.
 
