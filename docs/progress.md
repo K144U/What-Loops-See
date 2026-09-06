@@ -10,15 +10,18 @@ Milestone tracker for "What a Loop Sees". Mirrors Section 11 of `what-a-loop-see
 
 ## Current state
 
-**As of 2026-08-31**
+**As of 2026-09-06**
 
-- Phase: **milestone 2 complete. GATE G1 PASSED on attempt 2.** Milestone 3 is unblocked.
-- Repository: `loopvision/`, git initialised, six commits. Cloned to `<cluster-user>@<login-node>:~/loopvision`, transferred by git bundle so the LF line endings survive.
+- Phase: **milestone 4 in progress, gate G2.** Milestone 3's build work was finished early during milestone 2, and H1 resolved two milestones early. See `findings.md`.
+- Repository: at `c1302b2`. Local and `<cluster-user>@<login-node>:~/loopvision` are in sync, transferred by git bundle so the LF line endings survive. There is no network remote: `origin` is a bundle file that must be placed on the cluster before a pull will work, and it is not left there between syncs.
 - Environment: Python 3.11.11 via `module load python311`, torch **2.4.1+cu121**, driver 525.147.05 confirmed. See D-014.
-- `pytest -q`: **99 passed.** Milestone 0's 13 plus the data layer.
-- D-016 approved 2026-08-31, so gate G1.3 uses the revised ceiling criterion.
-- **Blocking: cluster queue depth.** At submission the gpu queue held 40 running, 8 queued and 14 held jobs. Our four are queued behind roughly four others. Nothing to do but wait; the jobs will start as slots free.
-- Next action: when the runs finish, `python -m loopvision.analysis.gate_g1` and `pytest tests/test_gate_g1.py`. If the gate fails, stop and report rather than adjusting anything.
+- `pytest`: **270 passed in 228.77s, exit 0**, on the cluster 2026-09-06. Note that the documented command `pytest -q` doubles the `-q` already in `addopts` and suppresses the pass count entirely, so it prints dots and no summary. Run `pytest -o addopts='--strict-markers'` when you need the number.
+- The suite does not run on the Windows machine at all: the package is not installed there and collection fails on import for all 20 modules. Every test claim in these documents is a cluster claim.
+- **Blocking: cores on the gpu node, not compute and not memory.** 96 of 96 cores assigned with 41 jobs resident, while memory is nowhere near binding and is not enforced at all: one neighbouring job holds 1041 GiB against no request. Walltime does not predict releases either, since several neighbours have used more than ten times the wall they asked for. Nine of our jobs are on the cluster: 5178, 5180 and 5181 running, 5188, 5190, 5191, 5206 and 5207 queued, 5189 held.
+- In flight and **not results**: `famA_d2_s3spatial` seeds 0 and 1 read 0.9929 and 1.0000 at 30k of 300k steps, and `famA_d2_d4colour_s1` sits on the chance floor at 280k. If those hold, the 2x2 closes on substrate with no group effect. Neither run has written DONE, and a near perfect score still owes the three controls, so none of this is a finding yet.
+- Next action: read gate G2 when 5206 and 5207 land, `python -m loopvision.analysis.gate_g2`. It can fail, and a failure is reported rather than worked around.
+
+---
 
 ### Milestone 0 cluster sign-off, PASSED 2026-08-31
 
@@ -254,6 +257,28 @@ reached and deleting it would hide the reasoning.
 
 **Open and unchanged:** gate G2 has not run, and the substrate experiment
 in `experiment-substrate.md` is designed but not built.
+
+### Session, 2026-09-06
+
+**Did:** read the cluster and PyTorch notes carried over from the merging project against this repo. Two operational faults found and fixed, three reported hazards checked and already handled here.
+
+**Commands run:** `pytest -o addopts='--strict-markers'` on the cluster, **270 passed in 228.77s, exit 0**. `qsub` probes at mem 48gb, 64gb and 96gb to find the queue ceiling by measurement rather than from the queue configuration.
+
+**Fixed.** The run watcher tracked every queued experiment except the four gate G2 baselines, so the result ranked first in `STATE.md`, and a declared hard stop, would have completed in silence. `multirun.pbs` asked for `mem=96gb`, which the gpu queue now refuses outright at submit time; it had never bitten only because every real submission overrides the directive on the command line, so the checked-in default was unreachable. Recorded as D-031.
+
+**Resubmitted.** Gate G2 went from one 4-core job, 5202, to two 2-core jobs, 5206 and 5207, because cores are the binding constraint on this node and a smaller request fits a smaller gap. The cost is `WORKERS=0` and in-process generation, against D-025's margin of roughly 4000 samples per second supplied to 1500 to 3000 consumed, so expect the runs to be slower per step and to start sooner.
+
+**Checked and already sound, no change needed:** the randomised-SVD reproducibility trap does not apply, `svd_lowrank` is not used and `checkpoint.py` captures and restores full CPU and CUDA RNG state, so a resumed run continues the exact stream; stale GPU claims are already swept by `pick_gpus.sh`; checkpoint writes are already atomic. Recording these because a future session will otherwise re-audit them.
+
+**Open, nobody has decided:** TF32 is not set anywhere in the repo, so fp32 matmuls run at a 10-bit mantissa by default on these cards. That is an inherited default rather than a choice, and the instruments quote numbers to four decimals.
+
+**Documentation faults found:** `preregistration.md` has never existed in the working tree or anywhere in git history, and there is no `prereg-v1` tag, yet CLAUDE.md stated the freeze in the present tense. Corrected to say it is milestone 5 work. The `Current state` block above was six days stale at milestone 2 while the milestone table below it was correct at milestone 4.
+
+**Blocked by:** cores. 96 of 96 assigned on the gpu node. Gate G2 cannot run until a gap opens, and no scheduled drain exists to wait for.
+
+**Next:** read gate G2 when 5206 and 5207 land. Then the feedforward control for the colour deadlock, still not started, which is the one result that could change what the paper is about.
+
+---
 
 ---
 

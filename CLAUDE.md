@@ -17,7 +17,10 @@ Full spec: docs/IMPLEMENTATION.md. Read the relevant section before writing code
 - Never tune a task, threshold, seed count, or test to improve a result. Failures get reported.
 - Every plotted number must be readable from a stored metrics file. Plot scripts do not compute statistics.
 - No em dashes or en dashes anywhere, including comments and docstrings.
-- preregistration.md is frozen at git tag prereg-v1. Deviations go in docs/decisions.md, never in the prereg.
+- preregistration.md does not exist yet and there is no prereg-v1 tag in the
+  repository. Writing and freezing it is milestone 5 work, and milestone 5 is
+  NOT STARTED. Record choices in docs/decisions.md as usual. Once it is frozen,
+  the prereg is never edited and every deviation goes in docs/decisions.md.
 - Counts and totals in prose come from analysis/registry.py output, never typed by hand.
 - No citation enters a draft until its arXiv abstract page has been fetched and the version confirmed.
 - Family C is never cut. It is the breadth arm, and without it H1 is a replication rather than a dissociation.
