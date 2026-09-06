@@ -380,6 +380,23 @@ Family B at 1/1/1 is where a loop-count curve exists: depth 6 needs k=3 at tau=0
 **Consequence:** the looped arm reuses the eight existing `famB_curve111` runs, so only the two baselines are new. The original depth 3 comparison is reported in the paper as an undefined gate with its numbers, not hidden.
 **Reversible:** yes, if family A ever gains a learnable depth 3.
 
+### D-031. multirun.pbs asks for 64gb rather than 96gb, because the queue now refuses 96
+**Date:** 2026-09-06
+**Milestone:** 4
+**Type:** deviation
+**Decision:** the `#PBS -l select=` directive in `scripts/multirun.pbs` requests `mem=64gb` instead of `mem=96gb`.
+**Reason:** the gpu queue carries `resources_max.mem = 64gb` and refuses anything above it at submit time. Probed on 2026-09-06 rather than inferred from the queue configuration:
+
+| request | result |
+|---|---|
+| `mem=48gb` | accepted |
+| `mem=64gb` | accepted |
+| `mem=96gb` | rejected, `Job violates queue and/or server resource limits` |
+
+The cap postdates the script. It had never bitten because every real submission passes its own `-l` on the command line, which overrides the directive, so the checked-in default was unreachable and would have failed only for a bare `qsub scripts/multirun.pbs`.
+**Consequence:** none for any recorded run. No submitted job ever used the 96gb directive, so no result changes and the paper says nothing about this. The number is advisory in any case: PBS does not enforce memory here, and job 375 on the gpu node is using 1041 GiB against no request at all, so it holds the 32gb default. The binding constraint on that node is cores, measured at 96 of 96 assigned with 41 jobs resident.
+**Reversible:** yes, if the cap is lifted. Re-check with `qstat -Qf gpu | grep resources_max`.
+
 ### D-003. Compute block, sixteen weeks on the cluster
 **Date:** open
 **Milestone:** blocks the pre-registration freeze at milestone 5

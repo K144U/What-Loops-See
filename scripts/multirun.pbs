@@ -1,7 +1,14 @@
 #!/bin/bash
 #PBS -N loopmulti
 #PBS -q gpu
-#PBS -l select=1:ncpus=8:mem=96gb
+# mem=64gb is a ceiling, not a preference. The gpu queue carries
+# resources_max.mem = 64gb and refuses anything above it at submit time
+# with "Job violates queue and/or server resource limits". This line asked
+# for 96gb, and never failed only because every real submission passed its
+# own -l on the command line and overrode it. A bare
+# "qsub scripts/multirun.pbs" would have been rejected outright.
+# Re-check the cap with: qstat -Qf gpu | grep resources_max
+#PBS -l select=1:ncpus=8:mem=64gb
 #PBS -l walltime=24:00:00
 #PBS -j oe
 
