@@ -1,0 +1,13 @@
+runs:
+- run_id: famA_d3_d4only_s0
+  config: m3/famA_d3_d4only.yaml
+  seed: 0
+- run_id: famA_d4_d4only_s0
+  config: m3/famA_d4_d4only.yaml
+  seed: 0
+- run_id: famA_d5_d4only_s0
+  config: m3/famA_d5_d4only.yaml
+  seed: 0
+- run_id: famA_d6_d4only_s0
+  config: m3/famA_d6_d4only.yaml
+  seed: 0
