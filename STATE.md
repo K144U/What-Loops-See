@@ -110,10 +110,18 @@ Nothing can be done to a running job here: `qalter` is blocked and
    `python -m loopvision.analysis.gate_g2`. It can fail: Gao et al.
    arXiv 2607.16051 report parameter scaling usually beating looping at
    matched compute. A failure is reported, not worked around.
-2. **The feedforward control**, not yet built. Does a non-looped model of
-   matched depth deadlock on colour too? If yes the finding is about
-   compositional learning in general rather than about looping, which is a
-   different paper. Currently assumed untested.
+2. **The feedforward control is built, verified and not yet queued.** Does
+   a non-looped model of matched depth deadlock on colour too? If yes the
+   finding is about compositional learning in general rather than about
+   looping, which is a different paper. The configs are
+   `famA_d2_d4colour_ffwd` and `famA_d2_s3only_ffwd`, two seeds each in
+   `configs/sweep/ffwd_control.yaml`, each derived from its looped twin so
+   the diff is three lines. Both build 20 blocks against the 20 their twin
+   executes at k=8, checked on the cluster rather than assumed. Read D-032
+   before reporting either outcome: matched compute is not matched
+   parameters here, so a control that deadlocks is clean and a control
+   that solves the task leaves parameter count as a rival explanation.
+   Queue it with the same two-core shape as 5206 and 5207.
 3. **Read the depth ladder.** If d4only solves depths 3 to 6, family A
    gains a depth axis and H1 gets a second independent family.
 
