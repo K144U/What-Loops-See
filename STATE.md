@@ -102,9 +102,10 @@ advance rather than a pattern found afterwards. The colour half of the
 2x2 is no longer in flight: d4_colour finished at chance in both seeds.
 If the s3_spatial pair holds to its budget the 2x2 closes on substrate
 with no group effect, solved on position for both groups and chance on
-colour for both. Neither s3_spatial run has written DONE, and a near
-perfect score still owes the three controls described in section 5, so
-that half is not a finding yet.
+colour for both. Neither s3_spatial run has written DONE. Its
+order-blind ceiling already exists at 0.7500 and 1.0000 clears it, so what
+that pair still owes is completion and the blank-image and input-ablation
+controls, not a ceiling.
 
 **5180 and 5181 are marginal against their wall, and the estimate has
 improved.** At 07:01 elapsed they are at 110000 steps, about 15700 per hour,
@@ -158,8 +159,11 @@ it has failed on purpose.
 the input ablation in `analysis/ablate_input.py`, and an analytic
 order-blind ceiling. The solved D4 model needs its state and both operators
 and correctly ignores the distractors, and its 1.0000 sits above a computed
-ceiling of 0.8125. That is why the score is believed. The ceiling for S3 is
-a different number and has not been computed yet.
+ceiling of 0.8125. That is why the score is believed. **The S3 ceiling is
+0.7500**, computed exactly over all 1176 unordered operator pairs and
+registered before the substrate runs, so it is not outstanding work.
+`findings.md` carries both: 0.8125 for both D4 arms, 0.7500 for both S3
+arms, identical within a row because a row is one group.
 
 **Two gates have been moved and both are recorded.** G1.3 demanded an
 unachievable chance-level score (D-016) and G2 was undefined where it was
