@@ -69,6 +69,12 @@ PER_RUN=$(( NCPUS / NRUNS ))
 WORKERS=$(( PER_RUN - 1 ))
 [ "$WORKERS" -lt 0 ] && WORKERS=0
 
+# Release the GPU claims however this job ends, including the wall clock
+# kill. A claim left behind blacklists a working card until the stale
+# sweep catches it, which is a worse failure than the collision the claims
+# exist to prevent, so the trap is set before anything can fail.
+trap 'release_gpu_claims 2>/dev/null || true' EXIT TERM INT
+
 N_GPUS="$NRUNS" source scripts/pick_gpus.sh || {
     echo "FATAL could not obtain GPUs for $NRUNS runs" >&2
     exit 1
