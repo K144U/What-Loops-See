@@ -865,6 +865,52 @@ Recording this as the prediction was made. At tau = 0.90 the observed 1, 1, 1, 2
 
 Provenance: `runs/famB_curve111_s0/metrics.parquet` metric `sweep_accuracy`, `runs/famB_curve111_s0/blank_control.json`.
 
+### SUBSTRATE, NOT GROUP. The same group solves on geometry and fails on colour, milestone 3, 2026-09-04
+
+**The discriminating cell is complete, and it refutes the registered alternative.**
+
+D4 is the group that solves composition at depth 2 without difficulty. Acting on colour instead of on position, at the full 300000 step budget:
+
+| task | group | acts on | accuracy | loss | chance |
+|---|---|---|---|---|---|
+| `famA_d2_d4only` | D4 | position | **1.0000** | 0.0000 | 0.1250 |
+| `famA_d2_d4colour_s0` | D4 | **colour** | **0.1277** | **2.0795** | 0.1250 |
+| `famA_d2_s3only` | S3 | colour | 0.1659 | 1.7916 | 0.1667 |
+
+ln(8) = 2.0794. The colour arm finished on the chance floor to four decimals, and seed 1 is at 0.1265 by 203900 steps and heading to the same place.
+
+**Everything that could explain this by the algebra is held constant.** It is the same group, order 8, same generators, same abelianisation of order 4, and the same order-blind ceiling of 0.8125 at depth 2. The only thing that differs between the first two rows is what the group acts on.
+
+**The registered alternative is refuted.** Before these runs, `experiment-substrate.md` recorded two predictions for this cell. The abelian-foothold reading said it should self-bootstrap, because D4's abelian quotient offers the same partial credit whatever substrate it acts on. The substrate reading said it should deadlock. **It deadlocked.** Abelian structure is not what determines learnability here.
+
+**The failure signature is identical to S3's.** The state probe on `famA_d2_d4colour_s0`, for the D4 factor, chance 0.1250:
+
+| pooled at | initial | op1 | op2 | partial | composite |
+|---|---|---|---|---|---|
+| query tokens | 0.135 | 0.107 | 0.137 | 0.105 | 0.109 |
+| patch tokens | 0.148 | 0.119 | 0.121 | 0.135 | 0.121 |
+
+Nothing readable anywhere, at any pass, exactly as in the cold-start S3 run and exactly unlike the solved D4 position run, where the same probe reads the composite at 0.896. **The model never extracts the colour content of its inputs.** It is the same bootstrapping deadlock, now reproduced in a second group.
+
+**What this establishes.** A looped vision transformer composes a non-abelian group acting on position, and fails to compose the same group acting on colour, from a standing start. The obstacle is the substrate, not the algebra. Since the binding literature's account of feedforward failure is that everything must resolve in a single pass, and a looped model is serial by construction, this is the architecture that account implies should be the remedy. It is not.
+
+**What is still open.** `s3_spatial` is queued and is the fourth cell. The substrate reading predicts it solves cold. If it does, the 2 by 2 closes with both groups solving on geometry and both failing on colour, and no confound remains. If it fails, then geometry is not sufficient either and the claim narrows to something about D4 specifically, which the D4 row alone cannot distinguish.
+
+**The obvious follow-up.** S3 on colour was rescued by a depth 1 curriculum. If D4 on colour is rescued the same way, the deadlock is one mechanism rather than two coincidences, and the intervention generalises across groups. That needs a depth 1 `d4_colour` donor, which does not exist yet.
+
+Provenance: `runs/famA_d2_d4colour_s{0,1}`, `runs/famA_d2_d4colour_s0/state_probe.json`, `runs/famA_d2_d4only_s{0,1}`, `runs/famA_d2_s3only_s{0,1}`.
+
+### CONFIRMED at full budget. The curriculum result, milestone 3, 2026-09-04
+
+Both curriculum runs that have finished did so at 300000 steps:
+
+| run | donor | step | accuracy | loss |
+|---|---|---|---|---|
+| `famA_d2_s3only_curr_s0` | depth 1 S3 | 300000 | **1.0000** | 0.0000 |
+| `famA_d2_s3only_currctrl_s0` | depth 1 D4 | 300000 | **0.1652** | 1.9787 |
+
+Seed 1 of the curriculum arm is at 1.0000 by 253600 and still running. The control finished the full budget at chance, with a loss of 1.9787 against ln(6) = 1.7918, so it ends above the chance floor rather than below it. **A wrong-factor head start is worth nothing across 300000 steps, and a right-factor one is worth everything within 10000.**
+
 ### In flight, 2026-09-04. The crossed substrate design
 
 Recorded so the file says what is running and what it would mean, before any of it can be read as a result.
@@ -880,7 +926,7 @@ The construction holds every group-theoretic property fixed and moves only the s
 
 **Registered before the runs.** If the cause is the substrate, `s3_spatial` solves cold and `d4_colour` deadlocks. If the cause is the group, the reverse. The two built cells are consistent with both readings, which is exactly why they cannot settle it.
 
-**Current state, explicitly not a finding.** `d4_colour` sits at 0.1277 with loss 2.0786 against ln(8) = 2.0794 at 30000 steps, which is the chance floor. That is uninformative: the native D4 run was also near chance this early and then solved. The number worth watching is whether the loss leaves 2.0794 by 150000 steps.
+**Resolved.** `d4_colour` never left the chance floor. It finished 300000 steps at 0.1277 with loss 2.0795 against ln(8) = 2.0794. See the entry above. The prediction registered here, that the substrate reading implies this cell deadlocks, is the one that held.
 
 ## 6. Post-hoc claims awaiting confirmation
 
