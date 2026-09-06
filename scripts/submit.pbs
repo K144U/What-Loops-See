@@ -52,7 +52,11 @@ export ENTRY="${ENTRY:-loopvision.train.cli}"
 # itself can be tested without waiting a day per link.
 export MAX_HOURS="${MAX_HOURS:-23.0}"
 # Login node used to submit the successor job, see the chain block below.
-export CHAIN_SUBMIT_HOST="${CHAIN_SUBMIT_HOST:-<login-node>}"
+# PBS already knows which host the job was submitted from, so the login
+# node is derived rather than hardcoded. That keeps the cluster name out
+# of the repository and makes the chain work on any PBS site.
+export CHAIN_SUBMIT_HOST="${CHAIN_SUBMIT_HOST:-${PBS_O_HOST%%.*}}"
+: "${CHAIN_SUBMIT_HOST:?no submit host: set CHAIN_SUBMIT_HOST or check PBS_O_HOST}"
 # Follow the actual allocation rather than hardcoding it, so changing the
 # ncpus request cannot silently leave threads oversubscribed.
 export OMP_NUM_THREADS="${NCPUS:-4}"

@@ -3,7 +3,7 @@
 #
 # Runs on the LOCAL machine, not the cluster, because the cluster is only
 # reachable through the VPN on that machine. A cloud scheduled agent cannot
-# see <cluster-ip> at all.
+# see the cluster's private address at all.
 #
 # Called by the scheduled task "loopvision-run-watch". Each scheduled run
 # starts a fresh session with no memory, so "have I already reported this"
@@ -21,6 +21,17 @@
 set +e
 
 STATE="${LOOPVISION_WATCH_STATE:-$HOME/.claude/loopvision-watch-state.txt}"
+
+# Cluster identifiers live outside the repository, so the published history
+# carries none of them. Create ~/.loopvision-cluster holding:
+#   LOOPVISION_SSH_HOST=<your ssh alias for the login node>
+#   LOOPVISION_CLUSTER_USER=<your username on the cluster>
+# Failing loudly here is deliberate. This script is run by a scheduled
+# task, and a watcher that silently stops reporting is worse than no
+# watcher: the whole point of it is that nothing lands unnoticed.
+[ -f "$HOME/.loopvision-cluster" ] && . "$HOME/.loopvision-cluster"
+: "${LOOPVISION_SSH_HOST:?set it in ~/.loopvision-cluster}"
+: "${LOOPVISION_CLUSTER_USER:?set it in ~/.loopvision-cluster}"
 RUNS="famA_d2_s3only_curr_s1 famA_d2_d4colour_s1
       famA_d2_s3spatial_s0 famA_d2_s3spatial_s1
       famA_d1_d4colour_s0
@@ -47,12 +58,12 @@ touch "$STATE" 2>/dev/null
 # attempt is not evidence of anything, and treating it as unreachable
 # would delay a completion report by a full interval, so retry first.
 for attempt in 1 2 3; do
-  remote=$(ssh -o BatchMode=yes -o ConnectTimeout=30 <login-host> "cd ~/loopvision && for r in $RUNS; do
+  remote=$(ssh -o BatchMode=yes -o ConnectTimeout=30 "$LOOPVISION_SSH_HOST" "cd ~/loopvision && for r in $RUNS; do
     if [ -f runs/\$r/DONE ]; then echo \"\$r DONE\";
     elif [ -f runs/\$r/metrics.parquet ]; then echo \"\$r live\";
     else echo \"\$r pending\"; fi
   done
-  echo \"QUEUE \$(qstat -u <cluster-user> 2>/dev/null | awk '/^[0-9]/ {split(\$1,a,\".\"); printf \"%s \", a[1]}')\"" 2>/dev/null)
+  echo \"QUEUE \$(qstat -u $LOOPVISION_CLUSTER_USER 2>/dev/null | awk '/^[0-9]/ {split(\$1,a,\".\"); printf \"%s \", a[1]}')\"" 2>/dev/null)
   [ -n "$remote" ] && break
   [ "$attempt" != "3" ] && sleep 20
 done

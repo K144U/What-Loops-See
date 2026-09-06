@@ -47,7 +47,11 @@ source .venv/bin/activate
 
 export RUNS="${RUNS:?RUNS must be set, as \"id|cfg|seed id|cfg|seed ...\"}"
 export MAX_HOURS="${MAX_HOURS:-23.0}"
-export CHAIN_SUBMIT_HOST="${CHAIN_SUBMIT_HOST:-<login-node>}"
+# PBS already knows which host the job was submitted from, so the login
+# node is derived rather than hardcoded. That keeps the cluster name out
+# of the repository and makes the chain work on any PBS site.
+export CHAIN_SUBMIT_HOST="${CHAIN_SUBMIT_HOST:-${PBS_O_HOST%%.*}}"
+: "${CHAIN_SUBMIT_HOST:?no submit host: set CHAIN_SUBMIT_HOST or check PBS_O_HOST}"
 export PYTHONUNBUFFERED=1
 export WANDB_MODE=offline
 
