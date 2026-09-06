@@ -57,7 +57,7 @@ Legend: NOT STARTED, IN PROGRESS, BLOCKED, DONE, FAILED.
 | 1 | 1 | Sep 7 to 13 | `groups.py`, `render.py`, families A, B, C generators, manifest and splits | `pytest tests/test_data.py` passes, 64 sample images dumped and eyeballed | **DONE 2026-08-31.** 99 tests pass, all three families, 11 contact sheets dumped and eyeballed |
 | 2 | 2 | Sep 14 to 20 | **GATE G1**, task validity | `pytest tests/test_gate_g1.py` passes on stored gate runs | **DONE 2026-09-01.** Passed on attempt 2 at 200k steps. Attempt 1 at 20k steps failed G1.2 and is recorded in full |
 | 3 | 3 to 5 | Sep 21 to Oct 11 | Model, training loop, stability, three conditioning variants, four baselines | d=384 trains stably at k=8 on depth 3 above threshold, cold start, twice with different seeds | **UNBLOCKED.** Model, trainer, baselines and parallel generation already built during milestone 2 |
-| 4 | 5 | Oct 5 to 11 | **GATE G2**, loops beat matched-compute feedforward and echo baseline | `python -m loopvision.analysis.gate_g2` exits 0 | **IN PROGRESS 2026-09-04.** Undefined as specified: on family A depth 3 both arms sit on the chance floor at 0.0225, so the gate could neither pass nor fail. Moved to family B at 1/1/1 per D-030. Module built and tested; the two baselines are queued |
+| 4 | 5 | Oct 5 to 11 | **GATE G2**, loops beat matched-compute feedforward and echo baseline | `python -m loopvision.analysis.gate_g2` exits 0 | **FAILED 2026-09-07.** Undefined where the spec put it: on family A depth 3 both arms sat on the chance floor at 0.0225. Moved to family B at 1/1/1 per D-030, where the comparison could come out either way. It came out against us. G2.1 failed, looped 0.9966 against matched-compute feedforward 0.9998. G2.2 passed against the echo baseline. Hard stop, reported |
 | 5 | 6 to 7 | Oct 12 to 25 | Freeze `preregistration.md` at tag `prereg-v1`, then full M1 sweep | H1 resolves, `m1_loopcurve.parquet` complete, coefficients a and b with CIs printed | NOT STARTED |
 | 6 | 8 to 9 | Oct 26 to Nov 8 | M2 patching over (loop, patch position) | H3 resolves, heatmaps for all three families | NOT STARTED |
 | 7 | 10 | Nov 9 to 15 | M3 coda-lens, M4 geometry | rays-not-fixed-points question answered either way | NOT STARTED |
@@ -83,7 +83,7 @@ The two hard stops. A gate that fails means stop and report, not work around.
 | G1.2 | 2 | Depth 1 solvable at k=1 to high threshold | **PASSED** | 2026-09-01 | 1.0000 at 200k steps. Grokked at step ~84k, so attempt 1's 20k budget was 4x short |
 | G1.3 | 2 | Order-blind ceiling below tau, probe not above ceiling (revised, D-016) | **PASSED** | 2026-08-31 | Worst ceiling 0.652 at depth 2, tau 0.90, margin 0.248. Linear probe 0.056, well under its ceiling. Needs no trained model |
 | G1.4 | 2 | Family C solvable at k=1 at every breadth | **PASSED** | 2026-08-31 | 1.000 at every breadth cell, 4 through 8 |
-| G2 | 4 | Does looping beat matched-compute feedforward and the echo baseline? | PENDING | | |
+| G2 | 4 | Does looping beat matched-compute feedforward and the echo baseline? | **FAILED** | 2026-09-07 | G2.1 FAILED: looped 0.9966 against feedforward 0.9998, margin -0.0032 where +0.02 was required. G2.2 PASSED: looped 0.9966 against echo 0.9716, margin +0.0250. The feedforward wins at every depth and the gap widens with depth, -0.0001 at d3 to -0.0138 at d6. Reported, not worked around |
 
 Record every gate outcome here and in `findings.md`, including a failing outcome and what was changed in response. A gate that was re-run after a task change must show both attempts.
 

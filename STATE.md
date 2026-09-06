@@ -1,4 +1,10 @@
-# What a Loop Sees: state as of 6 September 2026
+# What a Loop Sees: state as of 7 September 2026
+
+> **GATE G2 FAILED on 7 September.** Matched-compute feedforward beats the
+> looped model, 0.9998 against 0.9966, and the gap widens with depth to
+> -0.0138 at depth 6. The echo comparison passed. This is a hard stop: it is
+> reported, not worked around. `findings.md` has the per-depth table and what
+> it does and does not cost. **Read that entry before planning any work.**
 
 **Read this first after clearing context.** Everything here is derivable
 from the other documents; this says where to look, what is running, and
@@ -71,15 +77,14 @@ all verified from their arXiv abstract pages.
 
 | job | experiment | what it decides |
 |---|---|---|
-| 5180, 5181 (running) | s3_spatial seeds 0 and 1 | closes the 2x2. Substrate reading predicts it solves cold. At 110000 and 103350 of 300000, both reading 1.0000 |
-| 5188 (running) | d4_colour depth 1 donor | feeds 5218. At 80050 of 300000, reading 1.0000, about 8 hours left |
+| 5180, 5181 (running, 17h) | s3_spatial seeds 0 and 1 | closes the 2x2. Substrate reading predicts it solves cold. Both read 1.0000 |
+| 5188 | d4_colour depth 1 donor | **DONE.** Released 5218 |
 | 5217 | d4_colour curriculum **control** | the wrong-donor arm. No dependency: its donor `famA_d1_d4only_s0` is already DONE |
 | 5218 (held on `afterany:5188`) | d4_colour curriculum | does the rescue generalise across groups |
 | 5220 | scale control, wide, deep, big | the reviewer objection: was the model too small |
 | 5221 | depth ladder, d4only depths 3 to 6 | could give family A a usable depth axis, which H1 lacks |
-| 5206 (running), 5207 | gate G2 baselines, feedforward and echo | the hard-stop gate. ffwd is at 49 percent reading 0.9961 and 0.9968 |
-| 5211 | d4_colour feedforward control, matched compute, two seeds | is the deadlock about looping or about composition |
-| 5212 | s3only feedforward control, matched compute, two seeds | the same question in the group the deadlock was found in |
+| 5206, 5207 | gate G2 baselines, feedforward and echo | **DONE. The gate FAILED**, see the banner above |
+| 5211, 5212 (running) | feedforward control, matched compute | is the deadlock about looping or about composition |
 | 5222, 5223 | feedforward control, **matched parameters**, two seeds each | separates architecture from capacity. Only informative read against 5211 and 5212, see D-037 |
 
 **Every job is now a two core job, and that was the whole problem.** 5190
@@ -133,10 +138,13 @@ time.
 
 ## 4. What to do next, ranked
 
-1. **Read gate G2 when 5206 and 5207 land.**
-   `python -m loopvision.analysis.gate_g2`. It can fail: Gao et al.
-   arXiv 2607.16051 report parameter scaling usually beating looping at
-   matched compute. A failure is reported, not worked around.
+1. **Decide what the paper claims now that G2 has failed.** This is a
+   judgement call and it is not mine to make. The gate that was written to
+   test the intended headline returned against it, at every depth, by more
+   as depth grows. The mechanism results are untouched and do not depend on
+   looping winning anything, so the paper may still be a strong paper about
+   what looped models do and fail to do. But the compute-matched claim in
+   `paper.md` is not supported and cannot be repaired by running it again.
 2. **The feedforward control is built, verified and not yet queued.** Does
    a non-looped model of matched depth deadlock on colour too? If yes the
    finding is about compositional learning in general rather than about

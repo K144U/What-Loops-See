@@ -24,6 +24,40 @@ The short list. Every row here must appear in `docs/claims.md` in the repo and m
 
 Gates are results too, and the G1 table goes in the paper as evidence the depth axis is real. Record failing attempts as well as passing ones, with what changed in between.
 
+### GATE G2 FAILED. Matched-compute feedforward beats the loop, and by more as depth grows, milestone 4, 2026-09-07
+
+**This is a hard stop and it is reported, not worked around.**
+
+```
+G2.1  FAIL  looped 0.9966   matched-compute feedforward 0.9998   margin -0.0032, needed +0.02
+G2.2  PASS  looped 0.9966   echo baseline               0.9716   margin +0.0250, needed +0.02
+```
+
+Looped arm is the eight `famB_curve111` seeds. Baselines are `famB_g2_ffwd_s{0,1}` and `famB_g2_echo_s{0,1}`, matched structurally at `prelude + k*core + coda` with k=4, per D-030.
+
+**The aggregate hides nothing. The per-depth breakdown is worse than the headline.**
+
+| depth | 1 | 2 | 3 | 4 | 5 | 6 |
+|---|---|---|---|---|---|---|
+| looped | 1.0000 | 1.0000 | 0.9999 | 0.9989 | 0.9957 | **0.9851** |
+| feedforward | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 0.9998 | **0.9989** |
+| echo | 1.0000 | 0.9991 | 0.9980 | 0.9854 | 0.9514 | 0.8958 |
+| looped minus feedforward | -0.0000 | +0.0000 | -0.0001 | -0.0011 | -0.0041 | **-0.0138** |
+
+The feedforward is ahead at every depth where the two differ, and **the gap widens monotonically with depth**. The looped model degrades as the task deepens while the feedforward does not. Depth is exactly where looping was supposed to earn its keep.
+
+**A ceiling artifact was the obvious excuse, and the data refuses it.** Both arms sit above 0.98, so the first thought is that the task is too easy to discriminate and the gate is uninformative in the way the original G2 was uninformative at the chance floor (D-030). That reading does not survive the table. There is discriminating signal, it is monotonic in depth, and it points the wrong way. A saturated comparison would show noise around zero, not a trend.
+
+**What passed.** G2.2 is a genuine pass. Looping clearly beats the echo baseline, whose core is the identity, by +0.0250, and the echo arm degrades steeply with depth to 0.8958. So iterating a learned core does buy something over merely refreshing the state. It just does not buy as much as spending the same compute on untied depth.
+
+**What this costs.** The paper cannot claim that looping beats matched compute on this task family. The claim registered in `paper.md` as the intended headline is not supported by the gate written to test it. Gao et al. arXiv 2607.16051 predicted this: parameter scaling usually beats looping at matched compute, and they needed a specific mixture-of-experts design at 20B to overturn it. That citation is now load-bearing rather than defensive.
+
+**What is not decided by this.** The mechanism results stand on their own evidence and are untouched: the substrate dissociation, the bootstrapping deadlock and its curriculum rescue, and the three instruments agreeing these models compute answers rather than trajectories. None of those claim looping is better. They claim things about what a looped model does and fails to do, which remains true whether or not the architecture wins a compute-matched race.
+
+**The immediate diagnostic question.** The winning baseline is untied and 4x the depth of the core. Two properties changed at once, tying and depth, so the gate does not say which one produced the win. The untied baseline at matched depth is the experiment that separates them, and it is the fourth spec baseline, still unbuilt.
+
+Provenance: `runs/famB_curve111_s{0..7}`, `runs/famB_g2_ffwd_s{0,1}`, `runs/famB_g2_echo_s{0,1}`, read by `analysis/gate_g2.py`, exit 1.
+
 ### Gate G1, task validity, milestone 2
 
 **ATTEMPT 2, 2026-09-01: PASSED.** All four checks. Milestone 3 is unblocked. Attempt 1 is preserved below in full, per the rule that a gate re-run after a change must show both attempts.
