@@ -431,6 +431,29 @@ Attention and the MLPs, which is nearly all of the arithmetic in this model, are
 Changing either setting now would make new runs non-comparable with the 44 that have already finished under the current defaults, for a benefit nobody has measured. A certain cost against an unquantified benefit settles it for the campaign. Run count from `analysis/registry.py`, not counted by hand.
 **Consequence:** the paper needs no precision caveat for its matmul arithmetic, which is the arithmetic every quoted number depends on. If the patch embedding is ever questioned, the test is cheap and does not need retraining, because the setting affects the forward pass and not the stored weights: set `torch.backends.cudnn.allow_tf32 = False`, re-run one instrument that quotes four decimals against a stored checkpoint, and compare against the recorded value.
 **Reversible:** yes. Until the pinning lines exist this is a decision to leave a default alone rather than a change to anything, and the pin itself only fixes the values already in force.
+**The timing clause above was overtaken on 2026-09-06. See D-035.**
+
+### D-034. The repository is public, which resolves D-005 four milestones early
+**Date:** 2026-09-06
+**Milestone:** 4
+**Type:** resolution
+**Decision:** the full repository, `paper.md`, `findings.md` and `gap-analysis.md` included, was published at https://github.com/K144U/What-Loops-See on 2026-09-06, public, to timestamp priority over the work. D-005 is therefore resolved by action, rather than by the deliberation it scheduled for the end of milestone 8.
+**Reason:** priority. The instruction was explicit and repeated. A public repository with a push timestamp is the cheapest defensible claim to having held these results on this date, and three of them are unpublished.
+**Consequence:** D-005 asked exactly this question and named the cost, so the cost is recorded here rather than discovered later. It wrote that a preprint "complicates NeurIPS anonymity", and that the earlier submission pair had already flagged cross-paper anonymity risks. That cost is now incurred, and **it cannot be withdrawn by deleting the repository**, because the push is timestamped and public material may be mirrored, cached or indexed within minutes. Any double-blind submission drawn from this work must assume a reviewer can find the repository under the author's own account and read the whole experimental record, including findings that are in no paper yet. Read the venue's policy on preprints and public code before submitting, not after.
+
+Two things were done before publishing, recorded rather than assumed. The history was rewritten once, to remove tooling attribution trailers and to take a private address, a cluster username and two hostnames out of the published record. `docs/sha-map.txt` maps every pre-rewrite commit to its current one, because 49 run directories record the SHA they were produced at and would otherwise point at nothing. A scan for credentials and secrets before publishing found none.
+**Reversible:** no. Publication is not reversible, and treating it as reversible is the mistake this entry exists to prevent.
+
+### D-035. The TF32 pin reached the cluster before D-033 said it should
+**Date:** 2026-09-06
+**Milestone:** 4
+**Type:** deviation
+**Decision:** the pin from D-033 is live on the cluster now, with four of our jobs running, rather than waiting for the node to be clear of our runs as D-033 required.
+**Reason:** publishing required rewriting history, which orphaned the cluster's clone: every commit it held stopped existing. Restoring a coherent clone meant resetting it onto the new history, and the pin is part of that history. The alternative was leaving the cluster on a history unreachable from anywhere, which breaks provenance for every run started from that point onward. That is worse than deploying a change already shown to do nothing.
+
+D-033's caution was written while the pin's effect was unknown. It is now measured. After importing the pinned module the flags read False and True, identical to the unpinned defaults, and the suite passed in a sandbox built against the live tree, 272 passed and 4 skipped at exit 0, then again on the cluster after the reset at 276 passed. A value-preserving change cannot alter what a running job computes.
+**Consequence:** any run chaining after 2026-09-06 executes the pinned settings, which are the settings every earlier run already used, so no result is affected and no comparability is broken. The risk actually taken was not a precision change but the ordinary hazard of editing source that running jobs read live: a syntax error would have broken the next chain hop. That is why the sandbox test came first, and it is the argument for testing in a sandbox rather than in place.
+**Reversible:** yes, by deleting two lines, though there is no reason to.
 
 ### D-003. Compute block, sixteen weeks on the cluster
 **Date:** open
@@ -457,6 +480,7 @@ Changing either setting now would make new runs non-comparable with the 44 that 
 **Decision:** OPEN. From Section 12 of the spec.
 **Question:** a preprint after milestone 8 protects priority but complicates NeurIPS anonymity. The earlier submission pair already flagged cross-paper anonymity risks.
 **Resolve by:** end of milestone 8, late November 2026. Do not let this drift into the submission window, because by then the decision makes itself badly.
+**Resolved by D-034** on 2026-09-06, four milestones early, by publication rather than by deliberation.
 
 ### D-006. Task family priority
 **Date:** open
