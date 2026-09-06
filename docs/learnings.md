@@ -364,3 +364,11 @@ before recording the conclusion. Here that test was cheap and obvious in
 hindsight: if the subtask is genuinely hard, handing the model a head start
 should not rescue it. That is one run. See
 [[l-014-when-two-hypotheses-predict-the-same-number]].
+
+### L-020. A control that supplies its own target verifies nothing
+**Source:** this project, milestone 4
+**What happened:** the first version of `test_control_is_matched_compute` read the loop count k from the feedforward control's own config and computed the expected block count from it. Changing the control's `k_train` from 8 to 4 moved the expected value and the built value together, so the test passed against a control built at half the depth of the model it exists to match.
+**Cost:** none, because the mutation check caught it before the control was queued. Unchecked it would have cost a 300000 step run answering a different question than the one asked, with nothing in the run directory to record the substitution.
+**Root cause:** a comparison whose two sides are derived from the same source is not a comparison. The flaw survived writing because the docstring stated the correct rule, "read the expected count from the LOOPED config, not the control's own", and the code obeyed it for the block counts while still taking k from the control. A reader checking code against docstring sees the word looped and moves on.
+**Rule now:** in a matched-X test every term of the expected value comes from the reference side, and the test additionally asserts that the control's own declaration equals it. Two assertions, because the second one names the failure rather than merely preventing it.
+**Enforced by:** `tests/test_ffwd_control.py::test_control_is_matched_compute`, which reads k from the looped config and asserts `ffwd["k_train"] == k`. Mutation checked: k_train 8 to 4, steps divergence, and arch reverted to looped are all detected.

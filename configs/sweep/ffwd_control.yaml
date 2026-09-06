@@ -1,0 +1,13 @@
+runs:
+- run_id: famA_d2_d4colour_ffwd_s0
+  config: m3/famA_d2_d4colour_ffwd.yaml
+  seed: 0
+- run_id: famA_d2_d4colour_ffwd_s1
+  config: m3/famA_d2_d4colour_ffwd.yaml
+  seed: 1
+- run_id: famA_d2_s3only_ffwd_s0
+  config: m3/famA_d2_s3only_ffwd.yaml
+  seed: 0
+- run_id: famA_d2_s3only_ffwd_s1
+  config: m3/famA_d2_s3only_ffwd.yaml
+  seed: 1

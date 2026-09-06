@@ -397,6 +397,22 @@ The cap postdates the script. It had never bitten because every real submission 
 **Consequence:** none for any recorded run. No submitted job ever used the 96gb directive, so no result changes and the paper says nothing about this. The number is advisory in any case: PBS does not enforce memory here, and job 375 on the gpu node is using 1041 GiB against no request at all, so it holds the 32gb default. The binding constraint on that node is cores, measured at 96 of 96 assigned with 41 jobs resident.
 **Reversible:** yes, if the cap is lifted. Re-check with `qstat -Qf gpu | grep resources_max`.
 
+### D-032. The feedforward control for the colour deadlock, matched on compute at k=8
+**Date:** 2026-09-06
+**Milestone:** 4
+**Type:** scope
+**Decision:** build two feedforward controls, `famA_d2_d4colour_ffwd` and `famA_d2_s3only_ffwd`, each derived from its looped twin and differing from it in exactly three keys: `arch`, `k_schedule` and `k_train`. Both are built at k=8, so `prelude + k*core + coda` is `2 + 16 + 2 = 20` blocks, which is what the looped twin executes at its training operating point.
+**Reason:** the deadlock finding says a looped model cannot bootstrap composition on colour from scratch but can from a donor. That is a claim about **looping** only if a non-looped model of the same depth does not deadlock the same way. If it does, the finding is about compositional learning in general, which is a different paper. This has been ranked second in the handoff since 4 September and was never built.
+
+k=8 and not another value because both looped twins train with `k_schedule: sampled` and `k_mean_target: 8`, so 8 is their operating point. Gate G2 matched at k=4 for a different reason (D-030): there k=4 was where the looped model cleared tau at every depth. Here the looped model clears nothing at any k, so no such point exists and the training mean is the only choice that is not arbitrary.
+**Consequence:** **matched compute is not matched parameters.** The control holds 35.47M parameters against the looped model's 10.98M, a ratio of 3.23x, because its 20 blocks are untied where the looped model reuses one core. The spec (IMPLEMENTATION.md, baselines) calls for a matched-parameter arm separately and it is not built. So the two outcomes are not symmetric:
+
+- If the control **deadlocks**, the result is clean. A model with three times the parameters and the same depth also fails, and the deadlock is not an artifact of weight tying.
+- If the control **solves** the task, parameter count remains an alternative explanation. Run 5190 (wide, deep and big looped models on the same task) addresses that from the other side: a larger looped model that still deadlocks while the feedforward solves it isolates the architecture rather than the size.
+
+Reporting either outcome requires saying which of these two situations we are in.
+**Reversible:** yes. Nothing else depends on these configs.
+
 ### D-003. Compute block, sixteen weeks on the cluster
 **Date:** open
 **Milestone:** blocks the pre-registration freeze at milestone 5
