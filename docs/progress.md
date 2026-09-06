@@ -254,3 +254,77 @@ reached and deleting it would hide the reasoning.
 
 **Open and unchanged:** gate G2 has not run, and the substrate experiment
 in `experiment-substrate.md` is designed but not built.
+
+---
+
+## Handoff, 2026-09-04 end of session
+
+Written so a cold start can continue without the conversation. Everything
+below is derivable from the other documents; this says where to look and
+what is in flight.
+
+### The three results the paper now rests on
+
+1. **H1 supported.** Depth raises k_min in eight seeds of eight, breadth in
+   zero of three, at matched architecture. Single-pass accuracy falls 0.998
+   to 0.492 across depth and moves 1.000 to 0.999 across breadth.
+   findings.md, "H1 SUPPORTED".
+2. **Substrate, not group.** D4 solves at 1.0000 on position and sits on
+   the chance floor on colour, at the full budget, with every algebraic
+   property held constant including an order-blind ceiling of 0.8125 in
+   both. The registered abelian-foothold alternative was refuted.
+   findings.md, "SUBSTRATE, NOT GROUP".
+3. **The failure is a bootstrapping deadlock, not difficulty.** A depth 2
+   S3 task that never left chance in 300000 steps is solved in 10000 from a
+   depth 1 donor, with a wrong-donor control flat at chance. The state
+   probe shows the cold-start model never extracts its own inputs and the
+   curriculum model does. findings.md, "CORRECTION" and "The deadlock
+   closes".
+
+### In flight
+
+| job | experiment | why it matters |
+|---|---|---|
+| 5178 | d4_colour seed 1 | second seed of result 2 |
+| 5180, 5181 | s3_spatial | closes the 2x2. Substrate reading predicts it solves cold |
+| 5188 | d4_colour depth 1 donor | feeds 5189 |
+| 5189 (held) | d4_colour curriculum + control | does the rescue generalise across groups |
+| 5190 | scale control, wide/deep/big | the reviewer objection: was the model too small |
+| 5191 | depth ladder d4only d3 to d6 | could give family A a usable depth axis, which H1 currently lacks |
+
+All fourteen runs are tracked by the scheduled task `loopvision-run-watch`,
+which persists to disk and has survived four power cuts. It reports each
+start and each completion.
+
+### What is NOT done, ranked
+
+1. **Gate G2 has never run.** It is a hard stop in the plan, milestone 4,
+   marked NOT STARTED, and the project has walked past it into milestone 6
+   and 7 work. Gao et al. 2607.16051 make it genuinely uncertain rather
+   than a formality. This is the largest outstanding risk.
+2. The feedforward control: does a non-looped model of matched depth
+   deadlock on colour too? Decides whether the finding is about looping or
+   about compositional learning in general. Two very different papers.
+3. The curriculum runs to full budget, and s3_spatial, both under way.
+
+### Standing rules that keep being earned
+
+Every instrument is mutation checked, and three times today the first
+version of a test passed against deliberately broken code: a mocked ssh
+that ignored its command, a substrate test that compared images which
+differ anyway, and a hop-rate metric that returned the same number for
+opposite mechanisms. See L-011, L-015, L-016, L-017.
+
+A perfect score gets the blank-image control and, since today, the input
+ablation. `analysis/ablate_input.py` removes one patch at a time; the
+solved D4 model needs its state and both operators and correctly ignores
+the distractors, which together with an order-blind ceiling of 0.8125
+below its 1.0000 is why that score is believed.
+
+### Operational
+
+The machine running the VPN has had repeated power cuts. Cluster jobs are
+unaffected, the scheduled watcher survives, in-session monitors do not. The
+GPU node runs at or near zero free cores most of the time, so jobs are
+queue bound rather than compute bound, and shrinking a core request to fit
+a gap has started work hours earlier on four occasions.
