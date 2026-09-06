@@ -32,7 +32,9 @@ position and sits on the chance floor acting on colour, at the full 300000
 step budget, with every algebraic property held constant including an
 order-blind ceiling of 0.8125 in both. The registered abelian-foothold
 alternative predicted the opposite and was refuted. See `findings.md`,
-"SUBSTRATE, NOT GROUP".
+"SUBSTRATE, NOT GROUP". **Replicated in a second seed on 6 September:**
+`famA_d2_d4colour_s1` wrote DONE at the full 300000 steps and finished at
+0.1277, spread 0.1195 to 0.1421, against a 0.125 floor.
 
 **The failure is a bootstrapping deadlock, not difficulty.** A depth 2 S3
 task that never left chance in 300000 steps is solved in 10000 from a depth
@@ -69,13 +71,13 @@ all verified from their arXiv abstract pages.
 
 | job | experiment | what it decides |
 |---|---|---|
-| 5178 | d4_colour seed 1 | second seed of result 2. At 294400 of 300000 |
 | 5180, 5181 | s3_spatial seeds 0 and 1 | closes the 2x2. Substrate reading predicts it solves cold. At 54600 of 300000 |
 | 5188 | d4_colour depth 1 donor | feeds 5189 |
 | 5189 (held) | d4_colour curriculum and control | does the rescue generalise across groups |
 | 5190 | scale control, wide, deep, big | the reviewer objection: was the model too small |
 | 5191 | depth ladder, d4only depths 3 to 6 | could give family A a usable depth axis, which H1 lacks |
-| 5206, 5207 | gate G2 baselines, feedforward and echo | the hard-stop gate |
+| 5206 (running), 5207 | gate G2 baselines, feedforward and echo | the hard-stop gate |
+| 5211 | d4_colour feedforward control, two seeds | is the deadlock about looping or about composition |
 
 **5202 no longer exists.** It asked for four cores to run four G2 baselines
 and was replaced on 6 September by 5206 and 5207, two cores each, because
@@ -86,12 +88,13 @@ expect these two to be slower per step than 5180 and 5181 are.
 
 **In flight, and not results.** Both s3_spatial seeds read **1.0000** at
 50000 steps, which is the direction the substrate reading predicted in
-advance rather than a pattern found afterwards, and d4_colour seed 1
-sits at **0.1285** at 290000 against a chance floor of 0.125. If those
-hold, the 2x2 closes on substrate with no group effect: solved on
-position for both groups, chance on colour for both. No DONE sentinel
-exists for any of the three, and a near perfect score still owes the
-three controls described in section 5. Nothing here is a finding yet.
+advance rather than a pattern found afterwards. The colour half of the
+2x2 is no longer in flight: d4_colour finished at chance in both seeds.
+If the s3_spatial pair holds to its budget the 2x2 closes on substrate
+with no group effect, solved on position for both groups and chance on
+colour for both. Neither s3_spatial run has written DONE, and a near
+perfect score still owes the three controls described in section 5, so
+that half is not a finding yet.
 
 **5180 and 5181 will probably not finish inside their wall.** They are at
 18.2 percent of the step budget having spent 18.3 percent of `MAX_HOURS=20`,
@@ -121,7 +124,9 @@ Nothing can be done to a running job here: `qalter` is blocked and
    before reporting either outcome: matched compute is not matched
    parameters here, so a control that deadlocks is clean and a control
    that solves the task leaves parameter count as a rival explanation.
-   Queue it with the same two-core shape as 5206 and 5207.
+   **The d4_colour pair is queued as 5211**, two cores, two seeds. The
+   s3only pair is built and deliberately not queued, because cores are
+   scarce and d4_colour is the cell the substrate result rests on.
 3. **Read the depth ladder.** If d4only solves depths 3 to 6, family A
    gains a depth axis and H1 gets a second independent family.
 

@@ -875,9 +875,10 @@ D4 is the group that solves composition at depth 2 without difficulty. Acting on
 |---|---|---|---|---|---|
 | `famA_d2_d4only` | D4 | position | **1.0000** | 0.0000 | 0.1250 |
 | `famA_d2_d4colour_s0` | D4 | **colour** | **0.1277** | **2.0795** | 0.1250 |
+| `famA_d2_d4colour_s1` | D4 | **colour** | **0.1277** | | 0.1250 |
 | `famA_d2_s3only` | S3 | colour | 0.1659 | 1.7916 | 0.1667 |
 
-ln(8) = 2.0794. The colour arm finished on the chance floor to four decimals, and seed 1 is at 0.1265 by 203900 steps and heading to the same place.
+ln(8) = 2.0794. The colour arm finished on the chance floor to four decimals. **Seed 1 completed the full 300000 steps on 6 September and finished at 0.1277, spread 0.1195 to 0.1421**, so the colour failure is now replicated at full budget rather than extrapolated.
 
 **Everything that could explain this by the algebra is held constant.** It is the same group, order 8, same generators, same abelianisation of order 4, and the same order-blind ceiling of 0.8125 at depth 2. The only thing that differs between the first two rows is what the group acts on.
 
@@ -894,9 +895,11 @@ Nothing readable anywhere, at any pass, exactly as in the cold-start S3 run and 
 
 **What this establishes.** A looped vision transformer composes a non-abelian group acting on position, and fails to compose the same group acting on colour, from a standing start. The obstacle is the substrate, not the algebra. Since the binding literature's account of feedforward failure is that everything must resolve in a single pass, and a looped model is serial by construction, this is the architecture that account implies should be the remedy. It is not.
 
-**What is still open.** `s3_spatial` is queued and is the fourth cell. The substrate reading predicts it solves cold. If it does, the 2 by 2 closes with both groups solving on geometry and both failing on colour, and no confound remains. If it fails, then geometry is not sufficient either and the claim narrows to something about D4 specifically, which the D4 row alone cannot distinguish.
+**What is still open.** `s3_spatial` is running as 5180 and 5181 and is the fourth cell. Both seeds read 1.0000 at 50000 of 300000 steps as of 6 September, which is what the substrate reading predicts, but neither has written DONE and the S3 order-blind ceiling has not been computed, so this is an in-flight reading and not a result. The substrate reading predicts it solves cold. If it does, the 2 by 2 closes with both groups solving on geometry and both failing on colour, and no confound remains. If it fails, then geometry is not sufficient either and the claim narrows to something about D4 specifically, which the D4 row alone cannot distinguish.
 
-**The obvious follow-up.** S3 on colour was rescued by a depth 1 curriculum. If D4 on colour is rescued the same way, the deadlock is one mechanism rather than two coincidences, and the intervention generalises across groups. That needs a depth 1 `d4_colour` donor, which does not exist yet.
+**The obvious follow-up.** S3 on colour was rescued by a depth 1 curriculum. If D4 on colour is rescued the same way, the deadlock is one mechanism rather than two coincidences, and the intervention generalises across groups. That needs a depth 1 `d4_colour` donor, which is running as 5188 and feeds the held job 5189.
+
+**The inference about architecture is not yet controlled.** The paragraph above reasons that a serial architecture should have been the remedy and was not. That reasoning holds only if a non-looped model of the same depth does not fail the same way. The matched-compute feedforward control is queued as 5211, two seeds, and D-032 records why the two possible outcomes are not symmetric. Until it lands, read that paragraph as an open question rather than as a settled contrast.
 
 Provenance: `runs/famA_d2_d4colour_s{0,1}`, `runs/famA_d2_d4colour_s0/state_probe.json`, `runs/famA_d2_d4only_s{0,1}`, `runs/famA_d2_s3only_s{0,1}`.
 
