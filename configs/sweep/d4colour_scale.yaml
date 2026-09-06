@@ -1,0 +1,10 @@
+runs:
+- run_id: famA_d2_d4colour_wide_s0
+  config: m3/famA_d2_d4colour_wide.yaml
+  seed: 0
+- run_id: famA_d2_d4colour_deep_s0
+  config: m3/famA_d2_d4colour_deep.yaml
+  seed: 0
+- run_id: famA_d2_d4colour_big_s0
+  config: m3/famA_d2_d4colour_big.yaml
+  seed: 0
