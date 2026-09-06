@@ -8,8 +8,8 @@
 # own -l on the command line and overrode it. A bare
 # "qsub scripts/multirun.pbs" would have been rejected outright.
 # Re-check the cap with: qstat -Qf gpu | grep resources_max
-#PBS -l select=1:ncpus=8:mem=64gb
-#PBS -l walltime=24:00:00
+#PBS -l select=1:ncpus=2:mem=48gb
+#PBS -l walltime=168:00:00
 #PBS -j oe
 
 # Run several training runs inside ONE PBS job, each pinned to its own GPU.
@@ -73,7 +73,7 @@ if [ -z "$PENDING" ]; then
 fi
 
 NRUNS=$(echo "$PENDING" | wc -w)
-NCPUS="${NCPUS:-8}"
+NCPUS="${NCPUS:-2}"
 # One core for the trainer itself, the rest become generation workers.
 PER_RUN=$(( NCPUS / NRUNS ))
 [ "$PER_RUN" -lt 1 ] && PER_RUN=1
@@ -144,7 +144,12 @@ REMAINING=$(echo "$REMAINING" | xargs || true)
 
 if [ -n "$REMAINING" ]; then
     echo "queueing successor for:$REMAINING"
-    Q="qsub -W depend=afterany:$PBS_JOBID -v RUNS=\"$REMAINING\",MAX_HOURS=$MAX_HOURS scripts/multirun.pbs"
+    # Carry this job's allocation forward explicitly. Without the -l the
+    # successor falls back to the header, and a job that was sized to fit a
+    # two core gap resubmits itself asking for whatever the header says.
+    # On a node where only small requests schedule, that successor never
+    # runs and the chain dies silently holding a completed checkpoint.
+    Q="qsub -W depend=afterany:$PBS_JOBID -l select=1:ncpus=${NCPUS}:mem=48gb -l walltime=168:00:00 -v RUNS=\"$REMAINING\",MAX_HOURS=$MAX_HOURS,NCPUS=$NCPUS scripts/multirun.pbs"
     set +e
     eval "$Q"
     rc=$?
