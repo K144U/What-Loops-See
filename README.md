@@ -165,9 +165,10 @@ from `~/.loopvision-cluster`:
 
 ## Provenance
 
-The history was rewritten once, on 6 September 2026, to remove tooling
+The history was rewritten twice on 6 September 2026: once to remove tooling
 attribution trailers and to take a private address, a cluster username and two
-hostnames out of the published record. Every commit SHA changed.
+hostnames out of the published record, and once to correct the author identity.
+Every commit SHA changed both times.
 
 Run directories record the commit they were produced at, and those files hold
 pre-rewrite SHAs. `docs/sha-map.txt` maps old to new, so every provenance line

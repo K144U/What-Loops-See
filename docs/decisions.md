@@ -455,6 +455,17 @@ D-033's caution was written while the pin's effect was unknown. It is now measur
 **Consequence:** any run chaining after 2026-09-06 executes the pinned settings, which are the settings every earlier run already used, so no result is affected and no comparability is broken. The risk actually taken was not a precision change but the ordinary hazard of editing source that running jobs read live: a syntax error would have broken the next chain hop. That is why the sandbox test came first, and it is the argument for testing in a sandbox rather than in place.
 **Reversible:** yes, by deleting two lines, though there is no reason to.
 
+### D-036. A second history rewrite, force pushed over an already published repository
+**Date:** 2026-09-06
+**Milestone:** 4
+**Type:** deviation
+**Decision:** the history was rewritten a second time, setting the author and committer of all 102 commits to the identity actually linked to the publishing account, and force pushed over the repository published earlier the same day.
+**Reason:** the first rewrite set a uniform author, which satisfied the requirement that one name appear, but used an address not registered to the GitHub account. GitHub attributes commits by email, so the contributors list stayed empty and the commits linked to no profile. A priority claim that does not resolve to its author is worth less than one that does.
+**Consequence:** every SHA changed again. `docs/sha-map.txt` now maps original SHAs, the ones the 49 run directories actually record, directly to current ones, verified by resolving all 100 targets to real commits. Intermediate SHAs from the first rewrite are deliberately absent, because they never left this machine.
+
+**The force push is the part worth remembering.** The repository was public for roughly twenty minutes carrying the earlier history. Anyone who cloned in that window holds commits that no longer exist upstream and cannot pull. That is acceptable here only because the window was short, the repository was hours old, and its existence had been announced to nobody. **It stops being acceptable the moment anyone else holds a clone**, and no later rewrite should be assumed safe on this precedent.
+**Reversible:** no, in the sense that matters. The earlier SHAs were public, and public cannot be undone.
+
 ### D-003. Compute block, sixteen weeks on the cluster
 **Date:** open
 **Milestone:** blocks the pre-registration freeze at milestone 5
