@@ -78,6 +78,7 @@ all verified from their arXiv abstract pages.
 | 5191 | depth ladder, d4only depths 3 to 6 | could give family A a usable depth axis, which H1 lacks |
 | 5206 (running), 5207 | gate G2 baselines, feedforward and echo | the hard-stop gate |
 | 5211 | d4_colour feedforward control, two seeds | is the deadlock about looping or about composition |
+| 5212 | s3only feedforward control, two seeds | the same question in the group the deadlock was found in |
 
 **5202 no longer exists.** It asked for four cores to run four G2 baselines
 and was replaced on 6 September by 5206 and 5207, two cores each, because
@@ -124,9 +125,10 @@ Nothing can be done to a running job here: `qalter` is blocked and
    before reporting either outcome: matched compute is not matched
    parameters here, so a control that deadlocks is clean and a control
    that solves the task leaves parameter count as a rival explanation.
-   **The d4_colour pair is queued as 5211**, two cores, two seeds. The
-   s3only pair is built and deliberately not queued, because cores are
-   scarce and d4_colour is the cell the substrate result rests on.
+   **Both pairs are queued, d4_colour as 5211 and s3only as 5212**, two
+   cores and two seeds each. d4_colour is the cell the substrate result
+   rests on; s3only is the group the deadlock and its curriculum rescue
+   were originally found in, so the control covers both.
 3. **Read the depth ladder.** If d4only solves depths 3 to 6, family A
    gains a depth axis and H1 gets a second independent family.
 
