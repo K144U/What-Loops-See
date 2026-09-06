@@ -39,7 +39,7 @@ Full spec: docs/IMPLEMENTATION.md. Read the relevant section before writing code
   A test that passes against a deliberately broken implementation is not evidence.
 
 ## Commands
-    pytest -q
+    pytest                                           # bare. addopts adds -q, a second -q hides the count
     python -m loopvision.train.smoke --run-id <id> --steps 1000 --resume auto
     python -m loopvision.train.cli --config configs/base.yaml --run-id <id> --resume auto
     python -m loopvision.analysis.registry            # run index and counts

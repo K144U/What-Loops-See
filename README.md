@@ -15,7 +15,7 @@ how it is built, and `docs/progress.md` for where it currently stands.
     python -m venv .venv && source .venv/bin/activate
     pip install torch==2.4.1 --index-url https://download.pytorch.org/whl/cu121
     pip install -e ".[dev]"
-    pytest -q
+    pytest
 
 The cu121 index URL is not optional. The target cluster runs driver 525 with
 CUDA 12.0 and cannot load a cu124 or later build.

@@ -500,7 +500,7 @@ Full spec: docs/IMPLEMENTATION.md. Read the relevant section before writing code
 - Instruments use src/loopvision/instruments/hooks.py. Never reimplement the loop inside an instrument.
 
 ## Commands
-    pytest -q
+    pytest                                           # bare. addopts adds -q, a second -q hides the count
     python -m loopvision.train.cli --config configs/base.yaml --run-id <id> --resume auto
     python -m loopvision.analysis.registry            # run index and counts
     RUN_ID=<id> CONFIG=<cfg> qsub scripts/submit.pbs

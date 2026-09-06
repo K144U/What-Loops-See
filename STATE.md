@@ -1,13 +1,20 @@
-# What a Loop Sees: state as of 4 September 2026
+# What a Loop Sees: state as of 6 September 2026
 
 **Read this first after clearing context.** Everything here is derivable
 from the other documents; this says where to look, what is running, and
 what to do next. Written so a session starting cold can continue without
 the conversation that produced it.
 
-Local and cluster are at the same commit. `pytest -q` passes. The
-scheduled task `loopvision-run-watch` is armed and reports every run as it
-starts and finishes.
+Local and cluster are at the same commit. `pytest` passes, 270 tests,
+exit 0, run on the cluster. **Run it bare, not as `pytest -q`:** `addopts`
+has supplied a `-q` since the first commit and a second one suppresses the
+count entirely. The suite does not run on the Windows machine at all,
+where the package is not installed and collection fails on import, so
+every test claim in these documents is a cluster claim.
+
+The scheduled task `loopvision-run-watch` is armed and reports every run
+as it starts and finishes, including the four gate G2 baselines, which it
+did not track until 6 September.
 
 ---
 
@@ -62,22 +69,47 @@ all verified from their arXiv abstract pages.
 
 | job | experiment | what it decides |
 |---|---|---|
-| 5178 | d4_colour seed 1 | second seed of result 2 |
-| 5180, 5181 | s3_spatial | closes the 2x2. Substrate reading predicts it solves cold |
+| 5178 | d4_colour seed 1 | second seed of result 2. At 294400 of 300000 |
+| 5180, 5181 | s3_spatial seeds 0 and 1 | closes the 2x2. Substrate reading predicts it solves cold. At 54600 of 300000 |
 | 5188 | d4_colour depth 1 donor | feeds 5189 |
 | 5189 (held) | d4_colour curriculum and control | does the rescue generalise across groups |
 | 5190 | scale control, wide, deep, big | the reviewer objection: was the model too small |
 | 5191 | depth ladder, d4only depths 3 to 6 | could give family A a usable depth axis, which H1 lacks |
-| 5202 | gate G2 baselines, feedforward and echo | the hard-stop gate |
+| 5206, 5207 | gate G2 baselines, feedforward and echo | the hard-stop gate |
+
+**5202 no longer exists.** It asked for four cores to run four G2 baselines
+and was replaced on 6 September by 5206 and 5207, two cores each, because
+cores are the binding constraint and a smaller request fits a smaller gap.
+The cost is `WORKERS=0` and in-process generation. D-025 puts one worker at
+roughly 4000 samples per second against a GPU consuming 1500 to 3000, so
+expect these two to be slower per step than 5180 and 5181 are.
+
+**In flight, and not results.** Both s3_spatial seeds read **1.0000** at
+50000 steps, which is the direction the substrate reading predicted in
+advance rather than a pattern found afterwards, and d4_colour seed 1
+sits at **0.1285** at 290000 against a chance floor of 0.125. If those
+hold, the 2x2 closes on substrate with no group effect: solved on
+position for both groups, chance on colour for both. No DONE sentinel
+exists for any of the three, and a near perfect score still owes the
+three controls described in section 5. Nothing here is a finding yet.
+
+**5180 and 5181 will probably not finish inside their wall.** They are at
+18.2 percent of the step budget having spent 18.3 percent of `MAX_HOURS=20`,
+so a straight extrapolation needs about 20.1 hours against a 20.0 hour
+limit. They will most likely stop a few thousand steps short and chain.
+The chain itself is sound, but the successor queues into a node with no
+free cores, so the 2x2 could stall for days over the last one percent.
+Nothing can be done to a running job here: `qalter` is blocked and
+`MAX_HOURS` is fixed at submit time.
 
 ---
 
 ## 4. What to do next, ranked
 
-1. **Read gate G2 when 5202 lands.** `python -m loopvision.analysis.gate_g2`.
-   It can fail: Gao et al. arXiv 2607.16051 report parameter scaling
-   usually beating looping at matched compute. A failure is reported, not
-   worked around.
+1. **Read gate G2 when 5206 and 5207 land.**
+   `python -m loopvision.analysis.gate_g2`. It can fail: Gao et al.
+   arXiv 2607.16051 report parameter scaling usually beating looping at
+   matched compute. A failure is reported, not worked around.
 2. **The feedforward control**, not yet built. Does a non-looped model of
    matched depth deadlock on colour too? If yes the finding is about
    compositional learning in general rather than about looping, which is a
@@ -100,7 +132,8 @@ it has failed on purpose.
 the input ablation in `analysis/ablate_input.py`, and an analytic
 order-blind ceiling. The solved D4 model needs its state and both operators
 and correctly ignores the distractors, and its 1.0000 sits above a computed
-ceiling of 0.8125. That is why the score is believed.
+ceiling of 0.8125. That is why the score is believed. The ceiling for S3 is
+a different number and has not been computed yet.
 
 **Two gates have been moved and both are recorded.** G1.3 demanded an
 unachievable chance-level score (D-016) and G2 was undefined where it was
@@ -113,6 +146,23 @@ abelian quotient reading, the family A depth wall as first stated, the
 single-seed curve result, and the "S3 is genuinely hard" conclusion. The
 wrong version is how the right one was reached.
 
+**Editing source reaches jobs that are already running.** PBS spools the
+`.pbs` script at submit time and nothing else, so a queued or running job
+reads `src/` and `configs/` fresh from disk. Editing either while a run is
+in flight changes what that experiment computes. Editing a `.pbs` file is
+safe by the same rule, because the copy the job runs was taken at `qsub`.
+
+**There is no preregistration and no `prereg-v1` tag.** The file has never
+existed in the working tree or anywhere in git history. Writing and
+freezing it is milestone 5 work and milestone 5 is NOT STARTED. CLAUDE.md
+asserted the freeze in the present tense until 6 September.
+
+**The cluster remote is a file that has to be placed.** `origin` on the
+cluster points at `/home/<cluster-user>/loopvision.bundle`, which does not
+persist between syncs. To ship a commit: `git bundle create` locally, copy
+it to that path, then `git pull origin master` on the cluster. A pull with
+no bundle in place fails and says nothing useful about why.
+
 ---
 
 ## 6. Operational
@@ -121,10 +171,30 @@ The machine running the VPN has had repeated power cuts. Cluster jobs are
 unaffected, the scheduled watcher survives them, in-session monitors do
 not. If a long silence happens, check rather than assume.
 
-The GPU node runs at or near zero free cores most of the time, so work is
-queue bound rather than compute bound. Shrinking a core request to fit a
-gap has started jobs hours earlier on four occasions. GPUs are now claimed
-atomically so concurrent jobs stop landing on the same card.
+**The GPU node is core bound and there is no scheduled drain to wait for.**
+Measured 6 September: 96 of 96 cores assigned with 41 jobs resident, while
+memory is nowhere near binding. Shrinking a core request to fit a gap has
+started jobs hours earlier on five occasions. GPUs are claimed atomically
+so concurrent jobs stop landing on the same card.
+
+**Neither memory nor walltime is enforced.** One neighbouring job holds
+1041 GiB against no request at all, so the 32gb default. Several jobs have
+used more than ten times the walltime they asked for, one at 286 hours
+against a 24 hour request. Two consequences: a memory request protects
+nothing, and a neighbour's walltime tells you nothing about when its cores
+come back.
+
+**The gpu queue caps a job at `mem=64gb` and `ncpus=16`, and a user at 5
+running jobs and 16 running cores.** The memory cap is recent and refuses
+anything larger at submit time. `multirun.pbs` asked for 96gb until
+6 September, which never bit only because every real submission overrides
+it on the command line. See D-031.
+
+**workq is a separate machine pool and is mostly idle.** Six nodes,
+`<cpu-node-01>` to `<cpu-node-06>`, 64 cores each, no GPUs, and no `resources_max`
+at all. Four of the six were completely idle on 6 September. Nothing that
+needs a GPU can go there, but CPU-only analysis never has to queue behind
+the gpu node famine.
 
 ---
 
@@ -134,3 +204,8 @@ D-003 compute beyond the current block, D-004 co-authorship, D-005 whether
 to post a preprint before the deadline, D-006 which family to prioritise.
 D-006 now has evidence behind it: family B carries H1, family A carries the
 mechanism.
+
+An untaken decision, not yet numbered: **TF32 is not set anywhere in the
+repository**, so fp32 matmuls run at a 10-bit mantissa by default on these
+cards. That is an inherited default rather than a choice, and the
+instruments quote numbers to four decimals.
