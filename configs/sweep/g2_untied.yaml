@@ -1,0 +1,7 @@
+runs:
+- run_id: famB_g2_untied_s0
+  config: m3/famB_g2_untied.yaml
+  seed: 0
+- run_id: famB_g2_untied_s1
+  config: m3/famB_g2_untied.yaml
+  seed: 1

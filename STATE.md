@@ -138,14 +138,25 @@ time.
 
 ## 4. What to do next, ranked
 
-1. **Decide what the paper claims now that G2 has failed.** This is a
+1. **The untied baseline is built and not yet queued, and it is the
+   diagnostic the failed gate needs.** G2.1 lost to an arm that untied the
+   weights **and** removed the loop structure, so it does not say which one
+   won. `famB_g2_untied` restores the loop structure while keeping untied
+   weights: 10.9701M parameters against the feedforward arm's 10.6752M, a
+   difference of exactly 294912, the injection adapter. Against feedforward
+   it isolates the loop; against looped it isolates weight tying. D-038 has
+   the three outcomes and what each licenses. Queue with
+   `configs/sweep/g2_untied.yaml`, two cores. **It does not reopen G2**,
+   which failed and stays failed.
+
+2. **Decide what the paper claims now that G2 has failed.** This is a
    judgement call and it is not mine to make. The gate that was written to
    test the intended headline returned against it, at every depth, by more
    as depth grows. The mechanism results are untouched and do not depend on
    looping winning anything, so the paper may still be a strong paper about
    what looped models do and fail to do. But the compute-matched claim in
    `paper.md` is not supported and cannot be repaired by running it again.
-2. **The feedforward control is built, verified and not yet queued.** Does
+3. **The feedforward control is built, verified and not yet queued.** Does
    a non-looped model of matched depth deadlock on colour too? If yes the
    finding is about compositional learning in general rather than about
    looping, which is a different paper. The configs are
@@ -168,7 +179,7 @@ time.
    from capacity. The two arms bracket the looped model, and **D-037 says
    what each of the three possible outcomes means.** Read it before
    reporting either arm: neither is interpretable without the other.
-3. **Read the depth ladder.** If d4only solves depths 3 to 6, family A
+4. **Read the depth ladder.** If d4only solves depths 3 to 6, family A
    gains a depth axis and H1 gets a second independent family.
 
 ---

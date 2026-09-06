@@ -493,6 +493,34 @@ k=1 is not a tuned choice. A looped model's parameters live in `prelude + core +
 Reporting any outcome requires saying which of these three it is.
 **Reversible:** yes. Nothing depends on these configs.
 
+### D-038. The untied baseline, to decompose the gate G2 failure
+**Date:** 2026-09-07
+**Milestone:** 4
+**Type:** scope
+**Decision:** build `famB_g2_untied`, the fourth spec baseline, derived from the failing gate's feedforward arm and differing from it in `arch`, a truncated `eval_k_sweep`, and a pinned `untied_copies: 4`.
+**Reason:** G2.1 failed against an arm that changed **two** properties at once. The matched-compute feedforward both untied the weights and removed the loop structure, the recurrent state and the injection. The gate therefore establishes that looping lost without establishing what it lost to. The untied arm restores the loop structure while keeping untied weights, so it sits between the other two and separates them:
+
+| arm | parameters | vs looped | loop structure |
+|---|---|---|---|
+| looped, tied | 5.6594M | 1.000x | yes |
+| **untied** | **10.9701M** | **1.938x** | yes |
+| feedforward | 10.6752M | 1.886x | no |
+
+`untied` exceeds `feedforward` by exactly 294912 parameters, the injection adapter mapping 2d to d, which a feedforward model has no counterpart for. Up to that one module the two are parameter matched, so:
+
+- **untied against feedforward** holds parameters and compute fixed and varies only the loop structure.
+- **untied against looped** holds compute and depth fixed and varies only weight tying.
+
+**A trap worth recording, because it nearly ate the baseline.** `untied_copies` defaults to `max_k_in_use`, which reads `eval_k_sweep`. The inherited sweep runs to 64, so an unpinned untied model allocates **64 core copies**, roughly twenty times the core parameters, and is a matched comparison to nothing whatever. Pinning the copies is only safe once the sweep is truncated to what the model can serve, or the run raises partway through training. Both halves are asserted, and the mutation check confirms each is detected.
+**Consequence:** three outcomes, and each says something different about the failed gate.
+
+- **untied also beats looped:** the win came from untying the weights, not from abandoning the loop. That is a claim about parameter sharing and it leaves the looped architecture's serial story intact, at a cost in parameters.
+- **untied does not beat looped, but feedforward still does:** the win came from removing the loop structure itself, which is the harder result to write around.
+- **untied matches feedforward:** the loop structure is inert at this operating point, and the whole comparison reduces to a parameter count.
+
+**This does not reopen gate G2.** G2 failed, it is recorded as failed, and no outcome here changes that. This is diagnosis of a failure already reported, not an appeal against it.
+**Reversible:** yes. Nothing depends on these configs.
+
 ### D-003. Compute block, sixteen weeks on the cluster
 **Date:** open
 **Milestone:** blocks the pre-registration freeze at milestone 5

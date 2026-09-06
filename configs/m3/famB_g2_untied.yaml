@@ -1,0 +1,40 @@
+arch: untied
+batch_size: 256
+bptt_window: 8
+breadths:
+- 12
+- 13
+- 14
+- 15
+- 16
+coda_blocks: 1
+conditioning: none
+core_blocks: 1
+d_model: 384
+depths:
+- 1
+- 2
+- 3
+- 4
+- 5
+- 6
+eval_batches: 16
+eval_every: 5000
+eval_k_sweep:
+- 1
+- 2
+- 3
+- 4
+family: B
+inject: true
+jitter_sigma: 0.5
+k_eval: 4
+k_max_train: 32
+k_mean_target: 8
+k_schedule: fixed
+k_train: 4
+num_workers: 3
+prelude_blocks: 1
+state_init: randn
+untied_copies: 4
+steps: 300000
