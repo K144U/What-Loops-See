@@ -1,0 +1,4 @@
+runs:
+- run_id: famA_d1_d4colour_s0
+  config: m3/famA_d1_d4colour.yaml
+  seed: 0

@@ -1,0 +1,7 @@
+runs:
+- run_id: famA_d2_d4colour_curr_s0
+  config: m3/famA_d2_d4colour_curriculum.yaml
+  seed: 0
+- run_id: famA_d2_d4colour_currctrl_s0
+  config: m3/famA_d2_d4colour_curriculum_ctrl.yaml
+  seed: 0

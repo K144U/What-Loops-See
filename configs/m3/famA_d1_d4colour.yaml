@@ -1,0 +1,38 @@
+arch: looped
+batch_size: 256
+bptt_window: 8
+breadths:
+- 1
+- 2
+- 3
+- 4
+conditioning: none
+d_model: 384
+depths:
+- 1
+eval_batches: 16
+eval_every: 10000
+eval_k_sweep:
+- 1
+- 2
+- 3
+- 4
+- 6
+- 8
+- 12
+- 16
+- 24
+- 32
+- 48
+- 64
+factor: full
+family: A
+inject: true
+jitter_sigma: 0.5
+k_max_train: 32
+k_mean_target: 8
+k_schedule: sampled
+num_workers: 3
+state_init: randn
+steps: 150000
+substrate: d4_colour
