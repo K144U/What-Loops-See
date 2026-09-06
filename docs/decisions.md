@@ -357,6 +357,29 @@ Two new arms settle it: S3 acting on three spatial slots, and D4 acting on four 
 **Consequence:** the S3 section of the paper waits on two runs, roughly 15 hours of wall clock. A linear probe on the existing s3only checkpoints comes first and costs no training: it separates "the information is never computed" from "it is computed and the head cannot read it", which the coda lens cannot distinguish because a logit lens only sees what the head decodes.
 **Reversible:** yes, but writing the section first would mean writing it twice.
 
+### D-030. Gate G2 moves from family A depth 3 to family B, because it is undefined where it was written
+**Date:** 2026-09-04
+**Milestone:** 4
+**Type:** deviation
+**Decision:** G2 is evaluated on family B at a 1/1/1 core across depths 1 to 6, against a matched-compute feedforward baseline and the echo baseline, rather than on family A depth 3.
+**Reason:** the gate as written compares two models that are both at chance.
+
+| run | accuracy | loss |
+|---|---|---|
+| `g1_famA_d3_looped_long_s0` | 0.0225 | 3.8711 |
+| `g1_famA_d3_ffwd_long_s0` | 0.0225 | 3.8711 |
+
+Chance is 1/48 = 0.0208 and ln(48) = 3.8712. Both sit on the floor, identically, to four decimals. A gate asking whether A beats B, where A and B have both learned nothing, cannot pass and cannot fail. Every possible outcome is the same, so running it would produce a number carrying no information.
+
+The premise was falsified by our own later work: G2 assumed family A depth 3 would be learnable, and the depth wall says it is not. **This is a gate whose task stopped existing, not a gate we are avoiding.**
+
+Family B at 1/1/1 is where a loop-count curve exists: depth 6 needs k=3 at tau=0.90 and single-pass accuracy falls to 0.492, so there is something for loops to buy and the comparison can come out either way. Matched compute is well defined: a looped model at k passes does `prelude + k*core + coda` blocks, so the feedforward baseline is given the same block count.
+
+**On the no-tuning rule.** Moving a hard-stop gate to a task where it can pass is exactly the shape of the thing CLAUDE.md forbids, so the distinction has to be explicit. The gate is not being moved because it failed. It is being moved because it returns no information wherever it is pointed at present, in the same way G1.3 demanded an unachievable chance-level score (D-016) and the family B sweep was flat in every cell whatever the truth (D-028). Restoring a measurement's ability to come out either way is not selecting its outcome. **G2 can still fail on family B, and the recent literature says it might:** Gao et al. arXiv 2607.16051 state that parameter scaling usually beats looping at matched compute and needed a specific mixture-of-experts design at 20B to overturn it.
+
+**Consequence:** the looped arm reuses the eight existing `famB_curve111` runs, so only the two baselines are new. The original depth 3 comparison is reported in the paper as an undefined gate with its numbers, not hidden.
+**Reversible:** yes, if family A ever gains a learnable depth 3.
+
 ### D-003. Compute block, sixteen weeks on the cluster
 **Date:** open
 **Milestone:** blocks the pre-registration freeze at milestone 5

@@ -54,7 +54,7 @@ Legend: NOT STARTED, IN PROGRESS, BLOCKED, DONE, FAILED.
 | 1 | 1 | Sep 7 to 13 | `groups.py`, `render.py`, families A, B, C generators, manifest and splits | `pytest tests/test_data.py` passes, 64 sample images dumped and eyeballed | **DONE 2026-08-31.** 99 tests pass, all three families, 11 contact sheets dumped and eyeballed |
 | 2 | 2 | Sep 14 to 20 | **GATE G1**, task validity | `pytest tests/test_gate_g1.py` passes on stored gate runs | **DONE 2026-09-01.** Passed on attempt 2 at 200k steps. Attempt 1 at 20k steps failed G1.2 and is recorded in full |
 | 3 | 3 to 5 | Sep 21 to Oct 11 | Model, training loop, stability, three conditioning variants, four baselines | d=384 trains stably at k=8 on depth 3 above threshold, cold start, twice with different seeds | **UNBLOCKED.** Model, trainer, baselines and parallel generation already built during milestone 2 |
-| 4 | 5 | Oct 5 to 11 | **GATE G2**, loops beat matched-compute feedforward and echo baseline | `python -m loopvision.analysis.gate_g2` exits 0 | NOT STARTED |
+| 4 | 5 | Oct 5 to 11 | **GATE G2**, loops beat matched-compute feedforward and echo baseline | `python -m loopvision.analysis.gate_g2` exits 0 | **IN PROGRESS 2026-09-04.** Undefined as specified: on family A depth 3 both arms sit on the chance floor at 0.0225, so the gate could neither pass nor fail. Moved to family B at 1/1/1 per D-030. Module built and tested; the two baselines are queued |
 | 5 | 6 to 7 | Oct 12 to 25 | Freeze `preregistration.md` at tag `prereg-v1`, then full M1 sweep | H1 resolves, `m1_loopcurve.parquet` complete, coefficients a and b with CIs printed | NOT STARTED |
 | 6 | 8 to 9 | Oct 26 to Nov 8 | M2 patching over (loop, patch position) | H3 resolves, heatmaps for all three families | NOT STARTED |
 | 7 | 10 | Nov 9 to 15 | M3 coda-lens, M4 geometry | rays-not-fixed-points question answered either way | NOT STARTED |
@@ -298,10 +298,11 @@ start and each completion.
 
 ### What is NOT done, ranked
 
-1. **Gate G2 has never run.** It is a hard stop in the plan, milestone 4,
-   marked NOT STARTED, and the project has walked past it into milestone 6
-   and 7 work. Gao et al. 2607.16051 make it genuinely uncertain rather
-   than a formality. This is the largest outstanding risk.
+1. **Gate G2 is running at last.** It was undefined where the spec put it:
+   on family A depth 3 the looped and feedforward arms both sit at 0.0225
+   against a 0.0208 floor, so every outcome was identical. Moved to family
+   B at 1/1/1 by D-030, module built and mutation checked, baselines
+   queued. It can still fail, and Gao et al. 2607.16051 say it might.
 2. The feedforward control: does a non-looped model of matched depth
    deadlock on colour too? Decides whether the finding is about looping or
    about compositional learning in general. Two very different papers.

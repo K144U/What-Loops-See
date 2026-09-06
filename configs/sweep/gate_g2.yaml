@@ -1,0 +1,13 @@
+runs:
+- run_id: famB_g2_ffwd_s0
+  config: m3/famB_g2_ffwd.yaml
+  seed: 0
+- run_id: famB_g2_ffwd_s1
+  config: m3/famB_g2_ffwd.yaml
+  seed: 1
+- run_id: famB_g2_echo_s0
+  config: m3/famB_g2_echo.yaml
+  seed: 0
+- run_id: famB_g2_echo_s1
+  config: m3/famB_g2_echo.yaml
+  seed: 1
