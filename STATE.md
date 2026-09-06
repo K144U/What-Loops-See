@@ -75,11 +75,21 @@ all verified from their arXiv abstract pages.
 | 5188 (running) | d4_colour depth 1 donor | feeds 5218. At 80050 of 300000, reading 1.0000, about 8 hours left |
 | 5217 | d4_colour curriculum **control** | the wrong-donor arm. No dependency: its donor `famA_d1_d4only_s0` is already DONE |
 | 5218 (held on `afterany:5188`) | d4_colour curriculum | does the rescue generalise across groups |
-| 5190 | scale control, wide, deep, big | the reviewer objection: was the model too small |
-| 5191 | depth ladder, d4only depths 3 to 6 | could give family A a usable depth axis, which H1 lacks |
+| 5220 | scale control, wide, deep, big | the reviewer objection: was the model too small |
+| 5221 | depth ladder, d4only depths 3 to 6 | could give family A a usable depth axis, which H1 lacks |
 | 5206 (running), 5207 | gate G2 baselines, feedforward and echo | the hard-stop gate. ffwd is at 49 percent reading 0.9961 and 0.9968 |
 | 5211 | d4_colour feedforward control, two seeds | is the deadlock about looping or about composition |
 | 5212 | s3only feedforward control, two seeds | the same question in the group the deadlock was found in |
+
+**Every job is now a two core job, and that was the whole problem.** 5190
+and 5191 sat queued for an entire day at four cores while every two core
+job started within about an hour. They are resubmitted as 5220 and 5221.
+Dropping them cost nothing: at 3 and 4 runs per job `PER_RUN` was already
+floored to 1 and `WORKERS` to 0 at four cores, so the worker allocation is
+unchanged and only the gap they must fit has halved. Total CPU does halve,
+which matters little because D-025 has these runs GPU bound at k around 10.
+**Watch 5221 anyway:** four concurrent runs, in-process generation, and a
+20 hour budget, so it is the most likely of the queue to need a chain hop.
 
 **5189 and 5216 no longer exist.** 5189 held the curriculum and its control
 in one job behind `afterok:5188`, which can hang forever if the donor exits
