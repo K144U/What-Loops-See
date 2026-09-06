@@ -147,10 +147,19 @@ time.
    before reporting either outcome: matched compute is not matched
    parameters here, so a control that deadlocks is clean and a control
    that solves the task leaves parameter count as a rival explanation.
-   **Both pairs are queued, d4_colour as 5211 and s3only as 5212**, two
-   cores and two seeds each. d4_colour is the cell the substrate result
-   rests on; s3only is the group the deadlock and its curriculum rescue
-   were originally found in, so the control covers both.
+   **Both matched-compute pairs are queued, d4_colour as 5211 and s3only
+   as 5212**, two cores and two seeds each. d4_colour is the cell the
+   substrate result rests on; s3only is the group the deadlock and its
+   curriculum rescue were originally found in, so the control covers both.
+
+   **The matched-parameter arm is built and not yet queued.**
+   `famA_d2_{d4colour,s3only}_ffwd_mp`, the same control at k=1, six blocks
+   against the looped model's six distinct blocks, 0.973x its parameters.
+   It exists because the matched-compute arm carries 3.23x the parameters,
+   so on its own it cannot separate architecture from capacity. The two
+   arms bracket the looped model, and **D-037 says what each of the three
+   possible outcomes means.** Read it before reporting either. Queue with
+   `configs/sweep/ffwd_control_mp.yaml`, two cores.
 3. **Read the depth ladder.** If d4only solves depths 3 to 6, family A
    gains a depth axis and H1 gets a second independent family.
 

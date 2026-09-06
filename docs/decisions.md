@@ -466,6 +466,33 @@ D-033's caution was written while the pin's effect was unknown. It is now measur
 **The force push is the part worth remembering.** The repository was public for roughly twenty minutes carrying the earlier history. Anyone who cloned in that window holds commits that no longer exist upstream and cannot pull. That is acceptable here only because the window was short, the repository was hours old, and its existence had been announced to nobody. **It stops being acceptable the moment anyone else holds a clone**, and no later rewrite should be assumed safe on this precedent.
 **Reversible:** no, in the sense that matters. The earlier SHAs were public, and public cannot be undone.
 
+### D-037. The matched-parameter arm is the feedforward baseline at k=1
+**Date:** 2026-09-06
+**Milestone:** 4
+**Type:** scope
+**Decision:** the matched-parameter arm of the feedforward baseline is the same control at `k_train: 1`, giving 6 blocks against the looped model's 6 distinct blocks. Configs `famA_d2_d4colour_ffwd_mp` and `famA_d2_s3only_ffwd_mp`, derived from their looped twins, differing from the matched-compute arm in exactly one number.
+**Reason:** the matched-compute arm carries 3.23x the looped parameters, because its 20 blocks are untied where the looped model reuses one core. If it solves a task the looped model deadlocks on, capacity is an alternative explanation and the result does not isolate the architecture. The matched-parameter arm removes that explanation.
+
+k=1 is not a tuned choice. A looped model's parameters live in `prelude + core + coda` blocks however many times it iterates, so a feedforward model with that many blocks carries the same parameters, and `prelude + k*core + coda = prelude + core + coda` has the single solution k=1. Measured rather than argued, at d_model 384:
+
+| k | blocks | params | ratio to looped |
+|---|---|---|---|
+| **1** | **6** | **10.6886M** | **0.973x** |
+| 2 | 8 | 14.2291M | 1.295x |
+| 8 | 20 | 35.4720M | 3.230x |
+
+**The residual 2.69 percent is the injection adapter** and is not closable. The looped model holds an `adapter` mapping 2d to d, 294912 parameters, which feeds the state back in each iteration. A feedforward model has nothing to inject and no counterpart module. Widening the baseline to close the gap would be fitting the control to a number, which is the thing CLAUDE.md forbids, so the gap is reported instead.
+
+**The direction of the residual is the useful part.** The arm is 2.69 percent *smaller* than the looped model. If a smaller non-looped model solves a task the looped model never leaves chance on, capacity cannot be the explanation and neither can depth, because this arm is also shallower. That is the strongest form the control can take.
+**Consequence:** the two arms now bracket the looped model. Matched compute is deeper and larger, matched parameters is shallower and slightly smaller. Read together:
+
+- **both deadlock:** the deadlock is about compositional learning in general, not about looping. Finding 3 becomes a different paper, as D-032 already noted.
+- **both solve:** looping itself is the obstacle, and neither depth nor capacity explains it.
+- **matched compute solves, matched parameters does not:** the rescue came from capacity or depth rather than from dropping the loop, and the looping claim does not follow.
+
+Reporting any outcome requires saying which of these three it is.
+**Reversible:** yes. Nothing depends on these configs.
+
 ### D-003. Compute block, sixteen weeks on the cluster
 **Date:** open
 **Milestone:** blocks the pre-registration freeze at milestone 5
