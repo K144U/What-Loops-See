@@ -36,6 +36,17 @@ from loopvision.train.checkpoint import (
     save_checkpoint,
 )
 
+# TF32 is pinned at the values this campaign actually ran under, so that a
+# torch upgrade cannot silently change what the recorded numbers mean.
+# These ARE the torch 2.4.1 defaults, measured rather than assumed, so
+# setting them changes nothing today: matmuls stay at full fp32 and the
+# single patch-embedding convolution keeps TF32. That is the point. The
+# five instruments that build models import this module, so pinning here
+# covers training and analysis together. Changing either value would break
+# comparability with every finished run. See docs/decisions.md D-033.
+torch.backends.cuda.matmul.allow_tf32 = False
+torch.backends.cudnn.allow_tf32 = True
+
 DEFAULTS = {
     "family": "A",
     "d_model": 384,
