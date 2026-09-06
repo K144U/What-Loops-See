@@ -220,7 +220,13 @@ to post a preprint before the deadline, D-006 which family to prioritise.
 D-006 now has evidence behind it: family B carries H1, family A carries the
 mechanism.
 
-An untaken decision, not yet numbered: **TF32 is not set anywhere in the
-repository**, so fp32 matmuls run at a 10-bit mantissa by default on these
-cards. That is an inherited default rather than a choice, and the
-instruments quote numbers to four decimals.
+**Resolved on 6 September by D-033, and not the way it was framed.** This
+section previously recorded TF32 as an untaken decision degrading fp32
+matmuls to a 10-bit mantissa. Measurement says otherwise: in torch 2.4.1
+`matmul.allow_tf32` is False and `float32_matmul_precision` is `highest`,
+so the arithmetic every quoted number rests on is already full fp32. The
+claim came from a note written against PyTorch before 1.12, where the
+default was the other way. Only cudnn convolutions have TF32 on, and each
+model holds exactly one convolution, the patch embedding. Left at the
+defaults for the campaign, because changing them now would break
+comparability with 44 finished runs.

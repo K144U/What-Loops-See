@@ -272,6 +272,8 @@ in `experiment-substrate.md` is designed but not built.
 
 **Open, nobody has decided:** TF32 is not set anywhere in the repo, so fp32 matmuls run at a 10-bit mantissa by default on these cards. That is an inherited default rather than a choice, and the instruments quote numbers to four decimals.
 
+**Superseded later the same day by D-033.** The claim above was taken from the carried-over note without checking it, and it is wrong for this project: `matmul.allow_tf32` is False in torch 2.4.1, so the matmuls were at full fp32 the whole time. Only the single patch-embedding convolution is exposed. Left here rather than corrected in place, because how the wrong version was reached is part of the record.
+
 **Documentation faults found:** `preregistration.md` has never existed in the working tree or anywhere in git history, and there is no `prereg-v1` tag, yet CLAUDE.md stated the freeze in the present tense. Corrected to say it is milestone 5 work. The `Current state` block above was six days stale at milestone 2 while the milestone table below it was correct at milestone 4.
 
 **Blocked by:** cores. 96 of 96 assigned on the gpu node. Gate G2 cannot run until a gap opens, and no scheduled drain exists to wait for.

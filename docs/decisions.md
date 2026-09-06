@@ -413,6 +413,25 @@ k=8 and not another value because both looped twins train with `k_schedule: samp
 Reporting either outcome requires saying which of these two situations we are in.
 **Reversible:** yes. Nothing else depends on these configs.
 
+### D-033. TF32 is left alone for the campaign, and the inherited worry was based on an outdated default
+**Date:** 2026-09-06
+**Milestone:** 4
+**Type:** resolution
+**Decision:** leave both TF32 settings at their torch 2.4.1 defaults for every run in this campaign. Pin them explicitly near the top of `train/cli.py`, at the values they already hold, once the node is clear of our runs. Not before: `src/` is read live by running jobs, so adding the lines now would change what an in-flight experiment computes at its next chain hop.
+**Reason:** the concern arrived from a note carried over from the merging project, which states that on Ampere `torch.backends.cuda.matmul.allow_tf32` defaults to True, so fp32 matmuls run with a 10-bit mantissa. **That was true before PyTorch 1.12 and is false here.** Measured in this project's venv on 6 September:
+
+| setting | value | what it means |
+|---|---|---|
+| `torch.backends.cuda.matmul.allow_tf32` | **False** | matmuls run at full fp32 |
+| `torch.get_float32_matmul_precision()` | `highest` | the same fact, stated the other way |
+| `torch.backends.cudnn.allow_tf32` | **True** | convolutions may use TF32 |
+
+Attention and the MLPs, which is nearly all of the arithmetic in this model, are already at full fp32. The entire exposure is cudnn convolutions, and each model holds exactly one convolution: `patchify`, an `nn.Conv2d` applied once per forward pass to embed the image into patch tokens (`model/loopvit.py` lines 88 and 339).
+
+Changing either setting now would make new runs non-comparable with the 44 that have already finished under the current defaults, for a benefit nobody has measured. A certain cost against an unquantified benefit settles it for the campaign. Run count from `analysis/registry.py`, not counted by hand.
+**Consequence:** the paper needs no precision caveat for its matmul arithmetic, which is the arithmetic every quoted number depends on. If the patch embedding is ever questioned, the test is cheap and does not need retraining, because the setting affects the forward pass and not the stored weights: set `torch.backends.cudnn.allow_tf32 = False`, re-run one instrument that quotes four decimals against a stored checkpoint, and compare against the recorded value.
+**Reversible:** yes. Until the pinning lines exist this is a decision to leave a default alone rather than a change to anything, and the pin itself only fixes the values already in force.
+
 ### D-003. Compute block, sixteen weeks on the cluster
 **Date:** open
 **Milestone:** blocks the pre-registration freeze at milestone 5
