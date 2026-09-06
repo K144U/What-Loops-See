@@ -4,6 +4,7 @@ Mechanistic interpretability of looped (depth-recurrent) vision models.
 Full spec: docs/IMPLEMENTATION.md. Read the relevant section before writing code.
 
 ## Document map
+- STATE.md                 read this first. Where things stand, what is running, what to do next.
 - docs/IMPLEMENTATION.md  how to build it. Sections 0 to 15.
 - docs/paper.md           what it claims, and what it says under every outcome.
 - docs/gap-analysis.md    who else is in this space and where our novelty actually sits.
