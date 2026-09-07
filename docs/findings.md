@@ -24,6 +24,30 @@ The short list. Every row here must appear in `docs/claims.md` in the repo and m
 
 Gates are results too, and the G1 table goes in the paper as evidence the depth axis is real. Record failing attempts as well as passing ones, with what changed in between.
 
+### The matched-parameter arm stays at chance. D-037's third outcome, registered in advance, milestone 4, 2026-09-07
+
+**Both seeds, full budget, on the floor.**
+
+| arm | parameters vs looped | seed 0 | seed 1 | chance |
+|---|---|---|---|---|
+| feedforward, **matched compute**, 20 blocks | 3.23x | 0.1249 | **1.0000** | 0.1250 |
+| feedforward, **matched parameters**, 6 blocks | 0.973x | **0.1249** | **0.1249** | 0.1250 |
+| looped | 1.000x | 0.1277 | 0.1277 | 0.1250 |
+
+All six runs completed 300000 steps.
+
+**This is the outcome D-037 registered as the one that does not license the looping claim**, quoted from that entry: *"matched compute solves, matched parameters does not: the rescue came from capacity or depth rather than from dropping the loop, and the looping claim does not follow."*
+
+Written before the runs, and it is what happened.
+
+**What it means.** The feedforward arm that solved `d4_colour` carried 3.23 times the looped model's parameters and executed 20 blocks. The arm that matched the looped model's parameters, at 0.973x, and ran 6 blocks, did not solve it on either seed. So the thing that escaped the deadlock was **capacity or depth, not the absence of a loop**. Removing the recurrence while holding parameters fixed buys nothing here.
+
+**What it does to the reading of the seed split.** The earlier entry recorded that a non-looped model solves what the looped model cannot, and was careful to say escape looks probabilistic rather than architectural. This narrows it further: escape is available to a model with three times the parameters, and is not available to a parameter-matched one. The deadlock account survives and the architectural account weakens.
+
+**What is still open.** Two seeds per arm. The matched-parameter arm being at chance twice is consistent with it never escaping and also with an escape rate low enough that two draws missed it, which is exactly the ambiguity the matched-compute arm's own split demonstrates. `famA_d2_d4colour_ffwd_s{2,3,4}` and `famA_d2_d4colour_s{2,3,4}` are queued as 5277 and 5278 to turn both into rates rather than anecdotes.
+
+Provenance: `runs/famA_d2_d4colour_ffwd_mp_s{0,1}`, `runs/famA_d2_d4colour_ffwd_s{0,1}`, `runs/famA_d2_d4colour_s{0,1}`. Configs derived from the looped twin per D-032 and D-037, differing in `arch`, `k_schedule` and `k_train` only, with the matched-parameter arm one further line different, `k_train: 1`.
+
 ### The feedforward control splits by seed. The colour task is learnable, and the loop has not learned it, milestone 4, 2026-09-07
 
 **The control that was built to decide whether the deadlock is about looping came back split, in both task families.**
