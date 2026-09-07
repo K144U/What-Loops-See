@@ -1,10 +1,17 @@
 # What a Loop Sees: state as of 7 September 2026
 
-> **GATE G2 FAILED on 7 September.** Matched-compute feedforward beats the
-> looped model, 0.9998 against 0.9966, and the gap widens with depth to
-> -0.0138 at depth 6. The echo comparison passed. This is a hard stop: it is
-> reported, not worked around. `findings.md` has the per-depth table and what
-> it does and does not cost. **Read that entry before planning any work.**
+> **GATE G2 FAILED on 7 September**, and three results since have pointed the
+> same way. Matched-compute feedforward beats the looped model at every depth,
+> the gap widening to -0.0138 at depth 6. The matched-**parameter** feedforward
+> arm then sat at chance on both seeds at full budget, which D-037 registered in
+> advance as meaning the escape came from capacity or depth and **not** from
+> dropping the loop. And a feedforward model that fails the colour task fails it
+> the same way a looped one does, reading nothing from the image.
+>
+> **The evidence has converged on a paper that is not about looping.** The
+> mechanism results are strong and stand on their own; the loop framing in
+> `paper.md` is the part under strain. That decision is item 1 below and it is
+> not mine to make.
 
 **Read this first after clearing context.** Everything here is derivable
 from the other documents; this says where to look, what is running, and
@@ -24,9 +31,38 @@ did not track until 6 September.
 
 ---
 
-## 1. The three results the paper rests on
+## 1. What the paper rests on
 
-**H1 is supported, two milestones early.** Depth raises the loops needed in
+**Read the status label on each, they are not the same kind of evidence.**
+The pre-registration was written at milestone 6 and its Section 0 says which
+results it can and cannot bind, so some of what follows is exploratory by its
+own admission.
+
+**The strongest four, in order of how well controlled they are:**
+
+1. **Substrate, not group.** Two seeds, full budget, three controls, and a
+   registered alternative refuted.
+2. **The deadlock is bootstrapping, not difficulty**, with a curriculum rescue
+   and a genuine wrong-donor control in S3. The D4 replication's control is
+   compromised and 5280 fixes it, see D-040.
+3. **Escape needs capacity, not the removal of the loop.** The
+   matched-parameter arm sat at chance on both seeds at full budget while the
+   matched-compute arm solved on one. D-037 registered that meaning first.
+4. **Both architectures fail the same way when they fail.** The deadlocked
+   feedforward seed scores 0.1250 with the image and 0.1250 blanked, the same
+   signature the probe found in cold-start looped models.
+
+**Weaker than it reads elsewhere:**
+
+- **H1 is exploratory now.** Prereg Section 0 demotes it: the family B result
+  was analysed before any metric was registered. The registered form binds
+  only cells not yet run.
+- **H3 is unresolved and its first read was post-hoc.** Metrics are now fixed
+  as normalised entropy, the confirmation set is one family of three.
+- **The coda lens is a replication** of Lu et al. arXiv 2507.02199, and
+  `paper.md` section 3a already says so.
+
+**H1 as originally stated.** Depth raises the loops needed in
 eight seeds of eight; breadth raises it in zero of three. Single-pass
 accuracy falls 0.998 to 0.492 across depths 1 to 6 and moves 1.000 to 0.999
 across breadths 4 to 8. Seed variance in magnitude is large, slopes 0.229 to
@@ -75,127 +111,60 @@ all verified from their arXiv abstract pages.
 
 ## 3. Running now
 
-| job | experiment | what it decides |
+Thirteen jobs, all two to four cores. **Ask for two.** Larger requests are
+backfilled past rather than queued behind: 5269 at six cores sat while 5270
+and 5272 at four, both submitted later, ran. Four jobs were resized for this
+on 7 September. `max_run` counts jobs and not runs, so pack runs into a job
+and cores stay small. See D-041 and section 6.
+
+| job | runs | what it decides |
 |---|---|---|
-| 5180, 5181 (running, 17h) | s3_spatial seeds 0 and 1 | closes the 2x2. Substrate reading predicts it solves cold. Both read 1.0000 |
-| 5188 | d4_colour depth 1 donor | **DONE.** Released 5218 |
-| 5217 | d4_colour curriculum **control** | the wrong-donor arm. No dependency: its donor `famA_d1_d4only_s0` is already DONE |
-| 5218 (held on `afterany:5188`) | d4_colour curriculum | does the rescue generalise across groups |
-| 5220 | scale control, wide, deep, big | the reviewer objection: was the model too small |
-| 5221 | depth ladder, d4only depths 3 to 6 | could give family A a usable depth axis, which H1 lacks |
-| 5206, 5207 | gate G2 baselines, feedforward and echo | **DONE. The gate FAILED**, see the banner above |
-| 5211, 5212 (running) | feedforward control, matched compute | is the deadlock about looping or about composition |
-| 5222, 5223 | feedforward control, **matched parameters**, two seeds each | separates architecture from capacity. Only informative read against 5211 and 5212, see D-037 |
+| 5270 (R) | untied s0, s1 | **the G2 diagnosis.** At 48 percent it had already passed the looped model's final accuracy at depths 4, 5, 6 |
+| 5272 (R) | d4only s3, s4 | H3 confirmation seeds. s3 was at 0.2490 at 20 percent while s4 had solved, worth watching |
+| 5276 (R) | s3only ffwd mp s0, s1 | matched parameters in the second family. Both near the 0.1667 floor at 80 percent |
+| 5279 | s3spatial s0, s1 | **closes the 2x2.** Resumes at 293400 and 292950, about 7k steps each, both already 1.0000 |
+| 5280 | curr_s3donor | **the D-040 control.** Two D4 curriculum arms sit at 1.0000 with nothing to interpret them against |
+| 5281 | d4colour ffwd s2, s3, s4 | turns the feedforward seed split into a rate |
+| 5282 | d4colour looped s2, s3, s4 | turns "the loop never escapes" into a rate. Currently four runs |
+| 5283 | famC s3, s4, famA d4only s2 | the rest of the H3 confirmation seeds |
+| 5274, 5275 | scale control, depth ladder | lower priority |
 
-**Every job is now a two core job, and that was the whole problem.** 5190
-and 5191 sat queued for an entire day at four cores while every two core
-job started within about an hour. They are resubmitted as 5220 and 5221.
-Dropping them cost nothing: at 3 and 4 runs per job `PER_RUN` was already
-floored to 1 and `WORKERS` to 0 at four cores, so the worker allocation is
-unchanged and only the gap they must fit has halved. Total CPU does halve,
-which matters little because D-025 has these runs GPU bound at k around 10.
-**Watch 5221 anyway:** four concurrent runs, in-process generation, and a
-20 hour budget, so it is the most likely of the queue to need a chain hop.
+**Finished and analysed:** gate G2 baselines, the matched-compute and
+matched-parameter feedforward arms on d4_colour, the D4 curriculum and its
+same-group control, five family B M2 confirmation grids, and the three input
+controls on the solved feedforward seed.
 
-**5189 and 5216 no longer exist.** 5189 held the curriculum and its control
-in one job behind `afterok:5188`, which can hang forever if the donor exits
-non-zero. Replaced by 5217 and 5218 on 6 September. They were split because
-the two runs init from **different donors**: the control starts from
-`famA_d1_d4only_s0`, which finished long ago, so it never needed to wait for
-5188 at all and is queued now rather than in eight hours. Splitting also buys
-each run two cores and one generation worker instead of one core and none.
+**Analysis that exists and is waiting for data.** All three were written
+before the numbers, on purpose.
 
-**5202 no longer exists.** It asked for four cores to run four G2 baselines
-and was replaced on 6 September by 5206 and 5207, two cores each, because
-cores are the binding constraint and a smaller request fits a smaller gap.
-The cost is `WORKERS=0` and in-process generation. D-025 puts one worker at
-roughly 4000 samples per second against a GPU consuming 1500 to 3000, so
-expect these two to be slower per step than 5180 and 5181 are.
-
-**In flight, and not results.** Both s3_spatial seeds read **1.0000** at
-50000 steps, which is the direction the substrate reading predicted in
-advance rather than a pattern found afterwards. The colour half of the
-2x2 is no longer in flight: d4_colour finished at chance in both seeds.
-If the s3_spatial pair holds to its budget the 2x2 closes on substrate
-with no group effect, solved on position for both groups and chance on
-colour for both. Neither s3_spatial run has written DONE. Its
-order-blind ceiling already exists at 0.7500 and 1.0000 clears it, so what
-that pair still owes is completion and the blank-image and input-ablation
-controls, not a ceiling.
-
-**5180 and 5181 are marginal against their wall, and the estimate has
-improved.** At 07:01 elapsed they are at 110000 steps, about 15700 per hour,
-so 300000 needs roughly 19.1 hours against a 20.0 hour `MAX_HOURS`. That is
-inside the budget by about four percent, where an earlier reading put them
-0.1 hours outside it. Treat it as could-go-either-way rather than settled,
-and re-measure rather than trusting either number. If they do stop short
-they chain, which is sound, but the successor queues into a node with no
-free cores, so the 2x2 could stall for days over the last one percent.
-Nothing can be done to a running job here: `MAX_HOURS` is fixed at submit
-time.
-
----
+- `python -m loopvision.analysis.untied_contrast` refuses until the untied
+  runs write DONE, and says why.
+- `python -m loopvision.analysis.h3_contrast` refuses with only one axis
+  present: an absent result, not a null one.
+- `python -m loopvision.instruments.m2_patching --run-id X --items 900
+  --min-admissible 256 --out runs/X/m2_confirm.parquet`, or in bulk via
+  `scripts/m2_confirm.pbs` on workq.
 
 ## 4. What to do next, ranked
 
-1. **Family C's `corrupted_twin` is written and NOT VERIFIED.** The cluster
-   went unreachable, TCP connect timing out rather than a banner failure,
-   which points at the VPN on the local machine rather than at the login
-   node. Jobs are unaffected. What this means for the code: family A and B
-   twins are tested and mutation checked, family C is neither. It compiles,
-   it carries no dashes, and its replay consumes the random stream in the
-   same order as `generate`, checked statically. **None of that is the
-   runtime drift guard**, which renders the replayed sprites and compares
-   against the original image, and which has caught a real bug in family B
-   already. `tests/test_family_c_twin.py` is written and waiting. Run it
-   before believing anything family C produces:
-   `pytest tests/test_family_c_twin.py`, then the mutation checks.
-
-2. **The untied baseline is built and not yet queued, and it is the
-   diagnostic the failed gate needs.** G2.1 lost to an arm that untied the
-   weights **and** removed the loop structure, so it does not say which one
-   won. `famB_g2_untied` restores the loop structure while keeping untied
-   weights: 10.9701M parameters against the feedforward arm's 10.6752M, a
-   difference of exactly 294912, the injection adapter. Against feedforward
-   it isolates the loop; against looped it isolates weight tying. D-038 has
-   the three outcomes and what each licenses. Queue with
-   `configs/sweep/g2_untied.yaml`, two cores. **It does not reopen G2**,
-   which failed and stays failed.
-
-3. **Decide what the paper claims now that G2 has failed.** This is a
-   judgement call and it is not mine to make. The gate that was written to
-   test the intended headline returned against it, at every depth, by more
-   as depth grows. The mechanism results are untouched and do not depend on
-   looping winning anything, so the paper may still be a strong paper about
-   what looped models do and fail to do. But the compute-matched claim in
-   `paper.md` is not supported and cannot be repaired by running it again.
-4. **The feedforward control is built, verified and not yet queued.** Does
-   a non-looped model of matched depth deadlock on colour too? If yes the
-   finding is about compositional learning in general rather than about
-   looping, which is a different paper. The configs are
-   `famA_d2_d4colour_ffwd` and `famA_d2_s3only_ffwd`, two seeds each in
-   `configs/sweep/ffwd_control.yaml`, each derived from its looped twin so
-   the diff is three lines. Both build 20 blocks against the 20 their twin
-   executes at k=8, checked on the cluster rather than assumed. Read D-032
-   before reporting either outcome: matched compute is not matched
-   parameters here, so a control that deadlocks is clean and a control
-   that solves the task leaves parameter count as a rival explanation.
-   **Both matched-compute pairs are queued, d4_colour as 5211 and s3only
-   as 5212**, two cores and two seeds each. d4_colour is the cell the
-   substrate result rests on; s3only is the group the deadlock and its
-   curriculum rescue were originally found in, so the control covers both.
-
-   **The matched-parameter arm is queued as 5222 and 5223.** The same
-   control at k=1, six blocks against the looped model's six distinct
-   blocks, 0.973x its parameters. It exists because the matched-compute arm
-   carries 3.23x the parameters, so alone it cannot separate architecture
-   from capacity. The two arms bracket the looped model, and **D-037 says
-   what each of the three possible outcomes means.** Read it before
-   reporting either arm: neither is interpretable without the other.
-5. **Read the depth ladder.** If d4only solves depths 3 to 6, family A
-   gains a depth axis and H1 gets a second independent family.
-
----
+1. **Decide what the paper claims.** Three registered or controlled results
+   now say the loop is not what the story is about, and the mechanism results
+   do not need it to be. `paper.md` section 3a already pivoted once, to
+   "looping does not rescue appearance binding", which survives all of this.
+   The question is whether the paper is now about **compositional
+   bootstrapping** with looping as one architecture among several, and that is
+   a judgement call, not a run.
+2. **5280, the D-040 control.** Until it lands the defensible D4 claim is only
+   that a depth 1 D4 donor rescues depth 2 D4 on colour whether trained on
+   position or on colour. Not that the donor's content matters.
+3. **5279, closing the 2x2.** Both seeds have read 1.0000 since 50k steps, so
+   the science is settled and the bookkeeping is not. About 7k steps each.
+4. **The untied contrast when 5270 finishes.** It decides whether gate G2 was
+   lost to weight tying or to the loop itself, which is the difference between
+   a repairable claim and an abandoned one.
+5. **The H3 confirmation set**, blocked on seeds. Family B has 5 accepted
+   cells; A has 2 usable seeds and C has 3, against the 5 the prereg requires.
+   5283 and 5272 are training the rest.
 
 ## 5. Things that will bite a fresh session
 
