@@ -144,6 +144,7 @@ def patch_grid(
     run_dir: Path,
     items: int = 256,
     min_admissible: int | None = None,
+    progress_every: int = 25,
     k: int | None = None,
     split: str = "iid_val",
     device: str | None = None,
@@ -202,6 +203,16 @@ def patch_grid(
             skipped_same_label += 1
             continue
         grids.append(g.cpu())
+        # A cell is tens of minutes of forward passes and used to print
+        # nothing until it finished, so a run that was progressing normally
+        # and a run that had wedged looked identical from outside. Cheap to
+        # emit, and it is the only handle on a long instrument.
+        if progress_every and len(grids) % progress_every == 0:
+            target = min_admissible or items
+            print(
+                f"  {len(grids)}/{target} admissible after {i + 1} candidates",
+                flush=True,
+            )
         # The control travels with the grid. A single-position heatmap that
         # reads near zero is uninterpretable without it, so it is computed
         # here rather than left to whoever remembers to ask for it.
