@@ -138,7 +138,20 @@ time.
 
 ## 4. What to do next, ranked
 
-1. **The untied baseline is built and not yet queued, and it is the
+1. **Family C's `corrupted_twin` is written and NOT VERIFIED.** The cluster
+   went unreachable, TCP connect timing out rather than a banner failure,
+   which points at the VPN on the local machine rather than at the login
+   node. Jobs are unaffected. What this means for the code: family A and B
+   twins are tested and mutation checked, family C is neither. It compiles,
+   it carries no dashes, and its replay consumes the random stream in the
+   same order as `generate`, checked statically. **None of that is the
+   runtime drift guard**, which renders the replayed sprites and compares
+   against the original image, and which has caught a real bug in family B
+   already. `tests/test_family_c_twin.py` is written and waiting. Run it
+   before believing anything family C produces:
+   `pytest tests/test_family_c_twin.py`, then the mutation checks.
+
+2. **The untied baseline is built and not yet queued, and it is the
    diagnostic the failed gate needs.** G2.1 lost to an arm that untied the
    weights **and** removed the loop structure, so it does not say which one
    won. `famB_g2_untied` restores the loop structure while keeping untied
@@ -149,14 +162,14 @@ time.
    `configs/sweep/g2_untied.yaml`, two cores. **It does not reopen G2**,
    which failed and stays failed.
 
-2. **Decide what the paper claims now that G2 has failed.** This is a
+3. **Decide what the paper claims now that G2 has failed.** This is a
    judgement call and it is not mine to make. The gate that was written to
    test the intended headline returned against it, at every depth, by more
    as depth grows. The mechanism results are untouched and do not depend on
    looping winning anything, so the paper may still be a strong paper about
    what looped models do and fail to do. But the compute-matched claim in
    `paper.md` is not supported and cannot be repaired by running it again.
-3. **The feedforward control is built, verified and not yet queued.** Does
+4. **The feedforward control is built, verified and not yet queued.** Does
    a non-looped model of matched depth deadlock on colour too? If yes the
    finding is about compositional learning in general rather than about
    looping, which is a different paper. The configs are
@@ -179,7 +192,7 @@ time.
    from capacity. The two arms bracket the looped model, and **D-037 says
    what each of the three possible outcomes means.** Read it before
    reporting either arm: neither is interpretable without the other.
-4. **Read the depth ladder.** If d4only solves depths 3 to 6, family A
+5. **Read the depth ladder.** If d4only solves depths 3 to 6, family A
    gains a depth axis and H1 gets a second independent family.
 
 ---

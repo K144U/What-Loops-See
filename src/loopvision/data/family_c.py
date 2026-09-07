@@ -19,6 +19,8 @@ IMPLEMENTATION.md Section 4.4.
 
 from __future__ import annotations
 
+from dataclasses import replace as dc_replace
+
 import numpy as np
 
 from loopvision.data import render, scenes
@@ -106,6 +108,128 @@ def matches(sprite, spec: dict) -> bool:
 
 def count_matching(sprites, spec: dict) -> int:
     return min(sum(matches(s, spec) for s in sprites), COUNT_CAP)
+
+
+ATTRIBUTE_POOL = {
+    "colour": lambda: list(range(render.N_SPRITE_COLOURS)),
+    "shape": lambda: list(render.SHAPES),
+    "size": lambda: list(render.SIZES),
+}
+
+
+def _replay(sample: Sample, cfg: TaskConfig, split: str):
+    """Rebuild this sample's scene and query from its index.
+
+    Duplicates the opening of `generate`, in the same order, because the
+    random stream is consumed in that order and a scene is a pure function
+    of the index. `corrupted_twin` renders the result and compares, so the
+    duplication cannot drift silently.
+    """
+    from loopvision.data.dataset import split_spec
+
+    spec = split_spec(FAMILY, split, cfg)
+    rng = sample_rng(FAMILY, split, sample.idx, cfg)
+    depth = int(rng.choice(spec.depth))
+    breadth = int(rng.choice(spec.breadth))
+    sprites = scenes.place_sprites(rng, breadth, split)
+    attrs = QUERY_SUBSETS[int(rng.integers(0, len(QUERY_SUBSETS)))]
+    if sprites is not None and rng.random() < 0.5:
+        source = sprites[int(rng.integers(0, len(sprites)))]
+        query_spec = {a: source.attribute(a) for a in attrs}
+    else:
+        query_spec = {
+            a: ATTRIBUTE_POOL[a]()[int(rng.integers(0, len(ATTRIBUTE_POOL[a]())))]
+            for a in attrs
+        }
+    return depth, breadth, sprites, query_spec
+
+
+def corrupted_twin(
+    sample: Sample,
+    cfg: TaskConfig | None = None,
+    which: int = 0,
+    split: str = "iid_val",
+) -> Sample | None:
+    """A twin where one attribute of one sprite flips its match status.
+
+    The M2 counterfactual for the breadth arm, and the one H3 actually
+    turns on. H3 predicts breadth tasks are loop-diffuse and spatially
+    local, and "spatially local" is only testable if the corruption sits at
+    a single place in the image. Editing the query instead would change
+    which sprites are relevant everywhere at once and could not distinguish
+    the two predictions.
+
+    So exactly one sprite changes, in exactly one attribute, and the count
+    moves by one. Position is untouched: `Sprite` keeps row and col
+    separate from appearance, so the edited sprite stays where it was and
+    the two images differ in one cell and nowhere else.
+
+    Returns None rather than something misleading when:
+
+    - **No sprite can be flipped by a single attribute.** Turning a
+      non-matching sprite on needs every queried attribute to agree, so
+      only sprites that already disagree in exactly one are eligible.
+    - **The label does not move.** The count is capped at
+      COUNT_CAP, so a scene already at the cap can lose a match without the
+      answer changing, and a recovery ratio needs a clean-corrupt gap.
+    """
+    cfg = cfg or TaskConfig()
+    depth, breadth, sprites, query_spec = _replay(sample, cfg, split)
+    if not sprites:
+        return None
+
+    if not np.array_equal(scenes.render_scene(sprites, cfg.canvas), sample.image):
+        raise ValueError(
+            f"replayed scene for index {sample.idx} does not render to the "
+            f"original image, so the replay and generate() have drifted. The "
+            f"counterfactual would be against a scene the model never saw."
+        )
+
+    queried = list(query_spec)
+    rng = np.random.default_rng(sample.layout_seed + 1)
+
+    # Prefer colour, then shape, then size, so the edit is the smallest
+    # visible change available rather than whichever attribute comes first.
+    order = [a for a in ("colour", "shape", "size") if a in query_spec]
+
+    candidates: list[tuple[int, str, object]] = []
+    for i, sp in enumerate(sprites):
+        if matches(sp, query_spec):
+            # Turn it off: any queried attribute set to a different value.
+            for a in order:
+                pool = [v for v in ATTRIBUTE_POOL[a]() if v != sp.attribute(a)]
+                if pool:
+                    candidates.append((i, a, pool[int(rng.integers(0, len(pool)))]))
+                    break
+        else:
+            wrong = [a for a in queried if sp.attribute(a) != query_spec[a]]
+            if len(wrong) == 1:
+                # Turn it on: agree on the single attribute that disagrees.
+                candidates.append((i, wrong[0], query_spec[wrong[0]]))
+
+    if not candidates:
+        return None
+
+    idx_sp, attr, value = candidates[which % len(candidates)]
+    edited = list(sprites)
+    edited[idx_sp] = dc_replace(sprites[idx_sp], **{attr: value})
+
+    label = count_matching(edited, query_spec)
+    if label == sample.label:
+        return None
+
+    desc = "+".join(f"{a}:{query_spec[a]}" for a in sorted(query_spec))
+    return Sample(
+        image=scenes.render_scene(edited, cfg.canvas),
+        query=sample.query,
+        label=label,
+        depth=depth,
+        breadth=breadth,
+        program=f"C;d={depth};b={breadth};query={desc};"
+        f"scene={scenes.scene_program(edited)}",
+        idx=sample.idx,
+        layout_seed=sample.layout_seed,
+    )
 
 
 def generate(idx: int, split: str, cfg: TaskConfig | None = None) -> Sample:

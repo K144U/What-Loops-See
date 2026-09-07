@@ -46,6 +46,7 @@ import yaml
 from loopvision.data import dataset as D
 from loopvision.data import family_a as FA
 from loopvision.data import family_b as FB
+from loopvision.data import family_c as FC
 from loopvision.instruments.hooks import (
     LogitDiff,
     capture,
@@ -66,6 +67,7 @@ from loopvision.train.cli import build_model, task_config
 TWIN = {
     "A": lambda sample, cfg, split: FA.corrupted_twin(sample, cfg),
     "B": lambda sample, cfg, split: FB.corrupted_twin(sample, cfg, split=split),
+    "C": lambda sample, cfg, split: FC.corrupted_twin(sample, cfg, split=split),
 }
 
 
