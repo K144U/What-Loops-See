@@ -24,6 +24,40 @@ The short list. Every row here must appear in `docs/claims.md` in the repo and m
 
 Gates are results too, and the G1 table goes in the paper as evidence the depth axis is real. Record failing attempts as well as passing ones, with what changed in between.
 
+### The feedforward control splits by seed. The colour task is learnable, and the loop has not learned it, milestone 4, 2026-09-07
+
+**The control that was built to decide whether the deadlock is about looping came back split, in both task families.**
+
+| run | architecture | final accuracy | chance |
+|---|---|---|---|
+| `famA_d2_d4colour_ffwd_s0` | feedforward, matched compute | **0.1249** | 0.1250 |
+| `famA_d2_d4colour_ffwd_s1` | feedforward, matched compute | **1.0000** | 0.1250 |
+| `famA_d2_d4colour_s0` | looped | 0.1277 | 0.1250 |
+| `famA_d2_d4colour_s1` | looped | 0.1277 | 0.1250 |
+| `famA_d2_s3only_ffwd_s0` | feedforward, matched compute | **0.1645** | 0.1667 |
+| `famA_d2_s3only_ffwd_s1` | feedforward, matched compute | **1.0000**, still training at 183450 | 0.1667 |
+| `famA_d2_s3only_s0` | looped | 0.1725 | 0.1667 |
+
+All completed runs are at the full 300000 step budget except `s3only_ffwd_s1`, which is live and already at ceiling.
+
+**What this establishes.** The colour task is **learnable at this compute budget by a non-looped model**. Until now every model that had ever attempted it sat on the chance floor, and the reading recorded in `findings.md` was a bootstrapping deadlock rather than difficulty. That reading survives, and is strengthened: a task nothing had solved has now been solved twice, by the architecture that does not iterate.
+
+**What this does not establish, and the distance is large.** Two seeds per arm. One seed solving is not a rate, and the looped arm has two seeds on `d4_colour` and two on `s3only`, so "the loop never escapes" rests on four runs. The honest statement is that escape looks probabilistic and no looped run has yet escaped, not that looping cannot.
+
+**A pattern that is probably nothing and is written down anyway.** Seed 0 deadlocked in both task families and seed 1 solved in both. Seed controls initialisation and data order together, so a seed that escapes on one task escaping on another is not independent evidence of anything. With two seeds and two tasks this is well inside coincidence. It is recorded now so that if it holds at five seeds it is a prediction rather than a discovery.
+
+**D-032 does not have a cell for this outcome.** That entry registered three readings: both arms deadlock, both solve, or matched compute solves while matched parameters does not. A split **within** the matched-compute arm was not anticipated, so the document that was supposed to say what each outcome licenses does not cover the one that happened. Do not resolve that by picking whichever of the three cells reads best. The matched-parameter arm, running now as 5222 and 5223, is the next evidence, and D-037 does define what it means.
+
+**Controls on the perfect score, one of three.** CLAUDE.md requires three for any score at or near 1.0000.
+
+- **Order-blind ceiling: PASSED.** The analytic ceiling at depth 2 for D4 is 0.8125 and the run is at 1.0000, so the score is not reachable by ignoring operator order.
+- **Blank-image control: running.**
+- **Input ablation: running.**
+
+Until both land, the 1.0000 is a number this file reports and does not yet vouch for.
+
+Provenance: `runs/famA_d2_d4colour_ffwd_s{0,1}`, `runs/famA_d2_s3only_ffwd_s{0,1}`, `runs/famA_d2_d4colour_s{0,1}`, `runs/famA_d2_s3only_s0`. Configs derived from their looped twins per D-032, differing in `arch`, `k_schedule` and `k_train` only.
+
 ### M2 patching, first read across all three families. POST-HOC, milestone 6, 2026-09-07
 
 **Label this post-hoc and keep it labelled.** The two summary statistics below were invented after looking at the heatmaps. IMPLEMENTATION.md Section 8 says a statistic discovered after seeing the data is post-hoc and is labelled so in the paper, and H3's metrics are not defined anywhere yet because `preregistration.md` does not exist. This entry is a reading, not a result.
