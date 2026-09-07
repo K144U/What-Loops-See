@@ -521,6 +521,21 @@ Reporting any outcome requires saying which of these three it is.
 **This does not reopen gate G2.** G2 failed, it is recorded as failed, and no outcome here changes that. This is diagnosis of a failure already reported, not an appeal against it.
 **Reversible:** yes. Nothing depends on these configs.
 
+### D-039. The pre-registration is written at milestone 6, and says so
+**Date:** 2026-09-07
+**Milestone:** 6
+**Type:** deviation
+**Decision:** `docs/preregistration.md` is written and frozen at tag `prereg-v1` on 2026-09-07, at milestone 6. IMPLEMENTATION.md Section 8 requires it before milestone 5 runs. Milestone 5 has not run, so the ordering is not violated for H1's remaining cells, H2 or H4, but the file arrives after H1's family B result and after three H3 heatmaps were already seen.
+**Reason:** H3 has no defined metric anywhere in the repository, and a first read of the M2 grids on 2026-09-07 produced numbers that did not fit the prediction using statistics invented after looking at them. Without a registered metric that reading cannot become a result, and with a metric written afterwards it could become whatever the data suggested. The only honest way out is a document that states what had been seen, at the moment of freezing, per hypothesis.
+**Consequence:** Section 0 of the pre-registration is a disclosure table rather than a formality, and it costs the project something real:
+
+- **H2 and H4 are pre-registered in the ordinary sense.** Nothing has been computed for either.
+- **H1's family B result is demoted to exploratory.** Eight seeds, already analysed, already written up as supported. The registered form binds only the cells not yet run.
+- **H3's three heatmaps are exploratory** and stay that way whatever the confirmation set shows. H3's metrics are now fixed as normalised Shannon entropy over iterations and over positions, chosen to be parameter free so that no later choice of a top-`m` cutoff can move the answer.
+
+The mechanistic alternative that would explain the observed reversal, counting being a global aggregate and composition being strip-local, is registered in Section 4 **before** the confirmation runs, so that adopting it later is a recorded prediction rather than a story fitted to the outcome.
+**Reversible:** no. The tag is the point. Deviations from here go in this file.
+
 ### D-003. Compute block, sixteen weeks on the cluster
 **Date:** open
 **Milestone:** blocks the pre-registration freeze at milestone 5
