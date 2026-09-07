@@ -48,13 +48,23 @@ All completed runs are at the full 300000 step budget except `s3only_ffwd_s1`, w
 
 **D-032 does not have a cell for this outcome.** That entry registered three readings: both arms deadlock, both solve, or matched compute solves while matched parameters does not. A split **within** the matched-compute arm was not anticipated, so the document that was supposed to say what each outcome licenses does not cover the one that happened. Do not resolve that by picking whichever of the three cells reads best. The matched-parameter arm, running now as 5222 and 5223, is the next evidence, and D-037 does define what it means.
 
-**Controls on the perfect score, one of three.** CLAUDE.md requires three for any score at or near 1.0000.
+**Controls on the perfect score: all three PASSED.** CLAUDE.md requires three for any score at or near 1.0000, and the 1.0000 is now believed.
 
-- **Order-blind ceiling: PASSED.** The analytic ceiling at depth 2 for D4 is 0.8125 and the run is at 1.0000, so the score is not reachable by ignoring operator order.
-- **Blank-image control: running.**
-- **Input ablation: running.**
+- **Order-blind ceiling: PASSED.** The analytic ceiling at depth 2 for D4 is 0.8125 against a run at 1.0000, so the score is not reachable by ignoring operator order.
+- **Blank-image control: PASSED.** Blanking the image takes it from 1.0000 to 0.1223, which is *below* the best constant baseline of 0.1284. It reads the image rather than the label prior.
+- **Input ablation: PASSED.** One patch at a time, n=4096, chance 0.1250:
 
-Until both land, the 1.0000 is a number this file reports and does not yet vouch for.
+| ablated | accuracy | reading |
+|---|---|---|
+| nothing | 1.0000 | baseline |
+| state | 0.1235 | required |
+| op1 | 0.1221 | required |
+| op2 | 0.1277 | required |
+| **distractors** | **1.0000** | **correctly ignored** |
+
+It needs its state and both operators, and is completely unaffected by the distractors. That is the same signature the solved D4 position model shows.
+
+**The deadlocked twin ran the same controls and answers a different question.** `famA_d2_d4colour_ffwd_s0` scores 0.1250 with the image and **0.1250 with the image blanked**, identical to four decimals. It is not reading the image at all. That is the "never extracts its own inputs" signature the state probe found in the cold-start looped models, now reproduced in a feedforward model that failed on the same task. Whatever the deadlock is, it is not specific to the looped architecture, and the two architectures fail the same way when they fail.
 
 Provenance: `runs/famA_d2_d4colour_ffwd_s{0,1}`, `runs/famA_d2_s3only_ffwd_s{0,1}`, `runs/famA_d2_d4colour_s{0,1}`, `runs/famA_d2_s3only_s0`. Configs derived from their looped twins per D-032, differing in `arch`, `k_schedule` and `k_train` only.
 
