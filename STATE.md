@@ -261,9 +261,23 @@ not. If a long silence happens, check rather than assume.
 
 **The GPU node is core bound and there is no scheduled drain to wait for.**
 Measured 6 September: 96 of 96 cores assigned with 41 jobs resident, while
-memory is nowhere near binding. Shrinking a core request to fit a gap has
-started jobs hours earlier on five occasions. GPUs are claimed atomically
-so concurrent jobs stop landing on the same card.
+memory is nowhere near binding. GPUs are claimed atomically so concurrent
+jobs stop landing on the same card.
+
+**Ask for two cores. Larger requests are backfilled past, not queued
+behind.** On 7 September, 5269 at six cores sat queued while 5270 and 5272
+at four cores, both submitted after it, started and ran. The scheduler
+fills the gaps that exist, and the gaps here are small, so a larger request
+does not wait its turn, it waits indefinitely while smaller jobs overtake
+it. Four jobs were resized for this reason in one afternoon: 5269, 5271,
+5277 and 5278, all carrying work ranked above what was overtaking them.
+
+The cost of two cores is `PER_RUN=1` and `WORKERS=0`, in-process
+generation, which D-025 puts at roughly 30 to 40 percent slower per run.
+That is the right trade against not running. **Pack runs into a job rather
+than cores into a job**: `max_run` counts jobs and not runs, so three runs
+in one two core job costs one slot, and three separate jobs cost three.
+See D-041.
 
 **Neither memory nor walltime is enforced.** One neighbouring job holds
 1041 GiB against no request at all, so the 32gb default. Several jobs have
