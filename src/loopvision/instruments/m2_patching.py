@@ -143,11 +143,21 @@ def full_state_control(model, clean, corrupt, k: int, device) -> list[float]:
 def patch_grid(
     run_dir: Path,
     items: int = 256,
+    min_admissible: int | None = None,
     k: int | None = None,
     split: str = "iid_val",
     device: str | None = None,
 ) -> pd.DataFrame:
-    """Aggregate the (loop, position) recovery grid over `items` pairs."""
+    """Aggregate the (loop, position) recovery grid over counterfactual pairs.
+
+    `items` caps how many candidates are examined. `min_admissible` is the
+    number that must survive, which is what the pre-registration actually
+    specifies: 256 admissible items per cell. Admissibility varies sharply by
+    family, 98 percent for family C against 51 percent for family B, so a raw
+    count delivers whatever sample the family happens to yield and a cell can
+    silently carry half the registered size. Set the target and let the cap
+    stop a runaway.
+    """
     cfg = yaml.safe_load((run_dir / "config.yaml").read_text())
     family = cfg["family"]
     if family not in TWIN:
@@ -175,7 +185,10 @@ def patch_grid(
     controls: list[list[float]] = []
     skipped_same_label = 0
     skipped_no_twin = 0
+    target = min_admissible
     for i in range(items):
+        if target is not None and len(grids) >= target:
+            break
         gi = D.global_index(split, i)
         clean = D.generate(family, gi, split, tcfg)
         corrupt = twin(clean, tcfg, split)
@@ -248,7 +261,10 @@ def patch_grid(
         )
 
     df = pd.DataFrame(rows)
+    df.attrs["items_examined"] = i + 1 if items else 0
     df.attrs["items_requested"] = items
+    df.attrs["min_admissible"] = min_admissible
+    df.attrs["admissible"] = len(grids)
     df.attrs["skipped_same_label"] = skipped_same_label
     df.attrs["skipped_no_twin"] = skipped_no_twin
     return df
@@ -258,18 +274,32 @@ def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--run-id", required=True)
     p.add_argument("--runs-root", default="runs")
-    p.add_argument("--items", type=int, default=256)
+    p.add_argument("--items", type=int, default=256, help="candidates to examine")
+    p.add_argument(
+        "--min-admissible",
+        type=int,
+        default=None,
+        help="admissible pairs required, the pre-registered quantity",
+    )
     p.add_argument("--k", type=int, default=None)
     p.add_argument("--split", default="iid_val")
     p.add_argument("--out", default=None)
     a = p.parse_args()
 
     run_dir = Path(a.runs_root) / a.run_id
-    df = patch_grid(run_dir, items=a.items, k=a.k, split=a.split)
+    df = patch_grid(
+        run_dir, items=a.items, min_admissible=a.min_admissible, k=a.k, split=a.split
+    )
     out = Path(a.out) if a.out else run_dir / "m2_patching.parquet"
     df.to_parquet(out, index=False)
 
     kept = df.n_items.max()
+    if a.min_admissible and df.attrs["admissible"] < a.min_admissible:
+        print(
+            f"  SHORT {df.attrs['admissible']} admissible of {a.min_admissible} "
+            f"required, after examining {df.attrs['items_examined']} candidates. "
+            f"Raise --items or this cell is under the registered size."
+        )
     print(f"wrote {out}")
     print(
         f"  grid {df.iteration.nunique()} iterations x {df.position.nunique()} positions"

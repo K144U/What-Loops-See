@@ -1,0 +1,95 @@
+#!/bin/bash
+#PBS -N m2confirm
+#PBS -q workq
+#PBS -l select=1:ncpus=16:mem=64gb
+#PBS -l walltime=48:00:00
+#PBS -j oe
+
+# The H3 confirmation grids, on workq rather than the gpu queue.
+#
+# WHY workq. These are forward passes over stored checkpoints, not training.
+# They need cores and no GPU. The gpu queue is chronically full, we sit at a
+# 5 job and 16 core per-user cap there, and every grid submitted there would
+# displace a training run we actually need. workq has six nodes of 64 cores,
+# four of them idle when this was written, and carries no resources_max at
+# all. See STATE.md section 6.
+#
+# A cell takes over ten minutes on one core, so the cells are run in parallel
+# across the allocation rather than in sequence.
+#
+# Writes runs/<id>/m2_confirm.parquet, NEVER m2_patching.parquet. The
+# pre-registration excludes the three exploratory grids from the
+# confirmation set, so overwriting them would destroy the record of what was
+# seen before the metrics were fixed, and merge two things it keeps apart.
+#
+#   RUNS="id1 id2 id3" MIN_ADMISSIBLE=256 ITEMS=900 qsub scripts/m2_confirm.pbs
+
+set -uo pipefail
+cd "$PBS_O_WORKDIR"
+mkdir -p logs
+
+source /etc/profile.d/modules.sh
+module load python311
+source .venv/bin/activate
+export PYTHONUNBUFFERED=1
+
+RUNS="${RUNS:?set RUNS to a space separated list of run ids}"
+MIN_ADMISSIBLE="${MIN_ADMISSIBLE:-256}"
+ITEMS="${ITEMS:-900}"
+NCPUS="${NCPUS:-16}"
+
+NRUNS=$(echo "$RUNS" | wc -w)
+# One worker per cell, but never more than the cores we hold.
+PAR=$(( NCPUS < NRUNS ? NCPUS : NRUNS ))
+[ "$PAR" -lt 1 ] && PAR=1
+# Each cell is single threaded, so torch must not also try to use every core.
+export OMP_NUM_THREADS=$(( NCPUS / PAR ))
+[ "$OMP_NUM_THREADS" -lt 1 ] && export OMP_NUM_THREADS=1
+
+echo "=== M2 confirmation grids ==="
+echo "runs           : $RUNS"
+echo "min admissible : $MIN_ADMISSIBLE"
+echo "candidate cap  : $ITEMS"
+echo "parallel       : $PAR workers, OMP_NUM_THREADS=$OMP_NUM_THREADS"
+echo
+
+PIDS=()
+IDS=()
+for rid in $RUNS; do
+    if [ -f "runs/$rid/m2_confirm.parquet" ]; then
+        echo "  $rid already has a grid, skipping"
+        continue
+    fi
+    while [ "$(jobs -rp | wc -l)" -ge "$PAR" ]; do wait -n; done
+    echo "  starting $rid"
+    python -m loopvision.instruments.m2_patching \
+        --run-id "$rid" \
+        --items "$ITEMS" \
+        --min-admissible "$MIN_ADMISSIBLE" --out "runs/$rid/m2_confirm.parquet" \
+        > "logs/m2_${rid}.log" 2>&1 &
+    PIDS+=($!)
+    IDS+=("$rid")
+done
+
+FAILED=""
+for j in "${!PIDS[@]}"; do
+    if ! wait "${PIDS[$j]}"; then FAILED="$FAILED ${IDS[$j]}"; fi
+done
+
+echo
+echo "=== results ==="
+for rid in $RUNS; do
+    f="runs/$rid/m2_confirm.parquet"
+    if [ ! -f "$f" ]; then echo "  $rid MISSING"; continue; fi
+    # The control is the admissibility gate for a cell, not a nicety. The
+    # pre-registration discards any cell whose control falls below 0.95
+    # rather than reporting it as a null.
+    grep -E "positive control|SHORT|admissible" "logs/m2_${rid}.log" 2>/dev/null \
+        | sed "s/^/  $rid: /"
+done
+
+if [ -n "$FAILED" ]; then
+    echo "FAILED:$FAILED" >&2
+    exit 1
+fi
+echo "all cells complete"
