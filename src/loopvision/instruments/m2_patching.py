@@ -45,6 +45,7 @@ import yaml
 
 from loopvision.data import dataset as D
 from loopvision.data import family_a as FA
+from loopvision.data import family_b as FB
 from loopvision.instruments.hooks import (
     LogitDiff,
     capture,
@@ -60,8 +61,11 @@ from loopvision.train.cli import build_model, task_config
 # strip. Families B and C need their own one element edit, a relation hop
 # and a scene element respectively, and until those exist this module
 # refuses rather than patching something it cannot interpret.
+# Signatures differ: family B needs the split, because it regenerates the
+# scene from the index rather than parsing it back out of the program.
 TWIN = {
-    "A": FA.corrupted_twin,
+    "A": lambda sample, cfg, split: FA.corrupted_twin(sample, cfg),
+    "B": lambda sample, cfg, split: FB.corrupted_twin(sample, cfg, split=split),
 }
 
 
@@ -79,7 +83,7 @@ def item_grid(model, clean, corrupt, k: int, device) -> torch.Tensor | None:
         # corrupt direction to measure recovery along.
         return None
     clean_image, query = to_tensor(clean, device)
-    corrupt_image, _ = to_tensor(corrupt, device)
+    corrupt_image, corrupt_query = to_tensor(corrupt, device)
     return recovery_grid(
         model,
         clean_image,
@@ -88,6 +92,7 @@ def item_grid(model, clean, corrupt, k: int, device) -> torch.Tensor | None:
         int(clean.label),
         int(corrupt.label),
         k,
+        corrupt_query=corrupt_query,
     )
 
 
@@ -109,11 +114,11 @@ def full_state_control(model, clean, corrupt, k: int, device) -> list[float]:
     if clean.label == corrupt.label:
         return []
     clean_image, query = to_tensor(clean, device)
-    corrupt_image, _ = to_tensor(corrupt, device)
+    corrupt_image, corrupt_query = to_tensor(corrupt, device)
 
     s0 = shared_init_state(model, clean_image, query)
     clean_logits, clean_states = capture(model, clean_image, query, k, s0=s0)
-    corrupt_logits, _ = capture(model, corrupt_image, query, k, s0=s0)
+    corrupt_logits, _ = capture(model, corrupt_image, corrupt_query, k, s0=s0)
     scale = LogitDiff(
         clean=float(logit_difference(clean_logits, int(clean.label), int(corrupt.label))[0]),
         corrupted=float(logit_difference(corrupt_logits, int(clean.label), int(corrupt.label))[0]),
@@ -127,7 +132,7 @@ def full_state_control(model, clean, corrupt, k: int, device) -> list[float]:
         # the control silently reads 0.0000 everywhere.
         with patched(model, clean_states, i, every) as hook:
             with torch.no_grad():
-                logits = model(corrupt_image, query, k=k, s0=s0, state_hook=hook)
+                logits = model(corrupt_image, corrupt_query, k=k, s0=s0, state_hook=hook)
         v = float(logit_difference(logits, int(clean.label), int(corrupt.label))[0])
         out.append(scale.recovered(v))
     return out
@@ -167,10 +172,16 @@ def patch_grid(
     grids: list[torch.Tensor] = []
     controls: list[list[float]] = []
     skipped_same_label = 0
+    skipped_no_twin = 0
     for i in range(items):
         gi = D.global_index(split, i)
         clean = D.generate(family, gi, split, tcfg)
-        corrupt = twin(clean, tcfg)
+        corrupt = twin(clean, tcfg, split)
+        if corrupt is None:
+            # No counterfactual exists for this item: family B depth 1 has no
+            # hop to edit, and an edited hop can point at empty space.
+            skipped_no_twin += 1
+            continue
         g = item_grid(model, clean, corrupt, k, device)
         if g is None:
             skipped_same_label += 1
@@ -184,7 +195,8 @@ def patch_grid(
     if not grids:
         raise RuntimeError(
             f"no admissible counterfactual pairs in {items} items for {run_dir.name}. "
-            f"{skipped_same_label} had a twin that did not change the label."
+            f"{skipped_same_label} had a twin that did not change the label, "
+            f"{skipped_no_twin} had no twin at all."
         )
 
     stack = torch.stack(grids)  # (n_items, k+1, positions)
@@ -236,6 +248,7 @@ def patch_grid(
     df = pd.DataFrame(rows)
     df.attrs["items_requested"] = items
     df.attrs["skipped_same_label"] = skipped_same_label
+    df.attrs["skipped_no_twin"] = skipped_no_twin
     return df
 
 
@@ -261,7 +274,8 @@ def main() -> int:
     )
     print(
         f"  {kept} of {a.items} items admissible, "
-        f"{df.attrs['skipped_same_label']} twins did not change the label"
+        f"{df.attrs['skipped_same_label']} twins did not change the label, "
+        f"{df.attrs['skipped_no_twin']} had no twin"
     )
     ctl_last = df[(df.position == -1) & (df.iteration == df.iteration.max())]
     v = float(ctl_last.recovery_mean.iloc[0])

@@ -202,6 +202,7 @@ def recovery_grid(
     corrupt_label: int,
     k: int,
     positions: Sequence[int] | None = None,
+    corrupt_query: torch.Tensor | None = None,
 ) -> torch.Tensor:
     """The M2 heatmap for one item: recovery at every (iteration, position).
 
@@ -210,15 +211,23 @@ def recovery_grid(
     row k is what the coda sees.
 
     Both runs share one s_0, so the only difference between them is the
-    corrupted pixel and whatever the patch restores.
+    corrupted input and whatever the patch restores.
+
+    ``corrupt_query`` exists because the counterfactual does not always live
+    in the image. Family A renders its operators into the scene, so the twin
+    differs in pixels and the query is shared. Family B puts the relation
+    chain in the query, so its twin differs in one query token and the image
+    is byte identical. Passing one query for both runs there makes the two
+    runs the same run, every logit difference zero, and every cell NaN.
     """
     device = clean_image.device
     n_positions = model.cfg.seq_len if positions is None else len(positions)
     positions = list(range(model.cfg.seq_len)) if positions is None else list(positions)
 
+    corrupt_query = query if corrupt_query is None else corrupt_query
     s0 = shared_init_state(model, clean_image, query)
     clean_logits, clean_states = capture(model, clean_image, query, k, s0=s0)
-    corrupt_logits, _ = capture(model, corrupt_image, query, k, s0=s0)
+    corrupt_logits, _ = capture(model, corrupt_image, corrupt_query, k, s0=s0)
 
     scale = LogitDiff(
         clean=float(logit_difference(clean_logits, clean_label, corrupt_label)[0]),
@@ -228,7 +237,7 @@ def recovery_grid(
     # Replicate the corrupted item once per position, and replicate the
     # donor states to match, so one pass covers the whole position axis.
     rep_image = corrupt_image.expand(n_positions, -1, -1, -1).contiguous()
-    rep_query = query.expand(n_positions, -1).contiguous()
+    rep_query = corrupt_query.expand(n_positions, -1).contiguous()
     rep_s0 = s0.expand(n_positions, -1, -1).contiguous()
     rep_donor = [st.expand(n_positions, -1, -1).contiguous() for st in clean_states]
 

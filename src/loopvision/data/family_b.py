@@ -258,6 +258,98 @@ def generate(idx: int, split: str, cfg: TaskConfig | None = None) -> Sample:
     )
 
 
+def corrupted_twin(
+    sample: Sample,
+    cfg: TaskConfig | None = None,
+    which: int = 0,
+    split: str = "iid_val",
+) -> Sample | None:
+    """A twin differing in exactly one relation hop. The M2 counterfactual.
+
+    **The image is byte identical.** Family A renders its operators into the
+    scene, so its twin re-renders. Here the chain lives in the query, so the
+    twin changes one relation token and leaves every pixel alone. That makes
+    this the cleaner of the two counterfactuals: patching isolates where the
+    edited hop is processed with the visual input held exactly constant.
+
+    The scene is regenerated from the sample's index rather than parsed back
+    out of the program string, because a scene is a pure function of that
+    index and there is no parser for `scenes.scene_program`. The replay
+    duplicates the first few lines of `generate`, and
+    `tests/test_family_b_twin.py` asserts the regenerated image matches the
+    original byte for byte, so the two cannot drift apart silently.
+
+    Returns None when no counterfactual exists, rather than returning
+    something misleading:
+
+    - **Depth 1 has no hop.** The chain is empty, there is nothing to edit.
+    - **The edited chain may die.** Family B rejection samples precisely
+      because a relation can point at empty space. A replacement hop that
+      does not resolve is not a harder question, it is not a question, so
+      every alternative is tried and the item is dropped if none survive.
+    """
+    cfg = cfg or TaskConfig()
+    from loopvision.data.dataset import split_spec
+
+    spec = split_spec(FAMILY, split, cfg)
+    rng = sample_rng(FAMILY, split, sample.idx, cfg)
+    depth = int(rng.choice(spec.depth))
+    breadth = int(rng.choice(spec.breadth))
+    (sprites, anchor, chain, _target, attribute), _ = sample_scene(
+        rng, depth, breadth, split
+    )
+
+    # The replay must reproduce the ORIGINAL scene, not merely some scene.
+    # Checking `twin.image == sample.image` cannot catch drift, because the
+    # twin reuses `sample.image` by construction and that comparison is true
+    # however wrong the sprites are. Rendering the replayed sprites and
+    # comparing is the check that actually binds.
+    if not np.array_equal(scenes.render_scene(sprites, cfg.canvas), sample.image):
+        raise ValueError(
+            f"replayed scene for index {sample.idx} does not render to the "
+            f"original image, so the replay and generate() have drifted. The "
+            f"counterfactual would be against a scene the model never saw."
+        )
+
+    if not chain:
+        return None
+
+    position = which % len(chain)
+    here = scenes.RELATIONS.index(chain[position])
+    order = [(here + 1 + j) % len(scenes.RELATIONS) for j in range(len(scenes.RELATIONS) - 1)]
+
+    for cand in order:
+        edited = list(chain)
+        edited[position] = scenes.RELATIONS[cand]
+        target = resolve(sprites, anchor, edited)
+        if target is None:
+            continue
+
+        base = {
+            "colour": lambda s: COLOUR_BASE + s.colour,
+            "shape": lambda s: SHAPE_BASE + render.SHAPES.index(s.shape),
+            "size": lambda s: SIZE_BASE + render.SIZES.index(s.size),
+        }
+        tokens = [FAM_B, QUERY, ATTR_BASE + ATTRIBUTES.index(attribute)]
+        tokens += [base[a](anchor) for a in scenes.DESCRIPTOR_FOR[attribute]]
+        tokens += [REL_BASE + scenes.RELATIONS.index(r) for r in edited]
+
+        return Sample(
+            image=sample.image,
+            query=pad_query(tokens, FAMILY),
+            label=encode_label(attribute, target.attribute(attribute)),
+            depth=depth,
+            breadth=breadth,
+            program=build_program(
+                anchor, edited, target, attribute, sprites, depth, breadth
+            ),
+            idx=sample.idx,
+            layout_seed=sample.layout_seed,
+        )
+
+    return None
+
+
 def hop_labels(idx: int, split: str, cfg: TaskConfig | None = None) -> list[int]:
     """The label at every point along the chain, not just the end.
 
