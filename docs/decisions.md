@@ -536,6 +536,30 @@ Reporting any outcome requires saying which of these three it is.
 The mechanistic alternative that would explain the observed reversal, counting being a global aggregate and composition being strip-local, is registered in Section 4 **before** the confirmation runs, so that adopting it later is a recorded prediction rather than a story fitted to the outcome.
 **Reversible:** no. The tag is the point. Deviations from here go in this file.
 
+### D-040. The D4 curriculum needs a third arm, because its control shares the group
+**Date:** 2026-09-07
+**Milestone:** 4
+**Type:** deviation
+**Decision:** add `famA_d2_d4colour_curriculum_s3donor`, a third curriculum arm initialised from `famA_d1_s3only_s0`, a depth 1 model that learned the S3 factor and carries no D4 structure at all.
+**Reason:** the two D4 arms are both at 1.0000 while still training, the real curriculum at 90 percent of budget and its control at 77 percent. Read carelessly that says the rescue is not donor specific. Read carefully it says something else, because the S3 experiment's control and the D4 experiment's control are not the same kind of control.
+
+| experiment | task | donor in the control arm | shares the task's group | outcome |
+|---|---|---|---|---|
+| S3 | depth 2 S3 | depth 1 **D4** | no | stayed at 0.1652 for the full budget |
+| D4 colour | depth 2 D4 on colour | depth 1 **D4** on position | **yes** | at 1.0000 |
+
+S3's control was a different group. D4's control is the same group on a different substrate. So the existing D4 control tests whether position-trained D4 knowledge transfers to colour, and the answer appears to be yes, which is a real result. It does not test whether the donor's content matters at all, and that is the claim the S3 experiment supports and the D4 experiment is currently assumed to support.
+**Consequence:** until this arm finishes, the defensible D4 statement is **"a depth 1 D4 donor rescues depth 2 D4 on colour, whether that donor was trained on position or on colour"**. The stronger statement, that the rescue is specific to the donor rather than to having any pretrained start, is not supported for D4 and must not be written as though the existing control established it.
+
+Three arms now differ from each other in exactly one config line, `init_from`, which is the cleanest form this comparison can take:
+
+- `famA_d1_d4colour_s0`, same group, same substrate
+- `famA_d1_d4only_s0`, same group, different substrate
+- `famA_d1_s3only_s0`, different group, no D4 content
+
+If the third arm also reaches 1.0000, the rescue is about having any trained depth 1 initialisation and the donor's content is irrelevant, which would weaken the deadlock account considerably and would apply retrospectively to the S3 result as well. That outcome is written here before the run, not after it.
+**Reversible:** yes, it is one more run.
+
 ### D-003. Compute block, sixteen weeks on the cluster
 **Date:** open
 **Milestone:** blocks the pre-registration freeze at milestone 5

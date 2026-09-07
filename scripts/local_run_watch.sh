@@ -43,7 +43,8 @@ RUNS="famA_d2_s3only_curr_s1 famA_d2_d4colour_s1
       famA_d2_s3only_ffwd_s0 famA_d2_s3only_ffwd_s1
       famA_d2_d4colour_ffwd_mp_s0 famA_d2_d4colour_ffwd_mp_s1
       famA_d2_s3only_ffwd_mp_s0 famA_d2_s3only_ffwd_mp_s1
-      famB_g2_untied_s0 famB_g2_untied_s1"
+      famB_g2_untied_s0 famB_g2_untied_s1
+      famA_d2_d4colour_curr_s3donor_s0"
 
 # Collapse to one line before it is interpolated into the remote command.
 # The readable definition above spans several lines, and a newline inside
