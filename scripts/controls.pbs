@@ -1,0 +1,60 @@
+#!/bin/bash
+#PBS -N controls
+#PBS -q workq
+#PBS -l select=1:ncpus=8:mem=32gb
+#PBS -l walltime=24:00:00
+#PBS -j oe
+
+# The two input controls a perfect score owes, on workq.
+#
+# CLAUDE.md requires three controls for any score at or near 1.0000: the
+# blank-image control, the one-patch-at-a-time input ablation, and an
+# analytic order-blind ceiling. The ceiling is arithmetic and needs no run.
+# These are the other two, and they are forward passes over a stored
+# checkpoint, so they want cores and no GPU.
+#
+# workq rather than the gpu queue for the same reason as m2_confirm.pbs: the
+# gpu queue is full, we are capped at 5 jobs and 16 cores there, and a
+# control run would displace a training run.
+#
+#   RUNS="id1 id2" CHANCE=0.125 qsub scripts/controls.pbs
+
+set -uo pipefail
+cd "$PBS_O_WORKDIR"
+mkdir -p logs
+
+source /etc/profile.d/modules.sh
+module load python311
+source .venv/bin/activate
+export PYTHONUNBUFFERED=1
+export OMP_NUM_THREADS="${OMP_NUM_THREADS:-4}"
+
+RUNS="${RUNS:?set RUNS to a space separated list of run ids}"
+BATCHES="${BATCHES:-16}"
+CHANCE="${CHANCE:-}"
+
+DIRS=""
+for rid in $RUNS; do DIRS="$DIRS runs/$rid"; done
+
+echo "=== blank-image control ==="
+python -m loopvision.analysis.blank_control $DIRS \
+    --batches "$BATCHES" \
+    --json "logs/blank_control.json" 2>&1 | tee logs/blank_control.log
+
+echo
+echo "=== input ablation, one patch at a time ==="
+for rid in $RUNS; do
+    echo "--- $rid ---"
+    if [ -n "$CHANCE" ]; then
+        python -m loopvision.analysis.ablate_input \
+            --run "runs/$rid" --batches "$BATCHES" --chance "$CHANCE" \
+            --json "logs/ablate_${rid}.json" 2>&1 | tee "logs/ablate_${rid}.log"
+    else
+        python -m loopvision.analysis.ablate_input \
+            --run "runs/$rid" --batches "$BATCHES" \
+            --json "logs/ablate_${rid}.json" 2>&1 | tee "logs/ablate_${rid}.log"
+    fi
+done
+
+echo
+echo "all controls complete"
