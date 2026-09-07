@@ -24,6 +24,33 @@ The short list. Every row here must appear in `docs/claims.md` in the repo and m
 
 Gates are results too, and the G1 table goes in the paper as evidence the depth axis is real. Record failing attempts as well as passing ones, with what changed in between.
 
+### M2 patching, first read across all three families. POST-HOC, milestone 6, 2026-09-07
+
+**Label this post-hoc and keep it labelled.** The two summary statistics below were invented after looking at the heatmaps. IMPLEMENTATION.md Section 8 says a statistic discovered after seeing the data is post-hoc and is labelled so in the paper, and H3's metrics are not defined anywhere yet because `preregistration.md` does not exist. This entry is a reading, not a result.
+
+All three families have a working grid with the positive control at 1.0000, so the instrument is not the question.
+
+| family | axis | loop concentration | spatial concentration | peak over mean |
+|---|---|---|---|---|
+| `famA_d2_d4only_s0` | depth | **0.911** | 0.576 | 5.22 |
+| `famB_curve111_s0` | depth | 0.372 | 0.436 | 6.44 |
+| `famC_breadth111_s0` | **breadth** | 0.374 | **0.214** | **2.66** |
+
+Loop concentration is the share of positive recovery sitting at the final iteration. Spatial concentration is the share carried by the top 8 of roughly 70 positions at that iteration.
+
+**H3 predicts depth tasks are loop-localised and spatially distributed, and breadth tasks are loop-diffuse and spatially local.** Two things in the table do not fit.
+
+1. **The two depth families disagree with each other on the loop axis.** Family A is strongly loop-localised at 0.911. Family B is at 0.372, which is indistinguishable from the breadth family's 0.374. H3 expects both depth families on the same side.
+2. **The breadth family is the most spatially distributed of the three**, at 0.214 against 0.576 and 0.436, and the least peaked at 2.66 against 5.22 and 6.44. H3 expects the reverse.
+
+**There is a mechanistic reading under which the second point is unsurprising**, which is a reason to be careful rather than a reason to relax. Counting is a global aggregate: the answer depends on every sprite, so corrupting one and restoring one position should recover a little from many places. Composition depends on the queried strip, so recovery should concentrate where that strip is. That story predicts exactly what the table shows and it is the opposite of what was registered. Deciding after the fact which story the data supports is the thing pre-registration exists to prevent.
+
+**What this does not yet license.** One seed and one run per family, one depth cell each, roughly 60 to 118 admissible items against the 256 the spec asks for, three different models trained on three different tasks at different k. No statistic here is corrected for anything.
+
+**What to do before this becomes a result.** Write `preregistration.md`, which is milestone 5 and unstarted, and define H3's metrics in it before reading these numbers again. The registered substrate prediction is the model to follow: it was written down first, it predicted the opposite of the alternative, and it held, which is why that finding is worth something.
+
+Provenance: `runs/famA_d2_d4only_s0/m2_patching.parquet`, `runs/famB_curve111_s0/m2_patching.parquet`, `runs/famC_breadth111_s0/m2_patching.parquet`.
+
 ### GATE G2 FAILED. Matched-compute feedforward beats the loop, and by more as depth grows, milestone 4, 2026-09-07
 
 **This is a hard stop and it is reported, not worked around.**

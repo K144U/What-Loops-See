@@ -215,6 +215,13 @@ def corrupted_twin(
     edited[idx_sp] = dc_replace(sprites[idx_sp], **{attr: value})
 
     label = count_matching(edited, query_spec)
+    # Flipping one sprite's match status moves the count by one, so this
+    # can only fire when COUNT_CAP truncates the difference away. Measured
+    # on 2026-09-07 over 800 iid_val items: the largest count produced was
+    # 7 against a cap of 10, so no sample reaches it and this branch is
+    # currently unreachable. Kept because the breadth range and the query
+    # subsets are both free to change, and pinned by
+    # test_the_cap_is_currently_out_of_reach so a change says so.
     if label == sample.label:
         return None
 

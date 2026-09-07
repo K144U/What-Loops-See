@@ -106,3 +106,26 @@ def test_the_query_is_untouched():
         assert np.array_equal(np.asarray(clean.query), np.asarray(twin.query))
         checked += 1
     assert checked > 0
+
+
+def test_the_cap_is_currently_out_of_reach():
+    """Pins an assumption the twin's last guard depends on.
+
+    `corrupted_twin` refuses when the edited count equals the original. That
+    can only happen when COUNT_CAP truncates a difference away, and measured
+    over 800 items the largest count the sampler produces is 7 against a cap
+    of 10. So that branch is unreachable and no mutation of it can be
+    detected, which is why it has no behavioural test.
+
+    If the breadth range or the query subsets change, counts can reach the
+    cap and this fails, which is the notice that the guard has become live
+    and now needs one.
+    """
+    cfg = D.TaskConfig()
+    labels = [
+        D.generate("C", D.global_index(SPLIT, i), SPLIT, cfg).label for i in range(400)
+    ]
+    assert max(labels) < FC.COUNT_CAP, (
+        f"counts now reach {max(labels)} against a cap of {FC.COUNT_CAP}, so the "
+        f"cap guard in corrupted_twin is reachable and needs a real test"
+    )
