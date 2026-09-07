@@ -560,6 +560,35 @@ Three arms now differ from each other in exactly one config line, `init_from`, w
 If the third arm also reaches 1.0000, the rescue is about having any trained depth 1 initialisation and the donor's content is irrelevant, which would weaken the deadlock account considerably and would apply retrospectively to the S3 result as well. That outcome is written here before the run, not after it.
 **Reversible:** yes, it is one more run.
 
+### D-041. The queue is consolidated, because the cap counts jobs and not runs
+**Date:** 2026-09-07
+**Milestone:** 4
+**Type:** deviation
+**Decision:** the nine queued jobs were deleted and resubmitted as six, ordered by scientific priority rather than by submission history, with runs packed several to a job.
+**Reason:** `max_run` is 5 **jobs** per user, and `max_run_res.ncpus` is 16 **cores**. Neither counts runs. We were holding four job slots for five runs, with nine more jobs queued behind carrying nineteen runs between them, several of them single run jobs. `multirun.pbs` exists to put several runs inside one allocation and the queue had drifted away from using it.
+
+Measured at the time: all eight GPUs had more than the 10240 MiB `pick_gpus` requires, we held five claims, and eight cores were about to free. So the ceiling on concurrent runs is roughly eight, set by GPUs, and the job cap was costing us most of the gap between five and eight.
+
+Order now reflects what the results need rather than when things were submitted:
+
+| job | runs | why it is where it is |
+|---|---|---|
+| 5269 | s3spatial s0, s1, curr_s3donor | closes the 2x2 from 293k checkpoints, about 7k steps each, and starts the D-040 control |
+| 5270 | untied s0, s1 | diagnoses the gate G2 failure |
+| 5271 | famC s3, s4, famA d4only s2 | H3 confirmation seeds |
+| 5272 | famA d4only s3, s4 | H3 confirmation seeds |
+| 5274 | wide, deep, big | scale control |
+| 5275 | depth ladder d3 to d6 | second family for H1 |
+
+**Two things went wrong and are recorded rather than tidied away.**
+
+First, 5223 had started in the minutes before the `qdel`, so killing it ran its chain block, which correctly resubmitted its unfinished runs as 5276. That is the chain fix working as designed, and it produced a **duplicate**: 5276 and the new 5273 both carried `famA_d2_s3only_ffwd_mp_s{0,1}`, which would have put two processes in one run directory. Caught by comparing run ids across every queued job, and 5273 was deleted because 5276 was already running. **A qdel of a running multirun job resubmits its remainder, so any bulk requeue must check for duplicates afterwards rather than assume the deleted jobs are gone.**
+
+Second, the first verification pass used `tr -d '
+	 '`, which deletes the spaces separating run ids, so every job appeared to hold one run and the duplicate was invisible. The check that found it keeps spaces.
+**Consequence:** resubmitting costs queue position, which is free here because nothing had started except 5223, and no work is lost because every run resumes from checkpoint under `--resume auto`. The s3spatial pair resumes at 293448 and 292987 steps rather than restarting.
+**Reversible:** yes.
+
 ### D-003. Compute block, sixteen weeks on the cluster
 **Date:** open
 **Milestone:** blocks the pre-registration freeze at milestone 5
