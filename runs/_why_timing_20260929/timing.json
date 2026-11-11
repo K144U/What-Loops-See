@@ -1,0 +1,4540 @@
+{
+ "rows": [
+  {
+   "run_id": "famA_d1_d4colour_s0",
+   "group": "famA_d1_d4colour",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2450,
+   "solve_step": 7050,
+   "plateaus": [],
+   "last_step": 150000
+  },
+  {
+   "run_id": "famA_d1_d4colour_s1",
+   "group": "famA_d1_d4colour",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 4850,
+   "solve_step": 5800,
+   "plateaus": [],
+   "last_step": 150000
+  },
+  {
+   "run_id": "famA_d1_d4colour_s2",
+   "group": "famA_d1_d4colour",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2050,
+   "solve_step": 4900,
+   "plateaus": [],
+   "last_step": 150000
+  },
+  {
+   "run_id": "famA_d1_d4colour_s3",
+   "group": "famA_d1_d4colour",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 4600,
+   "solve_step": 6250,
+   "plateaus": [],
+   "last_step": 150000
+  },
+  {
+   "run_id": "famA_d1_d4colour_s4",
+   "group": "famA_d1_d4colour",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 3350,
+   "solve_step": 4700,
+   "plateaus": [],
+   "last_step": 150000
+  },
+  {
+   "run_id": "famA_d1_d4colour_s5",
+   "group": "famA_d1_d4colour",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 5100,
+   "solve_step": 6000,
+   "plateaus": [],
+   "last_step": 150000
+  },
+  {
+   "run_id": "famA_d1_d4colour_s6",
+   "group": "famA_d1_d4colour",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2000,
+   "solve_step": 4300,
+   "plateaus": [],
+   "last_step": 150000
+  },
+  {
+   "run_id": "famA_d1_d4colour_s7",
+   "group": "famA_d1_d4colour",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2000,
+   "solve_step": 3100,
+   "plateaus": [],
+   "last_step": 150000
+  },
+  {
+   "run_id": "famA_d1_d4colour_s8",
+   "group": "famA_d1_d4colour",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 8850,
+   "solve_step": 11000,
+   "plateaus": [],
+   "last_step": 150000
+  },
+  {
+   "run_id": "famA_d1_d4colour_s9",
+   "group": "famA_d1_d4colour",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2000,
+   "solve_step": 3400,
+   "plateaus": [],
+   "last_step": 150000
+  },
+  {
+   "run_id": "famA_d1_d4only_s0",
+   "group": "famA_d1_d4only",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2050,
+   "solve_step": 3950,
+   "plateaus": [],
+   "last_step": 150000
+  },
+  {
+   "run_id": "famA_d1_d4only_s1",
+   "group": "famA_d1_d4only",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2300,
+   "solve_step": 4050,
+   "plateaus": [],
+   "last_step": 150000
+  },
+  {
+   "run_id": "famA_d1_d4only_s2",
+   "group": "famA_d1_d4only",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2500,
+   "solve_step": 4000,
+   "plateaus": [],
+   "last_step": 150000
+  },
+  {
+   "run_id": "famA_d1_d4only_s3",
+   "group": "famA_d1_d4only",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2000,
+   "solve_step": 5700,
+   "plateaus": [],
+   "last_step": 150000
+  },
+  {
+   "run_id": "famA_d1_d4only_s4",
+   "group": "famA_d1_d4only",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2050,
+   "solve_step": 5750,
+   "plateaus": [],
+   "last_step": 150000
+  },
+  {
+   "run_id": "famA_d1_d4only_s5",
+   "group": "famA_d1_d4only",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2450,
+   "solve_step": 3700,
+   "plateaus": [],
+   "last_step": 150000
+  },
+  {
+   "run_id": "famA_d1_d4only_s6",
+   "group": "famA_d1_d4only",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2000,
+   "solve_step": 2850,
+   "plateaus": [],
+   "last_step": 150000
+  },
+  {
+   "run_id": "famA_d1_d4only_s7",
+   "group": "famA_d1_d4only",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2000,
+   "solve_step": 4150,
+   "plateaus": [],
+   "last_step": 150000
+  },
+  {
+   "run_id": "famA_d1_d4only_s8",
+   "group": "famA_d1_d4only",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2000,
+   "solve_step": 7950,
+   "plateaus": [],
+   "last_step": 150000
+  },
+  {
+   "run_id": "famA_d1_d4only_s9",
+   "group": "famA_d1_d4only",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2000,
+   "solve_step": 2050,
+   "plateaus": [],
+   "last_step": 150000
+  },
+  {
+   "run_id": "famA_d1_s3only_s0",
+   "group": "famA_d1_s3only",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 3050,
+   "solve_step": 4950,
+   "plateaus": [],
+   "last_step": 150000
+  },
+  {
+   "run_id": "famA_d1_s3only_s1",
+   "group": "famA_d1_s3only",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2950,
+   "solve_step": 4300,
+   "plateaus": [],
+   "last_step": 150000
+  },
+  {
+   "run_id": "famA_d1_s3only_s2",
+   "group": "famA_d1_s3only",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2000,
+   "solve_step": 4550,
+   "plateaus": [],
+   "last_step": 150000
+  },
+  {
+   "run_id": "famA_d1_s3only_s3",
+   "group": "famA_d1_s3only",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2450,
+   "solve_step": 6750,
+   "plateaus": [],
+   "last_step": 150000
+  },
+  {
+   "run_id": "famA_d1_s3only_s4",
+   "group": "famA_d1_s3only",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2000,
+   "solve_step": 2750,
+   "plateaus": [],
+   "last_step": 150000
+  },
+  {
+   "run_id": "famA_d1_s3only_s5",
+   "group": "famA_d1_s3only",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 4050,
+   "solve_step": 5050,
+   "plateaus": [],
+   "last_step": 150000
+  },
+  {
+   "run_id": "famA_d1_s3only_s6",
+   "group": "famA_d1_s3only",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2000,
+   "solve_step": 3000,
+   "plateaus": [],
+   "last_step": 150000
+  },
+  {
+   "run_id": "famA_d1_s3only_s7",
+   "group": "famA_d1_s3only",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 3200,
+   "solve_step": 4200,
+   "plateaus": [],
+   "last_step": 150000
+  },
+  {
+   "run_id": "famA_d1_s3only_s8",
+   "group": "famA_d1_s3only",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 3150,
+   "solve_step": 4100,
+   "plateaus": [],
+   "last_step": 150000
+  },
+  {
+   "run_id": "famA_d1_s3only_s9",
+   "group": "famA_d1_s3only",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 7150,
+   "solve_step": 8800,
+   "plateaus": [],
+   "last_step": 150000
+  },
+  {
+   "run_id": "famA_d2_d4colour_big_s0",
+   "group": "famA_d2_d4colour_big",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 4150,
+   "solve_step": 57650,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_big_s1",
+   "group": "famA_d2_d4colour_big",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 17600,
+   "solve_step": 50000,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_big_s2",
+   "group": "famA_d2_d4colour_big",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2600,
+   "solve_step": 58400,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_big_s3",
+   "group": "famA_d2_d4colour_big",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2150,
+   "solve_step": 7550,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_big_s4",
+   "group": "famA_d2_d4colour_big",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 3050,
+   "solve_step": 14650,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_big_s5",
+   "group": "famA_d2_d4colour_big",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 8600,
+   "solve_step": 20900,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_big_s6",
+   "group": "famA_d2_d4colour_big",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12542724609375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_big_s7",
+   "group": "famA_d2_d4colour_big",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12542724609375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_big_s8",
+   "group": "famA_d2_d4colour_big",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12542724609375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_big_s9",
+   "group": "famA_d2_d4colour_big",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 9700,
+   "solve_step": 45500,
+   "plateaus": [
+    {
+     "level": "ln4",
+     "start": 13300,
+     "end": 42750
+    }
+   ],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_confirm_s30",
+   "group": "famA_d2_d4colour_confirm [confirmation]",
+   "arm": null,
+   "confirm_arm": [
+    "D4",
+    "identity"
+   ],
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12542724609375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_confirm_s31",
+   "group": "famA_d2_d4colour_confirm [confirmation]",
+   "arm": null,
+   "confirm_arm": [
+    "D4",
+    "identity"
+   ],
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12542724609375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_confirm_s32",
+   "group": "famA_d2_d4colour_confirm [confirmation]",
+   "arm": null,
+   "confirm_arm": [
+    "D4",
+    "identity"
+   ],
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12542724609375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_confirm_s33",
+   "group": "famA_d2_d4colour_confirm [confirmation]",
+   "arm": null,
+   "confirm_arm": [
+    "D4",
+    "identity"
+   ],
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 16850,
+   "solve_step": 32000,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_confirm_s34",
+   "group": "famA_d2_d4colour_confirm [confirmation]",
+   "arm": null,
+   "confirm_arm": [
+    "D4",
+    "identity"
+   ],
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 46350,
+   "solve_step": 122200,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_curr_s0",
+   "group": "famA_d2_d4colour_curr [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2000,
+   "solve_step": 1500,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_curr_s1",
+   "group": "famA_d2_d4colour_curr [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2000,
+   "solve_step": 1850,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_curr_s2",
+   "group": "famA_d2_d4colour_curr [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2050,
+   "solve_step": 1900,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_curr_s3",
+   "group": "famA_d2_d4colour_curr [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2000,
+   "solve_step": 2400,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_curr_s3donor_s0",
+   "group": "famA_d2_d4colour_curr_s3donor [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12841796875,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_curr_s3donor_s1",
+   "group": "famA_d2_d4colour_curr_s3donor [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12841796875,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_curr_s3donor_s2",
+   "group": "famA_d2_d4colour_curr_s3donor [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "neither",
+   "final_accuracy": 0.12103271484375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_curr_s3donor_s3",
+   "group": "famA_d2_d4colour_curr_s3donor [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2550,
+   "solve_step": 4150,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_curr_s3donor_s4",
+   "group": "famA_d2_d4colour_curr_s3donor [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12841796875,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_curr_s3donor_s5",
+   "group": "famA_d2_d4colour_curr_s3donor [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "neither",
+   "final_accuracy": 0.12811279296875,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_curr_s3donor_s6",
+   "group": "famA_d2_d4colour_curr_s3donor [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12841796875,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_curr_s3donor_s7",
+   "group": "famA_d2_d4colour_curr_s3donor [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "neither",
+   "final_accuracy": 0.1282958984375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_curr_s3donor_s8",
+   "group": "famA_d2_d4colour_curr_s3donor [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "neither",
+   "final_accuracy": 0.12841796875,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_curr_s3donor_s9",
+   "group": "famA_d2_d4colour_curr_s3donor [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12841796875,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_curr_s4",
+   "group": "famA_d2_d4colour_curr [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2000,
+   "solve_step": 1600,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_curr_s5",
+   "group": "famA_d2_d4colour_curr [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2050,
+   "solve_step": 2150,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_curr_s6",
+   "group": "famA_d2_d4colour_curr [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2000,
+   "solve_step": 1700,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_curr_s7",
+   "group": "famA_d2_d4colour_curr [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2000,
+   "solve_step": 1750,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_curr_s8",
+   "group": "famA_d2_d4colour_curr [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2050,
+   "solve_step": 2950,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_curr_s9",
+   "group": "famA_d2_d4colour_curr [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2050,
+   "solve_step": 1800,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_currctrl_s0",
+   "group": "famA_d2_d4colour_currctrl [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2000,
+   "solve_step": 3450,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_currctrl_s1",
+   "group": "famA_d2_d4colour_currctrl [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2600,
+   "solve_step": 3350,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_currctrl_s2",
+   "group": "famA_d2_d4colour_currctrl [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2050,
+   "solve_step": 2600,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_currctrl_s3",
+   "group": "famA_d2_d4colour_currctrl [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2050,
+   "solve_step": 3050,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_currctrl_s4",
+   "group": "famA_d2_d4colour_currctrl [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2050,
+   "solve_step": 2750,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_currctrl_s5",
+   "group": "famA_d2_d4colour_currctrl [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2050,
+   "solve_step": 3000,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_currctrl_s6",
+   "group": "famA_d2_d4colour_currctrl [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2050,
+   "solve_step": 2600,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_currctrl_s7",
+   "group": "famA_d2_d4colour_currctrl [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2000,
+   "solve_step": 2200,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_currctrl_s8",
+   "group": "famA_d2_d4colour_currctrl [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2100,
+   "solve_step": 3500,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_currctrl_s9",
+   "group": "famA_d2_d4colour_currctrl [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "neither",
+   "final_accuracy": 0.12091064453125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_deep_s0",
+   "group": "famA_d2_d4colour_deep",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12542724609375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_deep_s1",
+   "group": "famA_d2_d4colour_deep",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12542724609375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_deep_s2",
+   "group": "famA_d2_d4colour_deep",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12939453125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_deep_s3",
+   "group": "famA_d2_d4colour_deep",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12939453125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_deep_s4",
+   "group": "famA_d2_d4colour_deep",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12542724609375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_deep_s5",
+   "group": "famA_d2_d4colour_deep",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12939453125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_deep_s6",
+   "group": "famA_d2_d4colour_deep",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 7900,
+   "solve_step": 11200,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_deep_s7",
+   "group": "famA_d2_d4colour_deep",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 17850,
+   "solve_step": 37150,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_deep_s8",
+   "group": "famA_d2_d4colour_deep",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12542724609375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_deep_s9",
+   "group": "famA_d2_d4colour_deep",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "neither",
+   "final_accuracy": 0.128173828125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_depth4_s0",
+   "group": "famA_d2_d4colour_depth4",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12542724609375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_depth4_s1",
+   "group": "famA_d2_d4colour_depth4",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 13000,
+   "solve_step": 15900,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_depth4_s2",
+   "group": "famA_d2_d4colour_depth4",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12542724609375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_depth4_s3",
+   "group": "famA_d2_d4colour_depth4",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12939453125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_depth4_s4",
+   "group": "famA_d2_d4colour_depth4",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12542724609375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_mp_s0",
+   "group": "famA_d2_d4colour_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_mp_s1",
+   "group": "famA_d2_d4colour_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_mp_s10",
+   "group": "famA_d2_d4colour_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_mp_s11",
+   "group": "famA_d2_d4colour_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12542724609375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_mp_s12",
+   "group": "famA_d2_d4colour_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 6500,
+   "solve_step": 42250,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_mp_s13",
+   "group": "famA_d2_d4colour_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 4950,
+   "solve_step": 14250,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_mp_s14",
+   "group": "famA_d2_d4colour_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12542724609375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_mp_s15",
+   "group": "famA_d2_d4colour_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 8250,
+   "solve_step": 10150,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_mp_s16",
+   "group": "famA_d2_d4colour_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_mp_s17",
+   "group": "famA_d2_d4colour_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 3250,
+   "solve_step": 7700,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_mp_s18",
+   "group": "famA_d2_d4colour_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_mp_s19",
+   "group": "famA_d2_d4colour_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 7350,
+   "solve_step": 28350,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_mp_s2",
+   "group": "famA_d2_d4colour_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_mp_s20",
+   "group": "famA_d2_d4colour_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 11500,
+   "solve_step": 127150,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_mp_s21",
+   "group": "famA_d2_d4colour_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_mp_s22",
+   "group": "famA_d2_d4colour_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 21800,
+   "solve_step": 30750,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_mp_s23",
+   "group": "famA_d2_d4colour_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 17100,
+   "solve_step": 26100,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_mp_s24",
+   "group": "famA_d2_d4colour_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_mp_s25",
+   "group": "famA_d2_d4colour_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_mp_s26",
+   "group": "famA_d2_d4colour_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_mp_s27",
+   "group": "famA_d2_d4colour_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 6950,
+   "solve_step": 15700,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_mp_s28",
+   "group": "famA_d2_d4colour_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_mp_s29",
+   "group": "famA_d2_d4colour_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_mp_s3",
+   "group": "famA_d2_d4colour_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 3950,
+   "solve_step": 32400,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_mp_s4",
+   "group": "famA_d2_d4colour_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_mp_s5",
+   "group": "famA_d2_d4colour_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_mp_s6",
+   "group": "famA_d2_d4colour_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12542724609375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_mp_s7",
+   "group": "famA_d2_d4colour_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_mp_s8",
+   "group": "famA_d2_d4colour_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_mp_s9",
+   "group": "famA_d2_d4colour_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_s0",
+   "group": "famA_d2_d4colour_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_s1",
+   "group": "famA_d2_d4colour_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 4600,
+   "solve_step": 7050,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_s10",
+   "group": "famA_d2_d4colour_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_s11",
+   "group": "famA_d2_d4colour_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_s12",
+   "group": "famA_d2_d4colour_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 5800,
+   "solve_step": 46300,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_s13",
+   "group": "famA_d2_d4colour_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_s14",
+   "group": "famA_d2_d4colour_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_s15",
+   "group": "famA_d2_d4colour_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_s16",
+   "group": "famA_d2_d4colour_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 5250,
+   "solve_step": 10000,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_s17",
+   "group": "famA_d2_d4colour_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 8550,
+   "solve_step": 13450,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_s18",
+   "group": "famA_d2_d4colour_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_s19",
+   "group": "famA_d2_d4colour_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_s2",
+   "group": "famA_d2_d4colour_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_s20",
+   "group": "famA_d2_d4colour_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_s21",
+   "group": "famA_d2_d4colour_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_s22",
+   "group": "famA_d2_d4colour_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_s23",
+   "group": "famA_d2_d4colour_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_s24",
+   "group": "famA_d2_d4colour_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 11550,
+   "solve_step": 13000,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_s25",
+   "group": "famA_d2_d4colour_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_s26",
+   "group": "famA_d2_d4colour_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_s27",
+   "group": "famA_d2_d4colour_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_s28",
+   "group": "famA_d2_d4colour_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_s29",
+   "group": "famA_d2_d4colour_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 5500,
+   "solve_step": 10300,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_s3",
+   "group": "famA_d2_d4colour_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_s4",
+   "group": "famA_d2_d4colour_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_s5",
+   "group": "famA_d2_d4colour_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12542724609375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_s6",
+   "group": "famA_d2_d4colour_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 13250,
+   "solve_step": 14900,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_s7",
+   "group": "famA_d2_d4colour_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_s8",
+   "group": "famA_d2_d4colour_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_ffwd_s9",
+   "group": "famA_d2_d4colour_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1234130859375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_s0",
+   "group": "famA_d2_d4colour",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12542724609375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_s1",
+   "group": "famA_d2_d4colour",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12542724609375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_s10",
+   "group": "famA_d2_d4colour",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 5850,
+   "solve_step": 9250,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_s11",
+   "group": "famA_d2_d4colour",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12542724609375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_s12",
+   "group": "famA_d2_d4colour",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12542724609375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_s13",
+   "group": "famA_d2_d4colour",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12542724609375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_s14",
+   "group": "famA_d2_d4colour",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12542724609375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_s15",
+   "group": "famA_d2_d4colour",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 12950,
+   "solve_step": 23850,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_s16",
+   "group": "famA_d2_d4colour",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 5850,
+   "solve_step": 10450,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_s17",
+   "group": "famA_d2_d4colour",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "neither",
+   "final_accuracy": 0.12017822265625,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_s18",
+   "group": "famA_d2_d4colour",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 7450,
+   "solve_step": 14200,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_s19",
+   "group": "famA_d2_d4colour",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12542724609375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_s2",
+   "group": "famA_d2_d4colour",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12939453125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_s20",
+   "group": "famA_d2_d4colour",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 14550,
+   "solve_step": 29500,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_s21",
+   "group": "famA_d2_d4colour",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12542724609375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_s22",
+   "group": "famA_d2_d4colour",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 9100,
+   "solve_step": 17300,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_s23",
+   "group": "famA_d2_d4colour",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 5150,
+   "solve_step": 28450,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_s24",
+   "group": "famA_d2_d4colour",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12542724609375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_s25",
+   "group": "famA_d2_d4colour",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1209716796875,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_s26",
+   "group": "famA_d2_d4colour",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12542724609375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_s27",
+   "group": "famA_d2_d4colour",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 13300,
+   "solve_step": 16700,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_s28",
+   "group": "famA_d2_d4colour",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12542724609375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_s29",
+   "group": "famA_d2_d4colour",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12542724609375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_s3",
+   "group": "famA_d2_d4colour",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12939453125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_s4",
+   "group": "famA_d2_d4colour",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12542724609375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_s5",
+   "group": "famA_d2_d4colour",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12939453125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_s6",
+   "group": "famA_d2_d4colour",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 7900,
+   "solve_step": 11200,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_s7",
+   "group": "famA_d2_d4colour",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 17850,
+   "solve_step": 37150,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_s8",
+   "group": "famA_d2_d4colour",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12542724609375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_s9",
+   "group": "famA_d2_d4colour",
+   "arm": [
+    "D4",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "neither",
+   "final_accuracy": 0.128173828125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_wide_s0",
+   "group": "famA_d2_d4colour_wide",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 3750,
+   "solve_step": 10650,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_wide_s1",
+   "group": "famA_d2_d4colour_wide",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2250,
+   "solve_step": 7700,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_wide_s2",
+   "group": "famA_d2_d4colour_wide",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 6450,
+   "solve_step": 11600,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_wide_s3",
+   "group": "famA_d2_d4colour_wide",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 3550,
+   "solve_step": 18300,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_wide_s4",
+   "group": "famA_d2_d4colour_wide",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2000,
+   "solve_step": 11800,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_wide_s5",
+   "group": "famA_d2_d4colour_wide",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 3400,
+   "solve_step": 7850,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_wide_s6",
+   "group": "famA_d2_d4colour_wide",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 5600,
+   "solve_step": 16950,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_wide_s7",
+   "group": "famA_d2_d4colour_wide",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2000,
+   "solve_step": 8750,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_wide_s8",
+   "group": "famA_d2_d4colour_wide",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 3100,
+   "solve_step": 10950,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4colour_wide_s9",
+   "group": "famA_d2_d4colour_wide",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2100,
+   "solve_step": 5850,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4only_confirm_s10",
+   "group": "famA_d2_d4only_confirm [confirmation]",
+   "arm": null,
+   "confirm_arm": [
+    "D4",
+    "position"
+   ],
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 3650,
+   "solve_step": 261700,
+   "plateaus": [
+    {
+     "level": "ln4",
+     "start": 4800,
+     "end": 18250
+    },
+    {
+     "level": "ln2",
+     "start": 19500,
+     "end": 254550
+    }
+   ],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4only_confirm_s11",
+   "group": "famA_d2_d4only_confirm [confirmation]",
+   "arm": null,
+   "confirm_arm": [
+    "D4",
+    "position"
+   ],
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 0.99993896484375,
+   "leave_step": 10600,
+   "solve_step": 215900,
+   "plateaus": [
+    {
+     "level": "ln4",
+     "start": 11750,
+     "end": 101500
+    },
+    {
+     "level": "ln2",
+     "start": 175600,
+     "end": 189600
+    },
+    {
+     "level": "ln2",
+     "start": 192750,
+     "end": 209900
+    }
+   ],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4only_confirm_s12",
+   "group": "famA_d2_d4only_confirm [confirmation]",
+   "arm": null,
+   "confirm_arm": [
+    "D4",
+    "position"
+   ],
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2450,
+   "solve_step": 59100,
+   "plateaus": [
+    {
+     "level": "ln4",
+     "start": 13600,
+     "end": 52450
+    }
+   ],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4only_confirm_s13",
+   "group": "famA_d2_d4only_confirm [confirmation]",
+   "arm": null,
+   "confirm_arm": [
+    "D4",
+    "position"
+   ],
+   "order": 8,
+   "outcome": "neither",
+   "final_accuracy": 0.5045166015625,
+   "leave_step": 5900,
+   "solve_step": null,
+   "plateaus": [
+    {
+     "level": "ln4",
+     "start": 18650,
+     "end": 189650
+    },
+    {
+     "level": "ln4",
+     "start": 192450,
+     "end": 224000
+    },
+    {
+     "level": "ln2",
+     "start": 226950,
+     "end": 300000
+    }
+   ],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4only_confirm_s14",
+   "group": "famA_d2_d4only_confirm [confirmation]",
+   "arm": null,
+   "confirm_arm": [
+    "D4",
+    "position"
+   ],
+   "order": 8,
+   "outcome": "collapsed",
+   "final_accuracy": 0.12939453125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4only_s0",
+   "group": "famA_d2_d4only",
+   "arm": [
+    "D4",
+    "position"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 4600,
+   "solve_step": 95950,
+   "plateaus": [
+    {
+     "level": "ln4",
+     "start": 6250,
+     "end": 80500
+    },
+    {
+     "level": "ln2",
+     "start": 81900,
+     "end": 94800
+    }
+   ],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4only_s1",
+   "group": "famA_d2_d4only",
+   "arm": [
+    "D4",
+    "position"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 0.99981689453125,
+   "leave_step": 4550,
+   "solve_step": 170050,
+   "plateaus": [
+    {
+     "level": "ln4",
+     "start": 7100,
+     "end": 76100
+    },
+    {
+     "level": "ln2",
+     "start": 80150,
+     "end": 167950
+    }
+   ],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4only_s2",
+   "group": "famA_d2_d4only",
+   "arm": [
+    "D4",
+    "position"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 0.99993896484375,
+   "leave_step": 7450,
+   "solve_step": 237450,
+   "plateaus": [
+    {
+     "level": "ln4",
+     "start": 8800,
+     "end": 96650
+    },
+    {
+     "level": "ln2",
+     "start": 97950,
+     "end": 233950
+    }
+   ],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4only_s3",
+   "group": "famA_d2_d4only",
+   "arm": [
+    "D4",
+    "position"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2900,
+   "solve_step": 71300,
+   "plateaus": [
+    {
+     "level": "ln4",
+     "start": 4050,
+     "end": 15350
+    },
+    {
+     "level": "ln4",
+     "start": 17200,
+     "end": 67700
+    }
+   ],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4only_s4",
+   "group": "famA_d2_d4only",
+   "arm": [
+    "D4",
+    "position"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 3100,
+   "solve_step": 39400,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4only_s5",
+   "group": "famA_d2_d4only",
+   "arm": [
+    "D4",
+    "position"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "neither",
+   "final_accuracy": 0.68017578125,
+   "leave_step": 3900,
+   "solve_step": null,
+   "plateaus": [
+    {
+     "level": "ln4",
+     "start": 5600,
+     "end": 31700
+    },
+    {
+     "level": "ln4",
+     "start": 40600,
+     "end": 66700
+    },
+    {
+     "level": "ln4",
+     "start": 136300,
+     "end": 151200
+    },
+    {
+     "level": "ln4",
+     "start": 153250,
+     "end": 165050
+    },
+    {
+     "level": "ln4",
+     "start": 167100,
+     "end": 183300
+    },
+    {
+     "level": "ln2",
+     "start": 223250,
+     "end": 253750
+    }
+   ],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4only_s6",
+   "group": "famA_d2_d4only",
+   "arm": [
+    "D4",
+    "position"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 4950,
+   "solve_step": 246400,
+   "plateaus": [
+    {
+     "level": "ln4",
+     "start": 14900,
+     "end": 56500
+    },
+    {
+     "level": "ln2",
+     "start": 64850,
+     "end": 241750
+    }
+   ],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4only_s7",
+   "group": "famA_d2_d4only",
+   "arm": [
+    "D4",
+    "position"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2500,
+   "solve_step": 227650,
+   "plateaus": [
+    {
+     "level": "ln4",
+     "start": 5350,
+     "end": 61700
+    },
+    {
+     "level": "ln2",
+     "start": 62900,
+     "end": 210150
+    }
+   ],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4only_s8",
+   "group": "famA_d2_d4only",
+   "arm": [
+    "D4",
+    "position"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2350,
+   "solve_step": 92800,
+   "plateaus": [
+    {
+     "level": "ln4",
+     "start": 21800,
+     "end": 87650
+    }
+   ],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_d4only_s9",
+   "group": "famA_d2_d4only",
+   "arm": [
+    "D4",
+    "position"
+   ],
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 3600,
+   "solve_step": 106600,
+   "plateaus": [
+    {
+     "level": "ln4",
+     "start": 4750,
+     "end": 84000
+    },
+    {
+     "level": "ln2",
+     "start": 85400,
+     "end": 105150
+    }
+   ],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_confirm_s10",
+   "group": "famA_d2_s3only_confirm [confirmation]",
+   "arm": null,
+   "confirm_arm": [
+    "S3",
+    "identity"
+   ],
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 16450,
+   "solve_step": 22900,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_confirm_s11",
+   "group": "famA_d2_s3only_confirm [confirmation]",
+   "arm": null,
+   "confirm_arm": [
+    "S3",
+    "identity"
+   ],
+   "order": 6,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1680908203125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_confirm_s12",
+   "group": "famA_d2_s3only_confirm [confirmation]",
+   "arm": null,
+   "confirm_arm": [
+    "S3",
+    "identity"
+   ],
+   "order": 6,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1680908203125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_confirm_s13",
+   "group": "famA_d2_s3only_confirm [confirmation]",
+   "arm": null,
+   "confirm_arm": [
+    "S3",
+    "identity"
+   ],
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 13950,
+   "solve_step": 20550,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_confirm_s14",
+   "group": "famA_d2_s3only_confirm [confirmation]",
+   "arm": null,
+   "confirm_arm": [
+    "S3",
+    "identity"
+   ],
+   "order": 6,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1680908203125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_curr_s0",
+   "group": "famA_d2_s3only_curr [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2000,
+   "solve_step": 1850,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_curr_s1",
+   "group": "famA_d2_s3only_curr [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2000,
+   "solve_step": 1800,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_curr_s2",
+   "group": "famA_d2_s3only_curr [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2000,
+   "solve_step": 1550,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_curr_s3",
+   "group": "famA_d2_s3only_curr [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2000,
+   "solve_step": 2150,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_curr_s4",
+   "group": "famA_d2_s3only_curr [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2000,
+   "solve_step": 1800,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_curr_s5",
+   "group": "famA_d2_s3only_curr [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2000,
+   "solve_step": 1400,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_curr_s6",
+   "group": "famA_d2_s3only_curr [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2000,
+   "solve_step": 1550,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_curr_s7",
+   "group": "famA_d2_s3only_curr [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2000,
+   "solve_step": 1500,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_curr_s8",
+   "group": "famA_d2_s3only_curr [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2000,
+   "solve_step": 1750,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_curr_s9",
+   "group": "famA_d2_s3only_curr [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2050,
+   "solve_step": 1650,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_currctrl_s0",
+   "group": "famA_d2_s3only_currctrl [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "collapsed",
+   "final_accuracy": 0.16845703125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_currctrl_s1",
+   "group": "famA_d2_s3only_currctrl [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2100,
+   "solve_step": 3000,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_currctrl_s2",
+   "group": "famA_d2_s3only_currctrl [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1680908203125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_currctrl_s3",
+   "group": "famA_d2_s3only_currctrl [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2100,
+   "solve_step": 2850,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_currctrl_s4",
+   "group": "famA_d2_s3only_currctrl [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "neither",
+   "final_accuracy": 0.1671142578125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_currctrl_s5",
+   "group": "famA_d2_s3only_currctrl [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1680908203125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_currctrl_s6",
+   "group": "famA_d2_s3only_currctrl [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2050,
+   "solve_step": 3100,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_currctrl_s7",
+   "group": "famA_d2_s3only_currctrl [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2000,
+   "solve_step": 2500,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_currctrl_s8",
+   "group": "famA_d2_s3only_currctrl [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2100,
+   "solve_step": 2900,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_currctrl_s9",
+   "group": "famA_d2_s3only_currctrl [init_from]",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1680908203125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_ffwd_mp_s0",
+   "group": "famA_d2_s3only_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1680908203125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_ffwd_mp_s1",
+   "group": "famA_d2_s3only_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1680908203125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_ffwd_mp_s2",
+   "group": "famA_d2_s3only_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 0.99993896484375,
+   "leave_step": 4100,
+   "solve_step": 7200,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_ffwd_mp_s3",
+   "group": "famA_d2_s3only_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 7700,
+   "solve_step": 9250,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_ffwd_mp_s4",
+   "group": "famA_d2_s3only_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1680908203125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_ffwd_mp_s5",
+   "group": "famA_d2_s3only_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "neither",
+   "final_accuracy": 0.1656494140625,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_ffwd_mp_s6",
+   "group": "famA_d2_s3only_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 4550,
+   "solve_step": 14250,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_ffwd_mp_s7",
+   "group": "famA_d2_s3only_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 10000,
+   "solve_step": 12350,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_ffwd_mp_s8",
+   "group": "famA_d2_s3only_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "neither",
+   "final_accuracy": 0.1690673828125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_ffwd_mp_s9",
+   "group": "famA_d2_s3only_ffwd_mp",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 6950,
+   "solve_step": 11750,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_ffwd_s0",
+   "group": "famA_d2_s3only_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1707763671875,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_ffwd_s1",
+   "group": "famA_d2_s3only_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 11200,
+   "solve_step": 15100,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_ffwd_s2",
+   "group": "famA_d2_s3only_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 8250,
+   "solve_step": 13050,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_ffwd_s3",
+   "group": "famA_d2_s3only_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1707763671875,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_ffwd_s4",
+   "group": "famA_d2_s3only_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1707763671875,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_ffwd_s5",
+   "group": "famA_d2_s3only_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1707763671875,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_ffwd_s6",
+   "group": "famA_d2_s3only_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1680908203125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_ffwd_s7",
+   "group": "famA_d2_s3only_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1707763671875,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_ffwd_s8",
+   "group": "famA_d2_s3only_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 4650,
+   "solve_step": 8650,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_ffwd_s9",
+   "group": "famA_d2_s3only_ffwd",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1680908203125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_s0",
+   "group": "famA_d2_s3only",
+   "arm": [
+    "S3",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1787109375,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_s1",
+   "group": "famA_d2_s3only",
+   "arm": [
+    "S3",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1680908203125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_s2",
+   "group": "famA_d2_s3only",
+   "arm": [
+    "S3",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1680908203125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_s3",
+   "group": "famA_d2_s3only",
+   "arm": [
+    "S3",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1680908203125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_s4",
+   "group": "famA_d2_s3only",
+   "arm": [
+    "S3",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1680908203125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_s5",
+   "group": "famA_d2_s3only",
+   "arm": [
+    "S3",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 9700,
+   "solve_step": 18400,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_s6",
+   "group": "famA_d2_s3only",
+   "arm": [
+    "S3",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1680908203125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_s7",
+   "group": "famA_d2_s3only",
+   "arm": [
+    "S3",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 11700,
+   "solve_step": 14650,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_s8",
+   "group": "famA_d2_s3only",
+   "arm": [
+    "S3",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 3300,
+   "solve_step": 6400,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3only_s9",
+   "group": "famA_d2_s3only",
+   "arm": [
+    "S3",
+    "identity"
+   ],
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1707763671875,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3spatial_s0",
+   "group": "famA_d2_s3spatial",
+   "arm": [
+    "S3",
+    "position"
+   ],
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 10500,
+   "solve_step": 23200,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3spatial_s1",
+   "group": "famA_d2_s3spatial",
+   "arm": [
+    "S3",
+    "position"
+   ],
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 6050,
+   "solve_step": 15700,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3spatial_s2",
+   "group": "famA_d2_s3spatial",
+   "arm": [
+    "S3",
+    "position"
+   ],
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 5400,
+   "solve_step": 6900,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3spatial_s3",
+   "group": "famA_d2_s3spatial",
+   "arm": [
+    "S3",
+    "position"
+   ],
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1680908203125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3spatial_s4",
+   "group": "famA_d2_s3spatial",
+   "arm": [
+    "S3",
+    "position"
+   ],
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1680908203125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3spatial_s5",
+   "group": "famA_d2_s3spatial",
+   "arm": [
+    "S3",
+    "position"
+   ],
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 2900,
+   "solve_step": 10150,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3spatial_s6",
+   "group": "famA_d2_s3spatial",
+   "arm": [
+    "S3",
+    "position"
+   ],
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 6200,
+   "solve_step": 11950,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3spatial_s7",
+   "group": "famA_d2_s3spatial",
+   "arm": [
+    "S3",
+    "position"
+   ],
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1680908203125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3spatial_s8",
+   "group": "famA_d2_s3spatial",
+   "arm": [
+    "S3",
+    "position"
+   ],
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "collapsed",
+   "final_accuracy": 0.1680908203125,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d2_s3spatial_s9",
+   "group": "famA_d2_s3spatial",
+   "arm": [
+    "S3",
+    "position"
+   ],
+   "confirm_arm": null,
+   "order": 6,
+   "outcome": "escaped",
+   "final_accuracy": 1.0,
+   "leave_step": 18000,
+   "solve_step": 23950,
+   "plateaus": [],
+   "last_step": 300000
+  },
+  {
+   "run_id": "famA_d3_d4only_s0",
+   "group": "famA_d3_d4only",
+   "arm": null,
+   "confirm_arm": null,
+   "order": 8,
+   "outcome": "neither",
+   "final_accuracy": 0.12811279296875,
+   "leave_step": null,
+   "solve_step": null,
+   "plateaus": [],
+   "last_step": 300000
+  }
+ ],
+ "summary": {
+  "famA_d1_d4colour": {
+   "runs": 10,
+   "escaped": 10,
+   "solve_steps": [
+    3100,
+    3400,
+    4300,
+    4700,
+    4900,
+    5800,
+    6000,
+    6250,
+    7050,
+    11000
+   ],
+   "leave_steps": [
+    2000,
+    2000,
+    2000,
+    2050,
+    2450,
+    3350,
+    4600,
+    4850,
+    5100,
+    8850
+   ],
+   "with_plateau": {},
+   "order": 8,
+   "latest_leave": 8850,
+   "latest_solve": 11000
+  },
+  "famA_d1_d4only": {
+   "runs": 10,
+   "escaped": 10,
+   "solve_steps": [
+    2050,
+    2850,
+    3700,
+    3950,
+    4000,
+    4050,
+    4150,
+    5700,
+    5750,
+    7950
+   ],
+   "leave_steps": [
+    2000,
+    2000,
+    2000,
+    2000,
+    2000,
+    2050,
+    2050,
+    2300,
+    2450,
+    2500
+   ],
+   "with_plateau": {},
+   "order": 8,
+   "latest_leave": 2500,
+   "latest_solve": 7950
+  },
+  "famA_d1_s3only": {
+   "runs": 10,
+   "escaped": 10,
+   "solve_steps": [
+    2750,
+    3000,
+    4100,
+    4200,
+    4300,
+    4550,
+    4950,
+    5050,
+    6750,
+    8800
+   ],
+   "leave_steps": [
+    2000,
+    2000,
+    2000,
+    2450,
+    2950,
+    3050,
+    3150,
+    3200,
+    4050,
+    7150
+   ],
+   "with_plateau": {},
+   "order": 6,
+   "latest_leave": 7150,
+   "latest_solve": 8800
+  },
+  "famA_d2_d4colour_big": {
+   "runs": 10,
+   "escaped": 7,
+   "solve_steps": [
+    7550,
+    14650,
+    20900,
+    45500,
+    50000,
+    57650,
+    58400
+   ],
+   "leave_steps": [
+    2150,
+    2600,
+    3050,
+    4150,
+    8600,
+    9700,
+    17600
+   ],
+   "with_plateau": {
+    "ln4": 1
+   },
+   "order": 8,
+   "latest_leave": 17600,
+   "latest_solve": 58400
+  },
+  "famA_d2_d4colour_confirm [confirmation]": {
+   "runs": 5,
+   "escaped": 2,
+   "solve_steps": [
+    32000,
+    122200
+   ],
+   "leave_steps": [
+    16850,
+    46350
+   ],
+   "with_plateau": {},
+   "order": 8,
+   "latest_leave": 46350,
+   "latest_solve": 122200
+  },
+  "famA_d2_d4colour_curr [init_from]": {
+   "runs": 10,
+   "escaped": 10,
+   "solve_steps": [
+    1500,
+    1600,
+    1700,
+    1750,
+    1800,
+    1850,
+    1900,
+    2150,
+    2400,
+    2950
+   ],
+   "leave_steps": [
+    2000,
+    2000,
+    2000,
+    2000,
+    2000,
+    2000,
+    2050,
+    2050,
+    2050,
+    2050
+   ],
+   "with_plateau": {},
+   "order": 8,
+   "latest_leave": 2050,
+   "latest_solve": 2950
+  },
+  "famA_d2_d4colour_curr_s3donor [init_from]": {
+   "runs": 10,
+   "escaped": 1,
+   "solve_steps": [
+    4150
+   ],
+   "leave_steps": [
+    2550
+   ],
+   "with_plateau": {},
+   "order": 8,
+   "latest_leave": 2550,
+   "latest_solve": 4150
+  },
+  "famA_d2_d4colour_currctrl [init_from]": {
+   "runs": 10,
+   "escaped": 9,
+   "solve_steps": [
+    2200,
+    2600,
+    2600,
+    2750,
+    3000,
+    3050,
+    3350,
+    3450,
+    3500
+   ],
+   "leave_steps": [
+    2000,
+    2000,
+    2050,
+    2050,
+    2050,
+    2050,
+    2050,
+    2100,
+    2600
+   ],
+   "with_plateau": {},
+   "order": 8,
+   "latest_leave": 2600,
+   "latest_solve": 3500
+  },
+  "famA_d2_d4colour_deep": {
+   "runs": 10,
+   "escaped": 2,
+   "solve_steps": [
+    11200,
+    37150
+   ],
+   "leave_steps": [
+    7900,
+    17850
+   ],
+   "with_plateau": {},
+   "order": 8,
+   "latest_leave": 17850,
+   "latest_solve": 37150
+  },
+  "famA_d2_d4colour_depth4": {
+   "runs": 5,
+   "escaped": 1,
+   "solve_steps": [
+    15900
+   ],
+   "leave_steps": [
+    13000
+   ],
+   "with_plateau": {},
+   "order": 8,
+   "latest_leave": 13000,
+   "latest_solve": 15900
+  },
+  "famA_d2_d4colour_ffwd_mp": {
+   "runs": 30,
+   "escaped": 10,
+   "solve_steps": [
+    7700,
+    10150,
+    14250,
+    15700,
+    26100,
+    28350,
+    30750,
+    32400,
+    42250,
+    127150
+   ],
+   "leave_steps": [
+    3250,
+    3950,
+    4950,
+    6500,
+    6950,
+    7350,
+    8250,
+    11500,
+    17100,
+    21800
+   ],
+   "with_plateau": {},
+   "order": 8,
+   "latest_leave": 21800,
+   "latest_solve": 127150
+  },
+  "famA_d2_d4colour_ffwd": {
+   "runs": 30,
+   "escaped": 7,
+   "solve_steps": [
+    7050,
+    10000,
+    10300,
+    13000,
+    13450,
+    14900,
+    46300
+   ],
+   "leave_steps": [
+    4600,
+    5250,
+    5500,
+    5800,
+    8550,
+    11550,
+    13250
+   ],
+   "with_plateau": {},
+   "order": 8,
+   "latest_leave": 13250,
+   "latest_solve": 46300
+  },
+  "famA_d2_d4colour": {
+   "runs": 30,
+   "escaped": 10,
+   "solve_steps": [
+    9250,
+    10450,
+    11200,
+    14200,
+    16700,
+    17300,
+    23850,
+    28450,
+    29500,
+    37150
+   ],
+   "leave_steps": [
+    5150,
+    5850,
+    5850,
+    7450,
+    7900,
+    9100,
+    12950,
+    13300,
+    14550,
+    17850
+   ],
+   "with_plateau": {},
+   "order": 8,
+   "latest_leave": 17850,
+   "latest_solve": 37150
+  },
+  "famA_d2_d4colour_wide": {
+   "runs": 10,
+   "escaped": 10,
+   "solve_steps": [
+    5850,
+    7700,
+    7850,
+    8750,
+    10650,
+    10950,
+    11600,
+    11800,
+    16950,
+    18300
+   ],
+   "leave_steps": [
+    2000,
+    2000,
+    2100,
+    2250,
+    3100,
+    3400,
+    3550,
+    3750,
+    5600,
+    6450
+   ],
+   "with_plateau": {},
+   "order": 8,
+   "latest_leave": 6450,
+   "latest_solve": 18300
+  },
+  "famA_d2_d4only_confirm [confirmation]": {
+   "runs": 5,
+   "escaped": 3,
+   "solve_steps": [
+    59100,
+    215900,
+    261700
+   ],
+   "leave_steps": [
+    2450,
+    3650,
+    5900,
+    10600
+   ],
+   "with_plateau": {
+    "ln2": 3,
+    "ln4": 4
+   },
+   "order": 8,
+   "latest_leave": 10600,
+   "latest_solve": 261700
+  },
+  "famA_d2_d4only": {
+   "runs": 10,
+   "escaped": 9,
+   "solve_steps": [
+    39400,
+    71300,
+    92800,
+    95950,
+    106600,
+    170050,
+    227650,
+    237450,
+    246400
+   ],
+   "leave_steps": [
+    2350,
+    2500,
+    2900,
+    3100,
+    3600,
+    3900,
+    4550,
+    4600,
+    4950,
+    7450
+   ],
+   "with_plateau": {
+    "ln2": 7,
+    "ln4": 9
+   },
+   "order": 8,
+   "latest_leave": 7450,
+   "latest_solve": 246400
+  },
+  "famA_d2_s3only_confirm [confirmation]": {
+   "runs": 5,
+   "escaped": 2,
+   "solve_steps": [
+    20550,
+    22900
+   ],
+   "leave_steps": [
+    13950,
+    16450
+   ],
+   "with_plateau": {},
+   "order": 6,
+   "latest_leave": 16450,
+   "latest_solve": 22900
+  },
+  "famA_d2_s3only_curr [init_from]": {
+   "runs": 10,
+   "escaped": 10,
+   "solve_steps": [
+    1400,
+    1500,
+    1550,
+    1550,
+    1650,
+    1750,
+    1800,
+    1800,
+    1850,
+    2150
+   ],
+   "leave_steps": [
+    2000,
+    2000,
+    2000,
+    2000,
+    2000,
+    2000,
+    2000,
+    2000,
+    2000,
+    2050
+   ],
+   "with_plateau": {},
+   "order": 6,
+   "latest_leave": 2050,
+   "latest_solve": 2150
+  },
+  "famA_d2_s3only_currctrl [init_from]": {
+   "runs": 10,
+   "escaped": 5,
+   "solve_steps": [
+    2500,
+    2850,
+    2900,
+    3000,
+    3100
+   ],
+   "leave_steps": [
+    2000,
+    2050,
+    2100,
+    2100,
+    2100
+   ],
+   "with_plateau": {},
+   "order": 6,
+   "latest_leave": 2100,
+   "latest_solve": 3100
+  },
+  "famA_d2_s3only_ffwd_mp": {
+   "runs": 10,
+   "escaped": 5,
+   "solve_steps": [
+    7200,
+    9250,
+    11750,
+    12350,
+    14250
+   ],
+   "leave_steps": [
+    4100,
+    4550,
+    6950,
+    7700,
+    10000
+   ],
+   "with_plateau": {},
+   "order": 6,
+   "latest_leave": 10000,
+   "latest_solve": 14250
+  },
+  "famA_d2_s3only_ffwd": {
+   "runs": 10,
+   "escaped": 3,
+   "solve_steps": [
+    8650,
+    13050,
+    15100
+   ],
+   "leave_steps": [
+    4650,
+    8250,
+    11200
+   ],
+   "with_plateau": {},
+   "order": 6,
+   "latest_leave": 11200,
+   "latest_solve": 15100
+  },
+  "famA_d2_s3only": {
+   "runs": 10,
+   "escaped": 3,
+   "solve_steps": [
+    6400,
+    14650,
+    18400
+   ],
+   "leave_steps": [
+    3300,
+    9700,
+    11700
+   ],
+   "with_plateau": {},
+   "order": 6,
+   "latest_leave": 11700,
+   "latest_solve": 18400
+  },
+  "famA_d2_s3spatial": {
+   "runs": 10,
+   "escaped": 6,
+   "solve_steps": [
+    6900,
+    10150,
+    11950,
+    15700,
+    23200,
+    23950
+   ],
+   "leave_steps": [
+    2900,
+    5400,
+    6050,
+    6200,
+    10500,
+    18000
+   ],
+   "with_plateau": {},
+   "order": 6,
+   "latest_leave": 18000,
+   "latest_solve": 23950
+  },
+  "famA_d3_d4only": {
+   "runs": 1,
+   "escaped": 0,
+   "solve_steps": [],
+   "leave_steps": [],
+   "with_plateau": {},
+   "order": 8,
+   "latest_leave": null,
+   "latest_solve": null
+  }
+ },
+ "unfinished": 3
+}

@@ -1,0 +1,124 @@
+{
+  "measures": {
+    "D4 position": {
+      "substrate": "native",
+      "subgroup": "d4",
+      "n_elements": 8,
+      "m_pix": 2.245522029421255,
+      "m_pix_min": 1.6979441172482568,
+      "m_emb": 0.8803691296943018,
+      "m_emb_min": 0.6664179778264245
+    },
+    "D4 appearance": {
+      "substrate": "d4_colour",
+      "subgroup": "d4",
+      "n_elements": 8,
+      "m_pix": 1.410386483116888,
+      "m_pix_min": 1.2188951956117593,
+      "m_emb": 0.5515307377882411,
+      "m_emb_min": 0.4673929015081561
+    },
+    "E1a": {
+      "substrate": "d4_square",
+      "subgroup": "d4",
+      "n_elements": 8,
+      "m_pix": 2.394779570317641,
+      "m_pix_min": 1.5481605957703612,
+      "m_emb": 0.9391323421620541,
+      "m_emb_min": 0.5931074498726513
+    },
+    "E1b": {
+      "substrate": "d4_scrambled",
+      "subgroup": "d4",
+      "n_elements": 8,
+      "m_pix": 2.2455220294212546,
+      "m_pix_min": 1.6979441172482568,
+      "m_emb": 0.8803691296943018,
+      "m_emb_min": 0.6664179778264245
+    },
+    "E2b": {
+      "substrate": "d4_colour_decoy",
+      "subgroup": "d4",
+      "n_elements": 8,
+      "m_pix": 1.6936974862908776,
+      "m_pix_min": 1.2188951956117593,
+      "m_emb": 0.660216359104507,
+      "m_emb_min": 0.4786465493620704
+    },
+    "S3 position": {
+      "substrate": "s3_spatial",
+      "subgroup": "s3",
+      "n_elements": 6,
+      "m_pix": 2.278701194420493,
+      "m_pix_min": 1.8251100044266817,
+      "m_emb": 0.8874909218496425,
+      "m_emb_min": 0.6798505676021859
+    },
+    "S3 appearance": {
+      "substrate": "native",
+      "subgroup": "s3",
+      "n_elements": 6,
+      "m_pix": 1.286757781697509,
+      "m_pix_min": 0.9608403345012425,
+      "m_emb": 0.500481375195753,
+      "m_emb_min": 0.3633797919563634
+    },
+    "E2a": {
+      "substrate": "d4_colour_cue",
+      "subgroup": "d4",
+      "n_elements": 8,
+      "m_pix": 1.7100943211460804,
+      "m_pix_min": 1.338306756692804,
+      "m_emb": 0.6672370889993239,
+      "m_emb_min": 0.5040217894528322
+    }
+  },
+  "rates": {
+    "D4 position": [
+      9,
+      10
+    ],
+    "D4 appearance": [
+      12,
+      40
+    ],
+    "E1a": [
+      16,
+      20
+    ],
+    "E1b": [
+      14,
+      20
+    ],
+    "E2b": [
+      13,
+      20
+    ],
+    "S3 position": [
+      6,
+      10
+    ],
+    "S3 appearance": [
+      3,
+      10
+    ],
+    "E2a": [
+      1,
+      20
+    ]
+  },
+  "S1": "held",
+  "rho_pix": 0.6727272727272727,
+  "rho_emb": 0.6727272727272727,
+  "p_pix": 0.10714285714285714,
+  "p_emb": 0.10714285714285714,
+  "tested": [
+    "D4 position",
+    "D4 appearance",
+    "E1a",
+    "E1b",
+    "E2b",
+    "S3 position",
+    "S3 appearance"
+  ]
+}

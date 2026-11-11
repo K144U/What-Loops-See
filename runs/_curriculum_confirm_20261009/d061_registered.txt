@@ -1,0 +1,5 @@
+R4  not contradicted  held out 5 of 5 against sealed 10 of 10, Fisher p = 1.000
+R5  not contradicted  held out 5 of 5 against sealed 9 of 10, Fisher p = 1.000
+R6  not contradicted  held out 1 of 5 against sealed 1 of 10, Fisher p = 1.000
+C1  held              5 of 5 against 1 of 5, Fisher p = 0.048
+C2  held              5 of 5 against 1 of 5, Fisher p = 0.048

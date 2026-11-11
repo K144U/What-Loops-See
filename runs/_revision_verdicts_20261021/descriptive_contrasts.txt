@@ -1,0 +1,43 @@
+# DESCRIPTIVE, cross-experiment, not in any registered family. escape_rates --contrast, 2026-10-21 04:49 +0530, commit 33da9379
+== c2_pos_x2 against famA_d2_d4only
+  c2_pos_x2: 10 of 10
+  famA_d2_d4only: 9 of 10
+  Fisher exact, two sided: p = 1.000
+  These rates are NOT distinguishable. Do not write this contrast as a claim.
+exit=0
+== c2_app_x2 against famA_d2_d4colour
+  c2_app_x2: 7 of 10
+  famA_d2_d4colour: 10 of 30
+  Fisher exact, two sided: p = 0.066
+  These rates are NOT distinguishable. Do not write this contrast as a claim.
+exit=0
+== c3_e2a_cue against why_e2a_cue
+  c3_e2a_cue: 3 of 10
+  why_e2a_cue: 1 of 20
+  Fisher exact, two sided: p = 0.095
+  These rates are NOT distinguishable. Do not write this contrast as a claim.
+exit=0
+== c3_e2b_decoy against why_e2b_decoy
+  c3_e2b_decoy: 4 of 10
+  why_e2b_decoy: 13 of 20
+  Fisher exact, two sided: p = 0.255
+  These rates are NOT distinguishable. Do not write this contrast as a claim.
+exit=0
+== c4_curr against famA_d2_d4colour_curr_confirm
+  c4_curr: 10 of 10
+  famA_d2_d4colour_curr_confirm: 5 of 5
+  Fisher exact, two sided: p = 1.000
+  These rates are NOT distinguishable. Do not write this contrast as a claim.
+exit=0
+== c4_currctrl against famA_d2_d4colour_currctrl_confirm
+  c4_currctrl: 9 of 10
+  famA_d2_d4colour_currctrl_confirm: 5 of 5
+  Fisher exact, two sided: p = 1.000
+  These rates are NOT distinguishable. Do not write this contrast as a claim.
+exit=0
+== c4_s3donor against famA_d2_d4colour_curr_s3donor_confirm
+  c4_s3donor: 3 of 10
+  famA_d2_d4colour_curr_s3donor_confirm: 1 of 5
+  Fisher exact, two sided: p = 1.000
+  These rates are NOT distinguishable. Do not write this contrast as a claim.
+exit=0

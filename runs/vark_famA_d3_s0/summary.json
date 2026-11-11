@@ -1,0 +1,64 @@
+{
+  "run_id": "vark_famA_d3_s0",
+  "config_hash": "bfc135fa",
+  "final_accuracy": 0.04229736328125,
+  "by_cell": {
+    "3x1": 0.04391072295002426,
+    "3x2": 0.04455205811138015,
+    "3x3": 0.04225006140997298,
+    "3x4": 0.03841418369859641
+  },
+  "n_eval": 16384,
+  "params": 10983552,
+  "config": {
+    "family": "A",
+    "d_model": 384,
+    "arch": "looped",
+    "k_schedule": "sampled",
+    "k_train": 1,
+    "k_mean_target": 8,
+    "jitter_sigma": 0.5,
+    "k_max_train": 32,
+    "k_eval": 8,
+    "eval_k_sweep": [
+      1,
+      2,
+      3,
+      4,
+      6,
+      8,
+      12,
+      16,
+      24,
+      32,
+      48,
+      64
+    ],
+    "depths": [
+      3
+    ],
+    "breadths": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "steps": 200000,
+    "batch_size": 256,
+    "lr": 0.0003,
+    "weight_decay": 0.05,
+    "warmup": 2000,
+    "lr_schedule_steps": null,
+    "grad_clip": 1.0,
+    "bptt_window": 8,
+    "eval_every": 5000,
+    "eval_batches": 16,
+    "checkpoint_every_minutes": 30,
+    "seed": 0,
+    "master_seed": 20260901,
+    "num_workers": 3,
+    "state_init": "randn",
+    "conditioning": "none",
+    "inject": true
+  }
+}

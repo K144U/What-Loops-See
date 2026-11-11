@@ -1,0 +1,31 @@
+# DESCRIPTIVE, not in G1 or G2. escape_rates --contrast per cell, 2026-10-22 04:03 +0530, commit 33da9379
+== c1_pos_lr1e4_wd005 against c1_app_lr1e4_wd005
+  c1_pos_lr1e4_wd005: 5 of 5
+  c1_app_lr1e4_wd005: 4 of 5
+  Fisher exact, two sided: p = 1.000
+  These rates are NOT distinguishable. Do not write this contrast as a claim.
+== c1_pos_lr1e4_wd05 against c1_app_lr1e4_wd05
+  c1_pos_lr1e4_wd05: 0 of 5
+  c1_app_lr1e4_wd05: 0 of 5
+  Fisher exact, two sided: p = 1.000
+  These rates are NOT distinguishable. Do not write this contrast as a claim.
+== c1_pos_lr3e4_wd005 against c1_app_lr3e4_wd005
+  c1_pos_lr3e4_wd005: 4 of 5
+  c1_app_lr3e4_wd005: 2 of 5
+  Fisher exact, two sided: p = 0.524
+  These rates are NOT distinguishable. Do not write this contrast as a claim.
+== c1_pos_lr3e4_wd05 against c1_app_lr3e4_wd05
+  c1_pos_lr3e4_wd05: 0 of 5
+  c1_app_lr3e4_wd05: 1 of 5
+  Fisher exact, two sided: p = 1.000
+  These rates are NOT distinguishable. Do not write this contrast as a claim.
+== c1_pos_lr1e3_wd005 against c1_app_lr1e3_wd005
+  c1_pos_lr1e3_wd005: 1 of 5
+  c1_app_lr1e3_wd005: 0 of 5
+  Fisher exact, two sided: p = 1.000
+  These rates are NOT distinguishable. Do not write this contrast as a claim.
+== c1_pos_lr1e3_wd05 against c1_app_lr1e3_wd05
+  c1_pos_lr1e3_wd05: 0 of 5
+  c1_app_lr1e3_wd05: 0 of 5
+  Fisher exact, two sided: p = 1.000
+  These rates are NOT distinguishable. Do not write this contrast as a claim.

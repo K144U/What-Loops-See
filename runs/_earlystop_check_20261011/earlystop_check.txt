@@ -1,0 +1,18 @@
+finished runs read: 509
+reached 0.95 at some eval: 323
+of those, finished below 0.95: 6
+    ('famB_curve111_jit000_s0', 90000, 0.44921875, 0.59814453125)
+    ('famB_curve111_jit000_s1', 90000, 0.736083984375, 0.85284423828125)
+    ('famB_curve111_jit000_s2', 90000, 0.750244140625, 0.780517578125)
+    ('famB_curve111_jit000_s3', 90000, 0.274658203125, 0.5528564453125)
+    ('famB_curve111_jit000_s4', 90000, 0.233154296875, 0.3140869140625)
+    ('famB_curve111_s9', 20000, 0.789794921875, 0.94488525390625)
+rule 'all evals >= 0.95 for 20000 steps' would stop: 319
+of those, finished below 0.95: 6
+    ('famB_curve111_jit000_s0', 110000, 0.59814453125)
+    ('famB_curve111_jit000_s1', 110000, 0.85284423828125)
+    ('famB_curve111_jit000_s2', 110000, 0.780517578125)
+    ('famB_curve111_jit000_s3', 110000, 0.5528564453125)
+    ('famB_curve111_jit000_s4', 110000, 0.3140869140625)
+    ('famB_curve111_s9', 40000, 0.94488525390625)
+stop step among stopped runs: min 25000, median 40000, max 290000

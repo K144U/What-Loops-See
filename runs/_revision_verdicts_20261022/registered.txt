@@ -1,0 +1,9 @@
+# python -m loopvision.analysis.revision_verdicts, 2026-10-22 04:02 +0530, commit 33da9379
+G1  failed        position 10 of 30, appearance 7 of 30, CMH p = 0.4008, pooled odds ratio 3.14, Holm-adjusted p = 0.8016
+G2  held          smallest Holm-adjusted reversal p across cells = 1.0000, adjusted with G1 = 1.0000
+T1  failed        c2_pos_x2 10 of 10, c2_app_x2 7 of 10, Fisher p = 0.211
+T2  failed        c3_e2b_decoy 4 of 10, c3_e2a_cue 3 of 10, Fisher p = 1.000, held to 0.025
+T3  held          5 of 8 E2a runs that left chance finished between 0.24 and 0.26
+K1  held          c4_curr 10 of 10, c4_s3donor 3 of 10, Fisher p = 0.003, Holm-adjusted 0.006
+K2  held          c4_currctrl 9 of 10, c4_s3donor 3 of 10, Fisher p = 0.020, Holm-adjusted 0.020
+exit=1

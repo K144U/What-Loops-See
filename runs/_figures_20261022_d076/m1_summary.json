@@ -1,0 +1,154 @@
+{
+  "tau": 0.9,
+  "censored_at": 33,
+  "tasks": {
+    "B d(1, 2, 3, 4, 5, 6) b(12, 13, 14, 15, 16)": {
+      "runs": 10,
+      "seeds": 10,
+      "cells": 300,
+      "axes": {
+        "depth": [
+          {
+            "depth": 1,
+            "median": 1.0,
+            "q25": 1.0,
+            "q75": 1.0,
+            "n": 50,
+            "censored": 0
+          },
+          {
+            "depth": 2,
+            "median": 1.0,
+            "q25": 1.0,
+            "q75": 2.0,
+            "n": 50,
+            "censored": 0
+          },
+          {
+            "depth": 3,
+            "median": 2.0,
+            "q25": 1.0,
+            "q75": 3.0,
+            "n": 50,
+            "censored": 0
+          },
+          {
+            "depth": 4,
+            "median": 2.0,
+            "q25": 2.0,
+            "q75": 3.0,
+            "n": 50,
+            "censored": 0
+          },
+          {
+            "depth": 5,
+            "median": 2.0,
+            "q25": 2.0,
+            "q75": 3.0,
+            "n": 47,
+            "censored": 3
+          },
+          {
+            "depth": 6,
+            "median": 3.0,
+            "q25": 2.0,
+            "q75": 4.0,
+            "n": 45,
+            "censored": 5
+          }
+        ],
+        "breadth": [
+          {
+            "breadth": 12,
+            "median": 2.0,
+            "q25": 1.0,
+            "q75": 3.0,
+            "n": 59,
+            "censored": 1
+          },
+          {
+            "breadth": 13,
+            "median": 2.0,
+            "q25": 1.0,
+            "q75": 3.0,
+            "n": 58,
+            "censored": 2
+          },
+          {
+            "breadth": 14,
+            "median": 2.0,
+            "q25": 1.0,
+            "q75": 3.0,
+            "n": 58,
+            "censored": 2
+          },
+          {
+            "breadth": 15,
+            "median": 2.0,
+            "q25": 1.0,
+            "q75": 3.0,
+            "n": 58,
+            "censored": 2
+          },
+          {
+            "breadth": 16,
+            "median": 2.0,
+            "q25": 1.0,
+            "q75": 3.0,
+            "n": 59,
+            "censored": 1
+          }
+        ]
+      }
+    },
+    "C d(1,) b(4, 5, 6, 7, 8)": {
+      "runs": 10,
+      "seeds": 10,
+      "cells": 50,
+      "axes": {
+        "breadth": [
+          {
+            "breadth": 4,
+            "median": 1.0,
+            "q25": 1.0,
+            "q75": 1.0,
+            "n": 10,
+            "censored": 0
+          },
+          {
+            "breadth": 5,
+            "median": 1.0,
+            "q25": 1.0,
+            "q75": 1.0,
+            "n": 10,
+            "censored": 0
+          },
+          {
+            "breadth": 6,
+            "median": 1.0,
+            "q25": 1.0,
+            "q75": 1.0,
+            "n": 10,
+            "censored": 0
+          },
+          {
+            "breadth": 7,
+            "median": 1.0,
+            "q25": 1.0,
+            "q75": 1.0,
+            "n": 10,
+            "censored": 0
+          },
+          {
+            "breadth": 8,
+            "median": 1.0,
+            "q25": 1.0,
+            "q75": 1.0,
+            "n": 10,
+            "censored": 0
+          }
+        ]
+      }
+    }
+  }
+}

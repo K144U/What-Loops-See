@@ -1,0 +1,7 @@
+Milestone 8 confirmation, held out of the registered 2x2:
+  cell               held out         sealed    Fisher p
+  D4/position      3 of 5          9 of 10          0.2418
+  D4/identity      2 of 5         12 of 40          0.6394
+  S3/identity      2 of 5          3 of 10          1.0000
+
+No held-out cell contradicts its sealed rate. That is weaker than confirmation and is not the same sentence.

@@ -1,0 +1,79 @@
+entry,title,commit,committed_at
+prereg-v1,"docs/preregistration.md, frozen",fd8d037df2a9ad48607d2ca88f1ff5888f3e2808,2026-09-07T10:35:53+05:30
+D-001,Create five planning documents alongside the implementation spec,cb55cfcc526375fc6edde2e1fe2d036f8b679001,2026-08-31T10:33:41+05:30
+D-002,This file becomes `docs/decisions.md` at milestone 0,cb55cfcc526375fc6edde2e1fe2d036f8b679001,2026-08-31T10:33:41+05:30
+D-007,"Related work survey run before milestone 0, and what it changes",cb55cfcc526375fc6edde2e1fe2d036f8b679001,2026-08-31T10:33:41+05:30
+D-008,Bibliography verification standard,cb55cfcc526375fc6edde2e1fe2d036f8b679001,2026-08-31T10:33:41+05:30
+D-009,"Mechanism leads the contributions, benchmark stays first",cb55cfcc526375fc6edde2e1fe2d036f8b679001,2026-08-31T10:33:41+05:30
+D-010,Local development environment differs from the cluster pin,0fe8a9a39b34deb595f1ff45270031636d983d7f,2026-08-31T10:37:02+05:30
+D-011,"The smoke trainer is a miniature looped model, and mutation checking is now standing practice",0fe8a9a39b34deb595f1ff45270031636d983d7f,2026-08-31T10:37:02+05:30
+D-012,LF line endings pinned via .gitattributes,0fe8a9a39b34deb595f1ff45270031636d983d7f,2026-08-31T10:37:02+05:30
+D-013,"GPU selection gates on free memory, not used memory",13e9334d19287316b0dc686d53c2eff5968e335d,2026-08-31T11:00:22+05:30
+D-014,"Cluster environment as found, 2026-08-31",13e9334d19287316b0dc686d53c2eff5968e335d,2026-08-31T11:00:22+05:30
+D-015,The chain submits its successor through the login node,f53958421bc48a0c5edd55468b3273c2ac5cb248,2026-08-31T11:07:03+05:30
+D-016,"Gate G1.3 rewritten, the at-chance criterion was unachievable",c84fee431e1e183ab6720e9c27492730c3c5f248,2026-08-31T12:38:14+05:30
+D-017,"Family A stimulus is a chiral tetromino, not an L-tromino",c84fee431e1e183ab6720e9c27492730c3c5f248,2026-08-31T12:38:14+05:30
+D-018,Family A has no combo_ood split,15f11b02bcdadb0c212ec0e18938e96e3de2d559,2026-08-31T14:25:11+05:30
+D-019,Family B relation semantics and scene construction,53f6de6dd9ff61c54ec6f54351b338bf6fdcb5ea,2026-08-31T14:48:50+05:30
+D-020,"Label spaces, split ranges and sprite gaps for families B and C",53f6de6dd9ff61c54ec6f54351b338bf6fdcb5ea,2026-08-31T14:48:50+05:30
+D-021,"Four cores per job, not eight",18af2efd4e78a19f1e1aa0afee581a028f9102ff,2026-08-31T15:46:48+05:30
+D-022,"Gate G1 failed. Remedy options for family A, awaiting a decision",8bd64da07a011988fbfaa68bf7bc9ad41c2cde7f,2026-08-31T17:09:22+05:30
+D-023,Size ladder cut from four models to two,24ce0be4d07088b5f559d63c95696179ae2741f5,2026-09-01T05:38:19+05:30
+D-024,"GPU selection ranks by utilisation, not free memory",c47c2f82158905748f32465008a1bba4ec166d79,2026-09-03T08:03:16+05:30
+D-025,"Several runs per PBS job, because cores bind before GPUs do",c47c2f82158905748f32465008a1bba4ec166d79,2026-09-03T08:03:16+05:30
+D-026,Family B anchor descriptor and family C query breadth,eeeb5a70c17aef0103f28d41dc3b20e276f15eb4,2026-09-03T21:32:28+05:30
+D-027,"Family B trains across depths 1 to 4, and has no depth_ood arm",3c4d5d31f74605ec8bdeed311926170b81973352,2026-09-03T21:47:26+05:30
+D-028,"Family B: size is not askable, breadth moves to 12 to 16, depth runs to 6, core shrinks to 1/1/1",d4a9976c4bd6da53ef62e1c7f6122850d202a15e,2026-09-04T06:46:37+05:30
+D-029,The D4 versus S3 asymmetry gets a crossed design before it gets a paper section,fbda3b2ef6c7c669ec74fb48d028fbbb9eb17525,2026-09-05T07:20:47+05:30
+D-030,"Gate G2 moves from family A depth 3 to family B, because it is undefined where it was written",306cb935c91a05ee0fe649210224141c7a152daf,2026-09-06T12:04:10+05:30
+D-031,"multirun.pbs asks for 64gb rather than 96gb, because the queue now refuses 96",01e6ce6816bd9d03e0c2fa1731b5f5d9d7c00134,2026-09-06T13:59:21+05:30
+D-032,"The feedforward control for the colour deadlock, matched on compute at k=8",1b8a9e01a2a654abbf8a89e28a973130d7e113c6,2026-09-06T14:41:32+05:30
+D-033,"TF32 is left alone for the campaign, and the inherited worry was based on an outdated default",cc5c54af4efc6e05814b4ac86c56bfb9ee7fa717,2026-09-06T15:39:03+05:30
+D-034,"The repository is public, which resolves D-005 four milestones early",bc7f83ab279a4275c78d378023d8a283cabe824d,2026-09-06T17:08:53+05:30
+D-035,The TF32 pin reached the cluster before D-033 said it should,bc7f83ab279a4275c78d378023d8a283cabe824d,2026-09-06T17:08:53+05:30
+D-036,"A second history rewrite, force pushed over an already published repository",17530c833fe6ef0eeb6d74d99123ec597d94e2d5,2026-09-06T17:26:27+05:30
+D-037,The matched-parameter arm is the feedforward baseline at k=1,3d8f64a321502a3ff3eb0ed1d29a12c12a134a49,2026-09-06T18:44:55+05:30
+D-038,"The untied baseline, to decompose the gate G2 failure",10170370fa64fbc92d9d4fa2f686fa05d1c84046,2026-09-07T04:17:29+05:30
+D-039,"The pre-registration is written at milestone 6, and says so",fd8d037df2a9ad48607d2ca88f1ff5888f3e2808,2026-09-07T10:35:53+05:30
+D-040,"The D4 curriculum needs a third arm, because its control shares the group",6d9c47fcf3341dc5a45a4903d3f09af43621e756,2026-09-07T15:44:50+05:30
+D-041,"The queue is consolidated, because the cap counts jobs and not runs",147c63ee48fa5da2b5d1ed8fb10fb3faa8fe0ca1,2026-09-07T17:18:47+05:30
+D-042,"The headline moved, so the seed requirement moves with it",7117751fbde4bc16d69562c191b0e0e5420b911c,2026-09-08T11:23:02+05:30
+D-043,"The scale control had no depth arm, and the fix is a new config rather than an edit",7117751fbde4bc16d69562c191b0e0e5420b911c,2026-09-08T11:23:02+05:30
+D-044,"Six configs cannot run, and seven finished runs cannot be re-analysed",42fcdb4a1b930f05ef5cca9c7636176cdedcbd09,2026-09-08T20:16:34+05:30
+D-003,"Compute block, sixteen weeks on the cluster",cb55cfcc526375fc6edde2e1fe2d036f8b679001,2026-08-31T10:33:41+05:30
+D-004,Co-authorship and affiliation,cb55cfcc526375fc6edde2e1fe2d036f8b679001,2026-08-31T10:33:41+05:30
+D-005,Preprint timing,cb55cfcc526375fc6edde2e1fe2d036f8b679001,2026-08-31T10:33:41+05:30
+D-006,Task family priority,cb55cfcc526375fc6edde2e1fe2d036f8b679001,2026-08-31T10:33:41+05:30
+D-045,"Fourteen more runs are closed to re-analysis, and the checker that missed them is fixed",9ed14a512c8e4f6a5b5ed465b20bb61de110ad4e,2026-09-10T12:59:25+05:30
+D-046,"CLAUDE.md was two revisions behind on cores, in the file every session reads first",4962a934b70abd2e67ac857ab7ef9d23d8006e19,2026-09-10T15:14:21+05:30
+D-047,"Breadth is recorded per item, and Claim 3 is post-hoc rather than registered",4962a934b70abd2e67ac857ab7ef9d23d8006e19,2026-09-10T15:14:21+05:30
+D-048,"What a feedforward trajectory is, and why five geometry jobs died",ad799f975d717ed20c61a914035dddd00ffa6ca3,2026-09-10T16:56:54+05:30
+D-049,"The contribution order moves again, and this time on a failed prediction",2993d4918ce3498bcb3ad6fbfd5cd19b989c4a3e,2026-09-10T17:26:41+05:30
+D-050,"A claim is retired, and the interesting part is that it never had support",1ffb5e610de4916ac310cecc053e57ace8dd02d6,2026-09-10T22:45:34+05:30
+D-051,The queue is reordered so the headline closes before the work that supports it,2d46ddd9087ccce94f88d222c797192dcb82e016,2026-09-16T13:59:07+05:30
+D-052,"The headline claim becomes a rate, because the cell was never settled",8f745fd1db3f074b64ad488f27a2c8b48b5b6cd0,2026-09-21T07:24:05+05:30
+D-053,"The registered H4 metric is underspecified in three ways, and each is resolved in the open",22d1dbf9bab75234f844191b06815263ba158108,2026-09-21T07:40:11+05:30
+D-054,The self-stop was set to a wall that only one of the two submitters has,d6f257eb978c2c50b4215d036b94f025e330aead,2026-09-23T17:33:15+05:30
+D-055,The paper build could only run on the machine without the results,b600adeb1f0328b6e1e7ba1b250a9d7b31346ed6,2026-09-23T18:52:46+05:30
+D-056,The test suite moves off the login node onto workq,b3ee31afea3ac9eb0f2a19e9ac28e0cb5db2827d,2026-09-23T19:03:45+05:30
+D-057,"Confirmation runs are milestone 8 work, and they are held out of the 2x2",f13ef8ab96b64b1be82fd286e4dc02d338a32600,2026-09-23T20:01:16+05:30
+D-058,"Training jobs ask for 16gb of host RAM, not 48gb",f58a6a37b2b4aacf174f53f6b15173a7a1c01bc0,2026-09-23T21:13:01+05:30
+D-059,Timing predictions on the fifteen milestone 8 confirmation seeds,964f68c3f834731b9bbe8936de4f16bffe7e635a,2026-09-24T15:09:24+05:30
+D-060,E0.4: which D4 character a model learns first,5a55d1b6e52e353262ac4c507de7dfad3c3846e4,2026-09-29T07:12:47+05:30
+D-061,Milestone 8 confirmation of claims.md rows 4 to 6,ac4433d73350e82e7e3f4ba8f783f4fc1468174b,2026-09-29T07:31:51+05:30
+D-062,E1 and E2: does a visible quotient cause the staircase?,f9bca497fc4001341a99a966580ecfc70c711c33,2026-09-29T07:49:02+05:30
+D-063,"GPU selection counts every process on a card, and a live claim is never cleared for its age",df2ac8984f99eaf51503e9063030d2edd0c8299a,2026-10-06T11:47:56+05:30
+D-064,"A finished run keeps only its latest checkpoint, and a failed prune is loud",ba4a69d143ba142024b85bc41adf53cc6399dc28,2026-10-11T17:35:03+05:30
+D-065,"Early stop for the new runs, family A only",ba4a69d143ba142024b85bc41adf53cc6399dc28,2026-10-11T17:35:03+05:30
+D-066,C1: the substrate asymmetry across learning rate and weight decay,ba4a69d143ba142024b85bc41adf53cc6399dc28,2026-10-11T17:35:03+05:30
+D-067,C2: does the asymmetry survive tiles that span several patches?,ba4a69d143ba142024b85bc41adf53cc6399dc28,2026-10-11T17:35:03+05:30
+D-068,"C3: more E2a and E2b seeds, and the trap registered for the first time",ba4a69d143ba142024b85bc41adf53cc6399dc28,2026-10-11T17:35:03+05:30
+D-069,"C4: more held-out donor seeds, for both specificity checks",ba4a69d143ba142024b85bc41adf53cc6399dc28,2026-10-11T17:35:03+05:30
+D-070,"A tile-distinguishability measure, with its prediction, before it is computed",ba4a69d143ba142024b85bc41adf53cc6399dc28,2026-10-11T17:35:03+05:30
+D-071,"One job reads the cards at a time, the scale 2 floor covers what nvidia-smi sees, and every launched run is checked",37e3bfc256aed57ac0929d0a18cdc4d09f8a625d,2026-10-12T06:12:36+05:30
+D-072,"Memory counts from the moment it is promised: a ledger in the picker, after the lease proved to be a guess about time",114ec5aec6bb98fe10cf81b6570835a1cc651ba8,2026-10-13T06:22:25+05:30
+D-073,"The C4 recipients go in before the last donor finishes, on the author's word",33da9379696c3ac4288a8d25651d8f29a587e289,2026-10-15T05:13:14+05:30
+D-074,"A loop-count curve pools one training setup, and F2 is drawn from the registered arms and stored with them",679c6251a7c4fec20b7eb8347047978637501701,2026-10-22T05:32:27+05:30
+D-075,"The release is a scrubbed snapshot of one commit, built by a script that refuses to leave anything private in it",0664e9ef110d9c1dd2530a6499aaec2714a0073f,2026-10-22T06:33:33+05:30
+D-076,"S1's tie restored as registered, and Appendix B read again from stored files",0664e9ef110d9c1dd2530a6499aaec2714a0073f,2026-10-22T06:33:33+05:30
+D-077,"The release goes on the project's GitHub repository, not on Zenodo",e10062a110d09f8571ec4f3f5860b9eb487c5199,2026-11-12T03:06:52+05:30

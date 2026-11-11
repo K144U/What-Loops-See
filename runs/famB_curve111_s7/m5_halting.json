@@ -1,0 +1,28 @@
+{
+  "run": "famB_curve111_s7",
+  "checkpoint": "step_000300000.pt",
+  "k": 32,
+  "items": 256,
+  "thresholds": {
+    "update_norm": 188.61124614133675,
+    "kl": 18.14640235900879,
+    "entropy": 0.0068434032658904395,
+    "second_difference": 5.192307488392978
+  },
+  "never_correct": 0,
+  "depth_levels": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "breadth_levels": [
+    12,
+    13,
+    14,
+    15,
+    16
+  ]
+}

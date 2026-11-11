@@ -1,0 +1,15 @@
+{
+  "run": "famA_d2_d4only_s0",
+  "checkpoint": "step_000300000.pt",
+  "n": 4096,
+  "accuracy": {
+    "none": 1.0,
+    "state": 0.12451171875,
+    "op1": 0.1328125,
+    "op2": 0.132568359375,
+    "distractors": 1.0,
+    "marker": 0.1728515625,
+    "all": 0.125
+  },
+  "chance": 0.125
+}

@@ -1,0 +1,19 @@
+escape_rates --contrast, two sided Fisher exact over finished seeds, 2026-10-06 11:56 +0530, cluster df2ac898
+
+== famA_d2_d4colour famA_d2_d4colour_ffwd
+  famA_d2_d4colour: 10 of 30
+  famA_d2_d4colour_ffwd: 7 of 30
+  Fisher exact, two sided: p = 0.567
+  These rates are NOT distinguishable. Do not write this contrast as a claim.
+
+== famA_d2_d4colour famA_d2_d4colour_ffwd_mp
+  famA_d2_d4colour: 10 of 30
+  famA_d2_d4colour_ffwd_mp: 10 of 30
+  Fisher exact, two sided: p = 1.000
+  These rates are NOT distinguishable. Do not write this contrast as a claim.
+
+== famA_d2_d4colour_ffwd famA_d2_d4colour_ffwd_mp
+  famA_d2_d4colour_ffwd: 7 of 30
+  famA_d2_d4colour_ffwd_mp: 10 of 30
+  Fisher exact, two sided: p = 0.567
+  These rates are NOT distinguishable. Do not write this contrast as a claim.

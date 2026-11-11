@@ -1,0 +1,33 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "G1.1 depth 3 unsolvable at k=1, looped k=1",
+      "passed": true,
+      "measured": 0.021240234375,
+      "threshold": 0.05,
+      "detail": "chance 0.0208, n=16384"
+    },
+    {
+      "name": "G1.1 depth 3 unsolvable at k=1, matched feedforward",
+      "passed": true,
+      "measured": 0.021240234375,
+      "threshold": 0.05,
+      "detail": "chance 0.0208, n=16384"
+    },
+    {
+      "name": "G1.2 depth 1 solvable at k=1",
+      "passed": true,
+      "measured": 1.0,
+      "threshold": 0.9,
+      "detail": "n=16384"
+    },
+    {
+      "name": "G1.4 family C solvable at k=1 at every breadth",
+      "passed": true,
+      "measured": 1.0,
+      "threshold": 0.9,
+      "detail": "worst cell 1x4, all cells 1x4=1.000, 1x5=1.000, 1x6=1.000, 1x7=1.000, 1x8=1.000"
+    }
+  ]
+}

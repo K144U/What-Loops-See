@@ -1,0 +1,13 @@
+rendering        in S1  M_pix   min     M_emb   min     escaped
+D4 position      yes    2.2455  1.6979  0.8804  0.6664  9 of 10
+D4 appearance    yes    1.4104  1.2189  0.5515  0.4674  12 of 40
+E1a              yes    2.3948  1.5482  0.9391  0.5931  16 of 20
+E1b              yes    2.2455  1.6979  0.8804  0.6664  14 of 20
+E2b              yes    1.6937  1.2189  0.6602  0.4786  13 of 20
+S3 position      yes    2.2787  1.8251  0.8875  0.6799  6 of 10
+S3 appearance    yes    1.2868  0.9608  0.5005  0.3634  3 of 10
+E2a              no     1.7101  1.3383  0.6672  0.5040  1 of 20
+
+S1  held          Spearman of M_pix with escape rate over 7 renderings = 0.673; held at 0.6 or above, failed at 0.0 or below
+    exact two-sided permutation p = 0.107, which decides nothing: the registration fixed a threshold
+    secondary, decides nothing: Spearman of M_emb with escape rate = 0.673, p = 0.107

@@ -1,0 +1,3 @@
+P1  failed   famA_d2_d4colour_confirm_s34 left chance at 46350
+P2  held     4 of 5 seeds show ln4
+P3  held     no plateau in 10 seeds

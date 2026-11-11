@@ -1,0 +1,27 @@
+{
+  "n": 6144,
+  "full_accuracy": 1.0,
+  "chance": 0.020833333333333332,
+  "parities": {
+    "flip (D4 reflection)": {
+      "accuracy": 1.0,
+      "chance": 0.5,
+      "residual_accuracy_given_correct_parity": 1.0,
+      "residual_chance": 0.041666666666666664
+    },
+    "rot mod 2": {
+      "accuracy": 1.0,
+      "chance": 0.5,
+      "residual_accuracy_given_correct_parity": 1.0,
+      "residual_chance": 0.041666666666666664
+    },
+    "sign (S3 permutation)": {
+      "accuracy": 1.0,
+      "chance": 0.5,
+      "residual_accuracy_given_correct_parity": 1.0,
+      "residual_chance": 0.041666666666666664
+    }
+  },
+  "run": "runs/g1_famA_d1_looped_long_s0",
+  "k": 1
+}

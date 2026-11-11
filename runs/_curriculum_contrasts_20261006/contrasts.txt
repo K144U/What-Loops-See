@@ -1,0 +1,33 @@
+escape_rates --contrast, two sided Fisher exact over finished seeds, 2026-10-06 11:52 +0530
+
+== famA_d2_d4colour_curr famA_d2_d4colour_curr_s3donor
+  famA_d2_d4colour_curr: 10 of 10
+  famA_d2_d4colour_curr_s3donor: 1 of 10
+  Fisher exact, two sided: p = 0.000
+
+== famA_d2_d4colour_currctrl famA_d2_d4colour_curr_s3donor
+  famA_d2_d4colour_currctrl: 9 of 10
+  famA_d2_d4colour_curr_s3donor: 1 of 10
+  Fisher exact, two sided: p = 0.001
+
+== famA_d2_d4colour famA_d2_d4colour_currctrl
+  famA_d2_d4colour: 10 of 30
+  famA_d2_d4colour_currctrl: 9 of 10
+  Fisher exact, two sided: p = 0.003
+
+== famA_d2_d4colour famA_d2_d4colour_curr_s3donor
+  famA_d2_d4colour: 10 of 30
+  famA_d2_d4colour_curr_s3donor: 1 of 10
+  Fisher exact, two sided: p = 0.233
+  These rates are NOT distinguishable. Do not write this contrast as a claim.
+
+== famA_d2_s3only_curr famA_d2_s3only_currctrl
+  famA_d2_s3only_curr: 10 of 10
+  famA_d2_s3only_currctrl: 5 of 10
+  Fisher exact, two sided: p = 0.033
+
+== famA_d2_s3only famA_d2_s3only_currctrl
+  famA_d2_s3only: 3 of 10
+  famA_d2_s3only_currctrl: 5 of 10
+  Fisher exact, two sided: p = 0.650
+  These rates are NOT distinguishable. Do not write this contrast as a claim.

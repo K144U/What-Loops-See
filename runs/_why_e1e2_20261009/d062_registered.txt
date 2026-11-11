@@ -1,0 +1,6 @@
+V1  failed        escaped: E1a 16 of 20, sealed 9 of 10, Fisher p = 0.640
+V2  held          climbed: E1a 7 of 17, sealed 9 of 10, Fisher p = 0.018
+V3  failed        escaped: E1b 14 of 20, sealed 9 of 10, Fisher p = 0.372
+V4  failed        climbed: E1b 12 of 18, sealed 9 of 10, Fisher p = 0.364
+V5  failed        escaped: E2b 13 of 20, E2a 1 of 20, Fisher p = 0.000
+V6  held          climbed: E2b 0 of 14, E2a 14 of 15, Fisher p = 0.000

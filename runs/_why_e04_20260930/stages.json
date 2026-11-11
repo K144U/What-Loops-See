@@ -1,0 +1,140 @@
+[
+ {
+  "run_id": "why_e04_d4colour_s100",
+  "arm": [
+   "D4",
+   "identity"
+  ],
+  "leave_step": 8600,
+  "evals": 60,
+  "stage": {
+   "character": "rot2",
+   "step": 9000
+  }
+ },
+ {
+  "run_id": "why_e04_d4colour_s101",
+  "arm": [
+   "D4",
+   "identity"
+  ],
+  "leave_step": 9950,
+  "evals": 60,
+  "stage": null
+ },
+ {
+  "run_id": "why_e04_d4colour_s102",
+  "arm": [
+   "D4",
+   "identity"
+  ],
+  "leave_step": null,
+  "evals": 60,
+  "stage": null
+ },
+ {
+  "run_id": "why_e04_d4colour_s103",
+  "arm": [
+   "D4",
+   "identity"
+  ],
+  "leave_step": 9250,
+  "evals": 60,
+  "stage": {
+   "character": "rot2",
+   "step": 9500
+  }
+ },
+ {
+  "run_id": "why_e04_d4colour_s104",
+  "arm": [
+   "D4",
+   "identity"
+  ],
+  "leave_step": null,
+  "evals": 60,
+  "stage": null
+ },
+ {
+  "run_id": "why_e04_d4colour_s105",
+  "arm": [
+   "D4",
+   "identity"
+  ],
+  "leave_step": null,
+  "evals": 60,
+  "stage": null
+ },
+ {
+  "run_id": "why_e04_d4colour_s106",
+  "arm": [
+   "D4",
+   "identity"
+  ],
+  "leave_step": 4450,
+  "evals": 60,
+  "stage": null
+ },
+ {
+  "run_id": "why_e04_d4colour_s107",
+  "arm": [
+   "D4",
+   "identity"
+  ],
+  "leave_step": null,
+  "evals": 60,
+  "stage": null
+ },
+ {
+  "run_id": "why_e04_d4only_s100",
+  "arm": [
+   "D4",
+   "position"
+  ],
+  "leave_step": 23700,
+  "evals": 60,
+  "stage": {
+   "character": "rotflip",
+   "step": 4500
+  }
+ },
+ {
+  "run_id": "why_e04_d4only_s101",
+  "arm": [
+   "D4",
+   "position"
+  ],
+  "leave_step": 3550,
+  "evals": 60,
+  "stage": {
+   "character": "flip",
+   "step": 3500
+  }
+ },
+ {
+  "run_id": "why_e04_d4only_s102",
+  "arm": [
+   "D4",
+   "position"
+  ],
+  "leave_step": 3050,
+  "evals": 60,
+  "stage": {
+   "character": "rotflip",
+   "step": 3000
+  }
+ },
+ {
+  "run_id": "why_e04_d4only_s103",
+  "arm": [
+   "D4",
+   "position"
+  ],
+  "leave_step": 4850,
+  "evals": 60,
+  "stage": {
+   "character": "rotflip",
+   "step": 5500
+  }
+ }
+]

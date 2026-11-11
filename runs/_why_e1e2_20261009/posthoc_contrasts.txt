@@ -1,0 +1,27 @@
+POST-HOC, not registered. escape_rates --contrast, two sided Fisher exact over finished seeds, 2026-10-09 14:15 +0530, cluster 43c9d463
+
+== famA_d2_d4colour why_e2a_cue
+  famA_d2_d4colour: 10 of 30
+  why_e2a_cue: 1 of 20
+  Fisher exact, two sided: p = 0.033
+
+== famA_d2_d4colour why_e2b_decoy
+  famA_d2_d4colour: 10 of 30
+  why_e2b_decoy: 13 of 20
+  Fisher exact, two sided: p = 0.043
+
+== famA_d2_d4only why_e2b_decoy
+  famA_d2_d4only: 9 of 10
+  why_e2b_decoy: 13 of 20
+  Fisher exact, two sided: p = 0.210
+  These rates are NOT distinguishable. Do not write this contrast as a claim.
+
+== famA_d2_d4colour why_e1a_square
+  famA_d2_d4colour: 10 of 30
+  why_e1a_square: 16 of 20
+  Fisher exact, two sided: p = 0.002
+
+== famA_d2_d4colour why_e1b_scrambled
+  famA_d2_d4colour: 10 of 30
+  why_e1b_scrambled: 14 of 20
+  Fisher exact, two sided: p = 0.020

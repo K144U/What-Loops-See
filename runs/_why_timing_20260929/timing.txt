@@ -1,0 +1,76 @@
+leave: trailing 2000 step mean below ln C - 0.15 for at least 10000 steps, or to the end of the log.
+solve: trailing 1000 step mean below 0.1 ln C. plateau: trailing 2000 step mean within 0.15 of ln(C/q) for at least 10000 steps, before the solve.
+3 in-scope runs skipped as unfinished.
+
+famA_d1_d4colour                                 C=8  escaped 10 of 10  plateaus -
+                                                 leave k-steps [2, 2, 2, 2, 2, 3, 5, 5, 5, 9]
+                                                 solve k-steps [3, 3, 4, 5, 5, 6, 6, 6, 7, 11]
+famA_d1_d4only                                   C=8  escaped 10 of 10  plateaus -
+                                                 leave k-steps [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+                                                 solve k-steps [2, 3, 4, 4, 4, 4, 4, 6, 6, 8]
+famA_d1_s3only                                   C=6  escaped 10 of 10  plateaus -
+                                                 leave k-steps [2, 2, 2, 2, 3, 3, 3, 3, 4, 7]
+                                                 solve k-steps [3, 3, 4, 4, 4, 5, 5, 5, 7, 9]
+famA_d2_d4colour                                 C=8  escaped 10 of 30  plateaus -
+                                                 leave k-steps [5, 6, 6, 7, 8, 9, 13, 13, 15, 18]
+                                                 solve k-steps [9, 10, 11, 14, 17, 17, 24, 28, 30, 37]
+famA_d2_d4colour_big                             C=8  escaped  7 of 10  plateaus ln4:1
+                                                 leave k-steps [2, 3, 3, 4, 9, 10, 18]
+                                                 solve k-steps [8, 15, 21, 46, 50, 58, 58]
+famA_d2_d4colour_confirm [confirmation]          C=8  escaped  2 of  5  plateaus -
+                                                 leave k-steps [17, 46]
+                                                 solve k-steps [32, 122]
+famA_d2_d4colour_curr [init_from]                C=8  escaped 10 of 10  plateaus -
+                                                 leave k-steps [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+                                                 solve k-steps [2, 2, 2, 2, 2, 2, 2, 2, 2, 3]
+famA_d2_d4colour_curr_s3donor [init_from]        C=8  escaped  1 of 10  plateaus -
+                                                 leave k-steps [3]
+                                                 solve k-steps [4]
+famA_d2_d4colour_currctrl [init_from]            C=8  escaped  9 of 10  plateaus -
+                                                 leave k-steps [2, 2, 2, 2, 2, 2, 2, 2, 3]
+                                                 solve k-steps [2, 3, 3, 3, 3, 3, 3, 3, 4]
+famA_d2_d4colour_deep                            C=8  escaped  2 of 10  plateaus -
+                                                 leave k-steps [8, 18]
+                                                 solve k-steps [11, 37]
+famA_d2_d4colour_depth4                          C=8  escaped  1 of  5  plateaus -
+                                                 leave k-steps [13]
+                                                 solve k-steps [16]
+famA_d2_d4colour_ffwd                            C=8  escaped  7 of 30  plateaus -
+                                                 leave k-steps [5, 5, 6, 6, 9, 12, 13]
+                                                 solve k-steps [7, 10, 10, 13, 13, 15, 46]
+famA_d2_d4colour_ffwd_mp                         C=8  escaped 10 of 30  plateaus -
+                                                 leave k-steps [3, 4, 5, 6, 7, 7, 8, 12, 17, 22]
+                                                 solve k-steps [8, 10, 14, 16, 26, 28, 31, 32, 42, 127]
+famA_d2_d4colour_wide                            C=8  escaped 10 of 10  plateaus -
+                                                 leave k-steps [2, 2, 2, 2, 3, 3, 4, 4, 6, 6]
+                                                 solve k-steps [6, 8, 8, 9, 11, 11, 12, 12, 17, 18]
+famA_d2_d4only                                   C=8  escaped  9 of 10  plateaus ln2:7 ln4:9
+                                                 leave k-steps [2, 2, 3, 3, 4, 4, 5, 5, 5, 7]
+                                                 solve k-steps [39, 71, 93, 96, 107, 170, 228, 237, 246]
+famA_d2_d4only_confirm [confirmation]            C=8  escaped  3 of  5  plateaus ln2:3 ln4:4
+                                                 leave k-steps [2, 4, 6, 11]
+                                                 solve k-steps [59, 216, 262]
+famA_d2_s3only                                   C=6  escaped  3 of 10  plateaus -
+                                                 leave k-steps [3, 10, 12]
+                                                 solve k-steps [6, 15, 18]
+famA_d2_s3only_confirm [confirmation]            C=6  escaped  2 of  5  plateaus -
+                                                 leave k-steps [14, 16]
+                                                 solve k-steps [21, 23]
+famA_d2_s3only_curr [init_from]                  C=6  escaped 10 of 10  plateaus -
+                                                 leave k-steps [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+                                                 solve k-steps [1, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+famA_d2_s3only_currctrl [init_from]              C=6  escaped  5 of 10  plateaus -
+                                                 leave k-steps [2, 2, 2, 2, 2]
+                                                 solve k-steps [2, 3, 3, 3, 3]
+famA_d2_s3only_ffwd                              C=6  escaped  3 of 10  plateaus -
+                                                 leave k-steps [5, 8, 11]
+                                                 solve k-steps [9, 13, 15]
+famA_d2_s3only_ffwd_mp                           C=6  escaped  5 of 10  plateaus -
+                                                 leave k-steps [4, 5, 7, 8, 10]
+                                                 solve k-steps [7, 9, 12, 12, 14]
+famA_d2_s3spatial                                C=6  escaped  6 of 10  plateaus -
+                                                 leave k-steps [3, 5, 6, 6, 10, 18]
+                                                 solve k-steps [7, 10, 12, 16, 23, 24]
+famA_d3_d4only                                   C=8  escaped  0 of  1  plateaus -
+                                                 leave k-steps []
+                                                 solve k-steps []

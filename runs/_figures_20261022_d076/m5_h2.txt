@@ -1,0 +1,84 @@
+
+=== B d(1, 2, 3, 4, 5, 6) b(12, 13, 14, 15, 16)   10 run(s), 10 seed(s), 2560 item rows
+    k*_model against k*_task, descriptive and uncorrected: r = 0.312 on n = 2557
+
+    criterion            median err        95% CI      boot p   sign p   Holm
+    update_norm             +0.00   [+0.00,+0.50]   1.0000   1.0000   not rejected
+    kl                      +0.00   [+0.00,+0.50]   1.0000   1.0000   not rejected
+    entropy                 +0.00   [+0.00,+1.00]   1.0000   0.2500   not rejected
+    second_difference       +2.00   [+1.50,+2.50]   0.0001   0.0020   rejected under Holm
+
+    criterion            slope/k*_task     95% CI      boot p            Holm
+    update_norm             -0.11   [-0.20,+0.08]   0.2114   not rejected
+    kl                      -0.12   [-0.20,-0.06]   0.0032   rejected under Holm
+    entropy                 +0.24   [+0.16,+0.31]   0.0001   rejected under Holm
+    second_difference       -0.16   [-0.37,-0.00]   0.0412   undetermined until the rest of the family runs
+
+    what left each test, and why it is not a random subset:
+    update_norm          used  2404 of  2560   model never correct     3   never fired   154
+    kl                   used  2557 of  2560   model never correct     3   never fired     0
+    entropy              used  2517 of  2560   model never correct     3   never fired    43
+    second_difference    used  2557 of  2560   model never correct     3   never fired     0
+
+=== C d(1,) b(4, 5, 6, 7, 8)   10 run(s), 10 seed(s), 2560 item rows
+    k*_model against k*_task, descriptive and uncorrected: r = n/a on n = 2560
+
+    criterion            median err        95% CI      boot p   sign p   Holm
+    update_norm             +0.00   [+0.00,+0.00]   1.0000      n/a   not rejected
+    kl                      +0.00   [+0.00,+0.00]   1.0000      n/a   not rejected
+    entropy                 +0.00   [+0.00,+0.00]   1.0000   1.0000   not rejected
+    second_difference       +2.00   [+2.00,+2.50]   0.0001   0.0020   rejected under Holm
+
+    criterion            slope/k*_task     95% CI      boot p            Holm
+    update_norm               n/a             n/a      n/a   no test
+    kl                        n/a             n/a      n/a   no test
+    entropy                   n/a             n/a      n/a   no test
+    second_difference         n/a             n/a      n/a   no test
+
+    what left each test, and why it is not a random subset:
+    update_norm          used  2356 of  2560   model never correct     0   never fired   204
+    kl                   used  2560 of  2560   model never correct     0   never fired     0
+    entropy              used  1140 of  2560   model never correct     0   never fired  1420
+    second_difference    used  2356 of  2560   model never correct     0   never fired   204
+
+=== Claim 3, the blind axis. DESCRIPTIVE, not one of the 14 ===
+    paper.md Section 4 reports this claim descriptively and calls it
+    unfalsifiable on its own. The preregistration registers two tests
+    per criterion and both regress on k*_task, so a breadth slope is
+    post-hoc under its Section 1 and owes a confirmation run at
+    milestone 8. No Holm column below, and no verdict.
+
+    what each task can answer:
+    B d(1, 2, 3, 4, 5, 6) b(12, 13, 14, 15, 16) depth [1, 2, 3, 4, 5, 6],  breadth [12, 13, 14, 15, 16]
+    C d(1,) b(4, 5, 6, 7, 8)     depth fixed at [1],  breadth [4, 5, 6, 7, 8]
+
+    BOTH AXES VARY IN: B d(1, 2, 3, 4, 5, 6) b(12, 13, 14, 15, 16)
+    Each slope below is a marginal fit, one axis at a time,
+    so unless the two are crossed evenly each absorbs part
+    of the other. Families B and C fix the axis they do not
+    sweep and are unaffected. Read a slope from a task in
+    this list only after checking the design is balanced.
+
+    criterion            axis      slope         95% CI      boot p  seeds  levels
+    update_norm          depth      -0.11   [-0.20,+0.08]  0.2114     10  [1, 2, 3, 4, 5, 6]
+    update_norm          breadth    +0.02   [-0.06,+0.05]  0.3882     10  [12, 13, 14, 15, 16]
+    update_norm          breadth    +0.00   [-0.00,+0.00]  1.0000     10  [4, 5, 6, 7, 8]
+    kl                   depth      -0.12   [-0.20,-0.06]  0.0032     10  [1, 2, 3, 4, 5, 6]
+    kl                   breadth    +0.02   [+0.01,+0.05]  0.0148     10  [12, 13, 14, 15, 16]
+    kl                   breadth    -0.01   [-0.01,+0.00]  0.3268     10  [4, 5, 6, 7, 8]
+    entropy              depth      +0.24   [+0.16,+0.31]  0.0001     10  [1, 2, 3, 4, 5, 6]
+    entropy              breadth    -0.02   [-0.04,+0.01]  0.2090     10  [12, 13, 14, 15, 16]
+    entropy              breadth    +0.02   [+0.00,+0.10]  0.0136     10  [4, 5, 6, 7, 8]
+    second_difference    depth      -0.16   [-0.37,-0.00]  0.0412     10  [1, 2, 3, 4, 5, 6]
+    second_difference    breadth    -0.03   [-0.11,+0.09]  0.7824     10  [12, 13, 14, 15, 16]
+    second_difference    breadth    -0.20   [-0.33,-0.00]  0.0030     10  [4, 5, 6, 7, 8]
+
+    The two slopes are per unit of their own axis and are not
+    rescaled. Depth and breadth differ in range and in what one step
+    of them means, so read the levels column before comparing the
+    magnitudes. Normalising here would be an unregistered choice
+    made after seeing the numbers.
+
+wrote runs/_figures_20261022_d076/m5_summary.json
+
+No H2 verdict is printed. Holm runs over the registered family of 14 tests; eight are here and the remaining six are H1 and H3. The Holm column states only what holds whatever those six turn out to be.

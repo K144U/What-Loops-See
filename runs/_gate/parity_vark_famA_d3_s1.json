@@ -1,0 +1,27 @@
+{
+  "n": 6144,
+  "full_accuracy": 0.021809895833333332,
+  "chance": 0.020833333333333332,
+  "parities": {
+    "flip (D4 reflection)": {
+      "accuracy": 0.501953125,
+      "chance": 0.5,
+      "residual_accuracy_given_correct_parity": 0.04345006485084306,
+      "residual_chance": 0.041666666666666664
+    },
+    "rot mod 2": {
+      "accuracy": 0.5022786458333334,
+      "chance": 0.5,
+      "residual_accuracy_given_correct_parity": 0.04342190537913156,
+      "residual_chance": 0.041666666666666664
+    },
+    "sign (S3 permutation)": {
+      "accuracy": 0.5008138020833334,
+      "chance": 0.5,
+      "residual_accuracy_given_correct_parity": 0.04354891127721807,
+      "residual_chance": 0.041666666666666664
+    }
+  },
+  "run": "runs/vark_famA_d3_s1",
+  "k": 8
+}

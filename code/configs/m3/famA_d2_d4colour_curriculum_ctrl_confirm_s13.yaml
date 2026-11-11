@@ -1,0 +1,46 @@
+# Milestone 8 confirmation seeds for claims.md row 5, registered as D-061.
+# Identical to famA_d2_d4colour_curriculum_ctrl.yaml except for the donor, which is this seed's own
+# fresh depth 1 run famA_d1_d4only_s13, and this marker. Held out on purpose:
+# a confirmation seed that joined the arm it tests would confirm nothing.
+# Curriculum arms are not 2x2 cells, so the marker does not guard the sealed
+# grid here; it keeps these runs labelled for what they are. See D-057, D-061.
+confirmation: true
+arch: looped
+batch_size: 256
+bptt_window: 8
+breadths:
+- 1
+- 2
+- 3
+- 4
+conditioning: none
+d_model: 384
+depths:
+- 2
+eval_batches: 16
+eval_every: 10000
+eval_k_sweep:
+- 1
+- 2
+- 3
+- 4
+- 6
+- 8
+- 12
+- 16
+- 24
+- 32
+- 48
+- 64
+factor: full
+family: A
+init_from: famA_d1_d4only_s13
+inject: true
+jitter_sigma: 0.5
+k_max_train: 32
+k_mean_target: 8
+k_schedule: sampled
+num_workers: 3
+state_init: randn
+steps: 300000
+substrate: d4_colour

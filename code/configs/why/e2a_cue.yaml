@@ -1,0 +1,50 @@
+# E2a of docs/why-experiments.md, registered as D-062 once signed:
+# the d4_colour block plus a pixel showing rotflip, which composes.
+# The 2x2 base config configs/m3/famA_d2_d4colour.yaml with four changes and no others,
+# pinned by tests/test_why_e1e2.py:
+#   substrate           d4_colour_cue, groups.SUBSTRATE_ACTIONS
+#   eval_every 1000     so a stair can be read from the characters
+#   log_characters      turns the character readout on
+#   experiment E2a    how analysis/why_e1e2.py finds these runs
+# The substrate keeps these runs out of the sealed 2x2: escape_rates reads
+# only the four registered (factor, substrate) pairs.
+arch: looped
+batch_size: 256
+bptt_window: 8
+breadths:
+- 1
+- 2
+- 3
+- 4
+conditioning: none
+d_model: 384
+depths:
+- 2
+eval_batches: 16
+eval_every: 1000
+eval_k_sweep:
+- 1
+- 2
+- 3
+- 4
+- 6
+- 8
+- 12
+- 16
+- 24
+- 32
+- 48
+- 64
+experiment: E2a
+factor: full
+family: A
+inject: true
+jitter_sigma: 0.5
+k_max_train: 32
+k_mean_target: 8
+k_schedule: sampled
+log_characters: true
+num_workers: 3
+state_init: randn
+steps: 300000
+substrate: d4_colour_cue

@@ -1,0 +1,23 @@
+{
+  "run": "famC_breadth111_s3",
+  "checkpoint": "step_000300000.pt",
+  "k": 32,
+  "items": 256,
+  "thresholds": {
+    "update_norm": 90.71859741210938,
+    "kl": 55.26204299926758,
+    "entropy": 2.8217922537205636e-09,
+    "second_difference": 14.41417884826661
+  },
+  "never_correct": 0,
+  "depth_levels": [
+    1
+  ],
+  "breadth_levels": [
+    4,
+    5,
+    6,
+    7,
+    8
+  ]
+}

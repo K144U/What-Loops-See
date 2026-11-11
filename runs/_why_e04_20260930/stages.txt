@@ -1,0 +1,13 @@
+stage: one character >= 0.9, both others <= 0.6, for 2 consecutive evals
+why_e04_d4colour_s100            ['D4', 'identity']       evals   60  left chance 8600  stage rot2 at 9000
+why_e04_d4colour_s101            ['D4', 'identity']       evals   60  left chance 9950  stage none
+why_e04_d4colour_s102            ['D4', 'identity']       evals   60  left chance None  stage none
+why_e04_d4colour_s103            ['D4', 'identity']       evals   60  left chance 9250  stage rot2 at 9500
+why_e04_d4colour_s104            ['D4', 'identity']       evals   60  left chance None  stage none
+why_e04_d4colour_s105            ['D4', 'identity']       evals   60  left chance None  stage none
+why_e04_d4colour_s106            ['D4', 'identity']       evals   60  left chance 4450  stage none
+why_e04_d4colour_s107            ['D4', 'identity']       evals   60  left chance None  stage none
+why_e04_d4only_s100              ['D4', 'position']       evals   60  left chance 23700  stage rotflip at 4500
+why_e04_d4only_s101              ['D4', 'position']       evals   60  left chance 3550  stage flip at 3500
+why_e04_d4only_s102              ['D4', 'position']       evals   60  left chance 3050  stage rotflip at 3000
+why_e04_d4only_s103              ['D4', 'position']       evals   60  left chance 4850  stage rotflip at 5500

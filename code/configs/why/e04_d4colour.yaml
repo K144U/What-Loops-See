@@ -1,0 +1,53 @@
+# E0.4 of docs/why-experiments.md, registered as D-060 once signed.
+# The 2x2 base config configs/m3/famA_d2_d4colour.yaml with five changes and no others, pinned by
+# tests/test_character_stage.py:
+#   steps 30000            the stage appears in the first 10k steps; 30k is
+#                          ample and keeps the run short
+#   lr_schedule_steps      300000, so the learning rate at every step is the
+#                          one the 300000 step arm had at that step
+#   eval_every 500         the stage is read at every eval
+#   log_characters true    turns the character readout on
+#   experiment E0.4        how analysis/character_stage.py finds these runs
+# The step budget also keeps these fresh seeds out of the sealed 2x2:
+# escape_rates.BASELINE requires 300000.
+arch: looped
+batch_size: 256
+bptt_window: 8
+breadths:
+- 1
+- 2
+- 3
+- 4
+conditioning: none
+d_model: 384
+depths:
+- 2
+eval_batches: 16
+eval_every: 500
+eval_k_sweep:
+- 1
+- 2
+- 3
+- 4
+- 6
+- 8
+- 12
+- 16
+- 24
+- 32
+- 48
+- 64
+experiment: E0.4
+factor: full
+family: A
+inject: true
+jitter_sigma: 0.5
+k_max_train: 32
+k_mean_target: 8
+k_schedule: sampled
+log_characters: true
+lr_schedule_steps: 300000
+num_workers: 3
+state_init: randn
+steps: 30000
+substrate: d4_colour

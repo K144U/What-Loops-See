@@ -1,0 +1,43 @@
+Cells
+            run_id family    axis  control   D_loop  D_space  peak_iteration  n_items  admitted
+ famA_d2_d4only_s0      A   depth      1.0 0.166073 0.721924               8      256      True
+ famA_d2_d4only_s1      A   depth      1.0 0.156180 0.629157               8      256      True
+ famA_d2_d4only_s2      A   depth      1.0 0.100406 0.974488               8      256      True
+ famA_d2_d4only_s3      A   depth      1.0 0.197396 0.783031               8      256      True
+ famA_d2_d4only_s4      A   depth      1.0 0.132336 0.858890               8      256      True
+ famA_d2_d4only_s5      A   depth      1.0 0.924277 0.486562               8      256      True
+ famA_d2_d4only_s6      A   depth      1.0 0.129040 0.670114               8      256      True
+ famA_d2_d4only_s7      A   depth      1.0 0.470482 0.920024               8      256      True
+ famA_d2_d4only_s8      A   depth      1.0 0.303307 0.916171               8      256      True
+ famA_d2_d4only_s9      A   depth      1.0 0.064737 0.922970               8      256      True
+  famB_curve111_s0      B   depth      1.0 0.780583 0.883857               8      256      True
+  famB_curve111_s1      B   depth      1.0 0.863058 0.897974               8      256      True
+  famB_curve111_s2      B   depth      1.0 0.883656 0.882530               8      256      True
+  famB_curve111_s3      B   depth      1.0 0.682857 0.867498               8      256      True
+  famB_curve111_s4      B   depth      1.0 0.705166 0.895700               8      256      True
+  famB_curve111_s5      B   depth      1.0 0.944143 0.796188               3      256      True
+  famB_curve111_s6      B   depth      1.0 0.925304 0.879797               7      256      True
+  famB_curve111_s7      B   depth      1.0 0.617617 0.881314               8      256      True
+  famB_curve111_s8      B   depth      1.0 0.945123 0.889624               5      256      True
+  famB_curve111_s9      B   depth      1.0 0.913543 0.796873               8      256      True
+famC_breadth111_s0      C breadth      1.0 0.781336 0.984406               8      256      True
+famC_breadth111_s1      C breadth      1.0 0.271981 0.964201               8      256      True
+famC_breadth111_s2      C breadth      1.0 0.891258 0.962550               8      256      True
+famC_breadth111_s3      C breadth      1.0 0.468352 0.980574               8      256      True
+famC_breadth111_s4      C breadth      1.0 0.638913 0.961853               8      256      True
+famC_breadth111_s5      C breadth      1.0 0.679982 0.971375               8      256      True
+famC_breadth111_s6      C breadth      1.0 0.935290 0.953273               8      256      True
+famC_breadth111_s7      C breadth      1.0 0.595035 0.986231               8      256      True
+famC_breadth111_s8      C breadth      1.0 0.269635 0.959141               8      256      True
+famC_breadth111_s9      C breadth      1.0 0.942271 0.840640               8      256      True
+
+admitted cells by axis: {'breadth': 10, 'depth': 20}
+
+H3 contrasts, prereg Section 4
+----------------------------------------------------------------------
+  D_loop   diff -0.1021  CI [-0.3062, +0.1110]  contains zero
+           predicted depth < breadth, observed depth < breadth, as predicted, survives Holm: False
+  D_space  diff -0.1287  CI [-0.1870, -0.0754]  significant
+           predicted depth > breadth, observed depth < breadth, OPPOSITE to prediction, survives Holm: False
+
+H3 SPLIT. One contrast supported and the other not. Prereg Section 4 says report it as split and weaken the lead claim, rather than asserting it on the surviving half.

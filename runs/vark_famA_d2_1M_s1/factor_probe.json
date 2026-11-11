@@ -1,0 +1,36 @@
+{
+  "n": 8192,
+  "full_accuracy": 0.166748046875,
+  "chance": 0.020833333333333332,
+  "parities": {
+    "flip (D4 reflection)": {
+      "accuracy": 1.0,
+      "chance": 0.5,
+      "residual_accuracy_given_correct_parity": 0.166748046875,
+      "residual_chance": 0.041666666666666664
+    },
+    "rot mod 2": {
+      "accuracy": 1.0,
+      "chance": 0.5,
+      "residual_accuracy_given_correct_parity": 0.166748046875,
+      "residual_chance": 0.041666666666666664
+    },
+    "sign (S3 permutation)": {
+      "accuracy": 0.5008544921875,
+      "chance": 0.5,
+      "residual_accuracy_given_correct_parity": 0.33292712649281014,
+      "residual_chance": 0.041666666666666664
+    }
+  },
+  "factors": {
+    "d4_accuracy": 1.0,
+    "d4_chance": 0.125,
+    "s3_accuracy": 0.166748046875,
+    "s3_chance": 0.16666666666666666,
+    "s3_given_d4_correct": 0.166748046875,
+    "d4_given_s3_correct": 1.0
+  },
+  "reading": "the D4 factor is solved and S3 is not. D4 is non abelian, so this REQUIRES sequential composition, and the model is doing it on one factor while ignoring the other.",
+  "run": "runs/vark_famA_d2_1M_s1",
+  "k": 8
+}

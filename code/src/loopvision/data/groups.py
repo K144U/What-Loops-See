@@ -1,0 +1,640 @@
+"""D4 x S3 group algebra for family A.
+
+The group is the direct product of D4, the dihedral group of order 8 acting
+on the plane by quarter turns and reflections, with S3, the permutation
+group on three colours. Order 48, non-abelian in both factors, so operator
+order genuinely matters and a model cannot succeed by counting operators.
+
+Everything is built once into explicit 48 by 48 tables. The tables are the
+source of truth and the closed-form formulas are only used to build them,
+so a mistake in a formula surfaces as a failed associativity test rather
+than as a subtly wrong dataset.
+
+Two conventions, fixed here and relied on everywhere downstream:
+
+  Composition is function composition. ``multiply(x, y)`` means apply y
+  first, then x. Written x . y.
+
+  An operator sequence (o_1, ..., o_n) is applied in order, o_1 first. Its
+  composite is therefore o_n . ... . o_1, which is ``compose_sequence``.
+  Read the sequence left to right as time, not as an algebraic product.
+"""
+
+from __future__ import annotations
+
+import numpy as np
+
+# ---------------------------------------------------------------------------
+# Element encoding
+# ---------------------------------------------------------------------------
+#
+# A D4 element is (rot, flip) with rot in 0..3 quarter turns counterclockwise
+# and flip in 0..1 reflections about the main diagonal, denoting r^rot f^flip.
+# An S3 element is a 3-tuple p where colour c maps to p[c].
+#
+# The group element index is d4_index * 6 + s3_index, so index // 6 and
+# index % 6 recover the factors. This ordering puts the identity at 0.
+
+D4_ORDER = 8
+S3_ORDER = 6
+GROUP_ORDER = D4_ORDER * S3_ORDER  # 48
+
+D4_ELEMENTS: tuple[tuple[int, int], ...] = tuple(
+    (rot, flip) for rot in range(4) for flip in range(2)
+)
+
+S3_ELEMENTS: tuple[tuple[int, int, int], ...] = (
+    (0, 1, 2),
+    (0, 2, 1),
+    (1, 0, 2),
+    (1, 2, 0),
+    (2, 0, 1),
+    (2, 1, 0),
+)
+
+_D4_INDEX = {e: i for i, e in enumerate(D4_ELEMENTS)}
+_S3_INDEX = {e: i for i, e in enumerate(S3_ELEMENTS)}
+
+IDENTITY = 0  # (rot=0, flip=0) x (0, 1, 2)
+
+
+def d4_of(index: int) -> tuple[int, int]:
+    return D4_ELEMENTS[index // S3_ORDER]
+
+
+def s3_of(index: int) -> tuple[int, int, int]:
+    return S3_ELEMENTS[index % S3_ORDER]
+
+
+def element_index(d4: tuple[int, int], s3: tuple[int, int, int]) -> int:
+    return _D4_INDEX[d4] * S3_ORDER + _S3_INDEX[s3]
+
+
+def element_name(index: int) -> str:
+    """Human readable label, for sample dumps and debugging."""
+    rot, flip = d4_of(index)
+    perm = "".join(str(c) for c in s3_of(index))
+    return f"r{rot}f{flip}.{perm}"
+
+
+#: The three homomorphisms of D4 onto Z2, read from a full group index.
+#: Each is additive mod 2, so the character of a composite is the sum of its
+#: operators' characters and needs no operator order. `rotflip` is the one
+#: the native J-tetromino shows in its silhouette: the glyph stands tall
+#: exactly when rot + flip is even (docs/why-experiments.md Section 2).
+#: Asserted to be homomorphisms, and `rotflip` to be the aspect ratio, in
+#: tests rather than argued for here.
+D4_CHARACTERS = {
+    "flip": lambda g: d4_of(g)[1],
+    "rot2": lambda g: d4_of(g)[0] % 2,
+    "rotflip": lambda g: (d4_of(g)[0] + d4_of(g)[1]) % 2,
+}
+
+
+# ---------------------------------------------------------------------------
+# Group law
+# ---------------------------------------------------------------------------
+
+
+def _d4_multiply(x: tuple[int, int], y: tuple[int, int]) -> tuple[int, int]:
+    """x . y in D4, apply y first.
+
+    From the dihedral relation f r = r^-1 f:
+
+        (r^a f^b)(r^c f^d) = r^(a + c(-1)^b) f^(b + d)
+    """
+    a, b = x
+    c, d = y
+    rot = (a + (c if b == 0 else -c)) % 4
+    flip = (b + d) % 2
+    return rot, flip
+
+
+def _s3_multiply(
+    x: tuple[int, int, int], y: tuple[int, int, int]
+) -> tuple[int, int, int]:
+    """x . y in S3, apply y first, so (x.y)[c] = x[y[c]]."""
+    return (x[y[0]], x[y[1]], x[y[2]])
+
+
+def _build_tables() -> tuple[np.ndarray, np.ndarray]:
+    mul = np.empty((GROUP_ORDER, GROUP_ORDER), dtype=np.int64)
+    for i in range(GROUP_ORDER):
+        for j in range(GROUP_ORDER):
+            mul[i, j] = element_index(
+                _d4_multiply(d4_of(i), d4_of(j)),
+                _s3_multiply(s3_of(i), s3_of(j)),
+            )
+
+    inv = np.empty(GROUP_ORDER, dtype=np.int64)
+    for i in range(GROUP_ORDER):
+        # Exactly one j satisfies i . j = identity, guaranteed by the group
+        # axioms and checked in tests/test_groups.py.
+        inv[i] = int(np.flatnonzero(mul[i] == IDENTITY)[0])
+
+    mul.flags.writeable = False
+    inv.flags.writeable = False
+    return mul, inv
+
+
+#: MUL[i, j] is the index of i . j, meaning apply j first then i.
+#: INV[i] is the index of the inverse of i.
+MUL, INV = _build_tables()
+
+
+def multiply(i: int, j: int) -> int:
+    """i . j, apply j first then i."""
+    return int(MUL[i, j])
+
+
+def inverse(i: int) -> int:
+    return int(INV[i])
+
+
+def compose_sequence(ops) -> int:
+    """Composite of an operator sequence applied in order, ops[0] first.
+
+    Equals ops[-1] . ... . ops[0]. An empty sequence is the identity.
+    """
+    acc = IDENTITY
+    for op in ops:
+        acc = int(MUL[op, acc])
+    return acc
+
+
+def prefix_products(ops) -> list[int]:
+    """Running composite after each operator. Length equals len(ops)."""
+    out: list[int] = []
+    acc = IDENTITY
+    for op in ops:
+        acc = int(MUL[op, acc])
+        out.append(acc)
+    return out
+
+
+# ---------------------------------------------------------------------------
+# Anti-shortcut sampling
+# ---------------------------------------------------------------------------
+
+
+def random_factorisation(rng: np.random.Generator, target: int, n: int) -> list[int]:
+    """A uniformly random length-n operator sequence composing to ``target``.
+
+    Draws the first n-1 operators uniformly and solves for the last, which
+    yields a uniform distribution over the |G|^(n-1) factorisations of
+    ``target``. Every proper prefix product is then uniform over the group,
+    which is the property that kills prefix-statistics shortcuts: knowing
+    the first j operators tells a model nothing about the answer.
+
+    Note what this does and does not buy, because the distinction matters
+    for gate G1. Each operator's marginal distribution is uniform and
+    independent of the target, so no single-operator statistic helps. The
+    multiset of operators is a different matter: see
+    ``bag_of_operators_ceiling``.
+    """
+    if n < 1:
+        raise ValueError(f"factorisation length must be at least 1, got {n}")
+    if n == 1:
+        return [target]
+
+    ops = [int(x) for x in rng.integers(0, GROUP_ORDER, size=n - 1)]
+    prefix = compose_sequence(ops)
+    ops.append(multiply(target, inverse(prefix)))
+    return ops
+
+
+
+# ---------------------------------------------------------------------------
+# Subgroups, for isolating one factor of the direct product
+# ---------------------------------------------------------------------------
+#
+# The depth 2 runs solve the D4 factor exactly and leave the S3 factor at
+# chance (docs/findings.md, 2026-09-04). D4 acts on positions and S3 on
+# colours, so the two are not interchangeable and the asymmetry may be the
+# whole explanation. Training on each factor alone separates two readings:
+# S3 at depth 2 may be hard in itself, or it may only be neglected while
+# D4 is available to solve first, which is gradient competition rather than
+# difficulty.
+#
+# Both are subgroups of the direct product, so they are closed under
+# multiplication and inversion and every function here works unchanged.
+# Index layout is d4_index * 6 + s3_index, so the D4 factor is the indices
+# divisible by 6 and the S3 factor is the first six.
+
+SUBGROUPS: dict[str, tuple[int, ...]] = {
+    "full": tuple(range(GROUP_ORDER)),
+    "d4": tuple(i * S3_ORDER for i in range(D4_ORDER)),
+    "s3": tuple(range(S3_ORDER)),
+}
+
+
+def subgroup_members(name: str) -> tuple[int, ...]:
+    """Element indices of a named subgroup, validated as actually closed."""
+    try:
+        return SUBGROUPS[name]
+    except KeyError:
+        raise ValueError(
+            f"unknown subgroup {name!r}, expected one of {sorted(SUBGROUPS)}"
+        ) from None
+
+
+def random_factorisation_in(
+    rng: np.random.Generator, target: int, n: int, members: tuple[int, ...]
+) -> list[int]:
+    """``random_factorisation`` restricted to a subgroup.
+
+    For the full group this makes exactly the same RNG draws in the same
+    order as ``random_factorisation``, so existing runs stay byte
+    identical. That is asserted in tests rather than left to inspection.
+    """
+    if n < 1:
+        raise ValueError(f"factorisation length must be at least 1, got {n}")
+    if n == 1:
+        return [target]
+
+    idx = rng.integers(0, len(members), size=n - 1)
+    ops = [int(members[int(x)]) for x in idx]
+    prefix = compose_sequence(ops)
+    ops.append(multiply(target, inverse(prefix)))
+    return ops
+
+
+def sample_operator_sequence(
+    rng: np.random.Generator, n: int
+) -> tuple[list[int], int]:
+    """Draw a target uniformly, then a uniform factorisation of it.
+
+    Returns (ops, target). This is the sampler family A uses: the label is
+    uniform over the 48 classes by construction, so chance accuracy is
+    exactly 1/48 and no class prior is exploitable.
+    """
+    target = int(rng.integers(0, GROUP_ORDER))
+    return random_factorisation(rng, target, n), target
+
+
+def bag_of_operators_ceiling(
+    rng: np.random.Generator, depth: int, trials: int = 20000
+) -> float:
+    """Best accuracy achievable by any order-blind predictor at this depth.
+
+    An order-blind model sees only the multiset of operators. For a given
+    multiset it can do no better than always answering the composite that
+    the most orderings produce, so this is an upper bound on every
+    bag-of-operators probe, logistic regression included, with unlimited
+    data and unlimited capacity.
+
+    This is an upper bound rather than a measurement of any particular
+    model, which makes it the honest thing to gate on: a probe scoring
+    below this tells us nothing, and no probe can score above it.
+
+    Computed as the Bayes accuracy of an order-blind predictor,
+
+        E_M [ max_g P(composite = g | multiset = M) ]
+
+    estimated by sampling multisets and, for each, enumerating orderings to
+    get the conditional distribution over composites. Returns a probability
+    in [0, 1]. Chance is 1/48, about 0.0208.
+
+    Do not reimplement this by picking the modal composite and checking
+    whether it equals the sampled target. ``itertools.permutations`` yields
+    the input ordering first, so ``Counter.most_common`` breaks ties in
+    favour of the true answer and the estimate comes out at 1.0 for depth
+    2, which is an artefact of tie ordering rather than a real shortcut.
+    Taking the max probability sidesteps tie breaking entirely.
+    """
+    from collections import Counter
+    from itertools import permutations
+
+    if depth < 1:
+        raise ValueError("depth must be at least 1")
+    if depth == 1:
+        return 1.0  # the single operator is the answer
+
+    # Enumerating all orderings is factorial, so cap the exact treatment.
+    # Beyond depth 6 the bound is far below anything of concern anyway.
+    if depth > 6:
+        raise ValueError("exact enumeration is impractical above depth 6")
+
+    total_best = 0.0
+    for _ in range(trials):
+        ops, _ = sample_operator_sequence(rng, depth)
+        counts = Counter(compose_sequence(p) for p in permutations(ops))
+        orderings = sum(counts.values())
+        total_best += max(counts.values()) / orderings
+    return total_best / trials
+
+
+# ---------------------------------------------------------------------------
+# Action on a coloured glyph
+# ---------------------------------------------------------------------------
+#
+# The stimulus must have a trivial stabiliser, otherwise two distinct group
+# elements produce the same picture and the 48-way task is not actually
+# 48-way. IMPLEMENTATION.md Section 4.2 suggests an L-tromino with a
+# coloured tip. That shape does not work: the L-tromino is symmetric under
+# reflection about its diagonal, and pairing that reflection with the
+# transposition of the two arm colours fixes the glyph, giving a stabiliser
+# of order 2 and only 24 distinct states.
+#
+# GLYPH_CELLS below is a chiral tetromino with three distinctly coloured
+# cells and one neutral cell. Chirality kills the reflection symmetry and
+# three distinct colours kill the colour permutations. The stabiliser is
+# asserted trivial in tests/test_groups.py rather than argued for here.
+
+NEUTRAL_COLOUR = -1
+
+#: (x, y, colour) with colour in {0, 1, 2} or NEUTRAL_COLOUR.
+#: A J-tetromino: a vertical bar of three with one cell attached at the foot.
+GLYPH_CELLS: tuple[tuple[int, int, int], ...] = (
+    (0, 0, 0),
+    (0, 1, 1),
+    (0, 2, 2),
+    (1, 0, NEUTRAL_COLOUR),
+)
+
+
+def d4_apply_cell(d4: tuple[int, int], x: int, y: int) -> tuple[int, int]:
+    """Apply a D4 element to a lattice point.
+
+    Reflection about the main diagonal first, then quarter turns
+    counterclockwise, matching the r^rot f^flip encoding.
+    """
+    rot, flip = d4
+    if flip:
+        x, y = y, x
+    for _ in range(rot):
+        x, y = -y, x
+    return x, y
+
+
+def _normalise(cells) -> frozenset[tuple[int, int, int]]:
+    """Translate so the bounding box starts at the origin.
+
+    Without this, a rotated glyph compares unequal to itself purely because
+    it sits somewhere else on the lattice.
+    """
+    xs = [c[0] for c in cells]
+    ys = [c[1] for c in cells]
+    dx, dy = min(xs), min(ys)
+    return frozenset((x - dx, y - dy, c) for x, y, c in cells)
+
+
+def act_on_glyph(
+    index: int, cells=GLYPH_CELLS
+) -> frozenset[tuple[int, int, int]]:
+    """Apply a group element to the glyph, returning normalised cells."""
+    d4 = d4_of(index)
+    perm = s3_of(index)
+    moved = []
+    for x, y, colour in cells:
+        nx, ny = d4_apply_cell(d4, x, y)
+        moved.append((nx, ny, colour if colour == NEUTRAL_COLOUR else perm[colour]))
+    return _normalise(moved)
+
+
+
+# ---------------------------------------------------------------------------
+# Substrates: the same group acting on geometry or on appearance
+# ---------------------------------------------------------------------------
+#
+# The native glyph confounds two things. D4 moves the figure in the plane
+# and S3 recolours it, so "D4 is learnable and S3 is not" could be about
+# the groups or about geometry versus appearance. Separating them needs the
+# same group acting both ways.
+#
+# There is a trap here worth stating, because the obvious design falls into
+# it. If a group permutes three slots and three colours sit in bijection
+# with those slots, then "move the contents between slots" and "relabel the
+# colours in place" generate the SAME set of images, differing only by
+# whether the element or its inverse produced each one. Inverse is a
+# bijection, so the two tasks are isomorphic and equally hard. Nothing is
+# measured.
+#
+# The fix is to make the permuted items spatially extended. Three arms of
+# lengths 1, 2 and 3 are distinguishable by geometry alone, carry no
+# colour, and permuting them changes the figure's shape. That is a genuine
+# geometric action. Recolouring three cells at fixed positions is a genuine
+# appearance action. Neither is a relabelling of the other.
+
+#: Three slots and three blobs, for S3 acting on geometry.
+#:
+#: Radiating arms of lengths 1, 2 and 3 were the first design and did not
+#: fit: they spanned 6 by 4 against a 4 by 4 tile, and widening the tile
+#: would have changed the rendering of every other task in the project.
+#: Three blobs of one, two and three cells in three quadrants span exactly
+#: 4 by 4 and are still distinguished by geometry alone.
+S3_SLOT_ORIGINS: tuple[tuple[int, int], ...] = ((0, 0), (2, 0), (0, 2))
+S3_BLOBS: tuple[tuple[tuple[int, int], ...], ...] = (
+    ((0, 0),),
+    ((0, 0), (1, 0)),
+    ((0, 0), (1, 0), (0, 1)),
+)
+
+#: Fixed positions for the D4 appearance glyph, the four corners of a
+#: square in cyclic order. They never move: only the colours permute.
+D4_COLOUR_POSITIONS: tuple[tuple[int, int], ...] = ((0, 0), (1, 0), (1, 1), (0, 1))
+
+
+def d4_corner_permutation(index: int) -> tuple[int, int, int, int]:
+    """How a D4 element permutes the four corners of a square.
+
+    Faithful: all eight elements give distinct permutations, asserted in
+    tests. That is what lets D4 act on four colour labels without the
+    action collapsing.
+    """
+    d4 = d4_of(index)
+    moved = [d4_apply_cell(d4, x, y) for x, y in D4_COLOUR_POSITIONS]
+    # Corners are on a unit square, so a rigid motion maps the corner set
+    # to itself up to translation. Normalise before matching.
+    dx = min(x for x, _ in moved)
+    dy = min(y for _, y in moved)
+    moved = [(x - dx, y - dy) for x, y in moved]
+    return tuple(D4_COLOUR_POSITIONS.index(c) for c in moved)
+
+
+def act_s3_spatial(index: int) -> frozenset[tuple[int, int, int]]:
+    """S3 permuting three blobs between three slots. No colour anywhere.
+
+    Blob i is placed in slot perm[i], so the group rearranges geometry and
+    nothing else. Every cell is neutral, which is what makes this an
+    appearance-free task and keeps it from being the colour task wearing a
+    different label.
+    """
+    perm = s3_of(index)
+    cells = []
+    for i, blob in enumerate(S3_BLOBS):
+        ox, oy = S3_SLOT_ORIGINS[perm[i]]
+        for dx, dy in blob:
+            cells.append((ox + dx, oy + dy, NEUTRAL_COLOUR))
+    return _normalise(cells)
+
+
+def act_d4_colour(index: int) -> frozenset[tuple[int, int, int]]:
+    """D4 permuting four colour labels at four positions that never move.
+
+    The geometric content is constant across all eight elements: only the
+    colouring changes. That is the appearance counterpart of the native
+    glyph's rigid motion.
+    """
+    perm = d4_corner_permutation(index)
+    return _normalise(
+        [(x, y, perm[i]) for i, (x, y) in enumerate(D4_COLOUR_POSITIONS)]
+    )
+
+
+# ---------------------------------------------------------------------------
+# E1 and E2 of docs/why-experiments.md: the same group, the same task, and
+# only the rendering changed, to test whether a VISIBLE quotient is what lets
+# D4 position learn through a staircase. Each is asserted in
+# tests/test_why_substrates.py rather than argued for here.
+# ---------------------------------------------------------------------------
+
+#: E1a. An F-pentomino: no symmetry, so all eight orientations differ, and a
+#: 3 by 3 bounding box in every orientation, so aspect ratio, which is what
+#: shows `rotflip` on the native J, carries nothing. Coloured like the native
+#: glyph: three distinct colours on the bar and neutral elsewhere.
+SQUARE_GLYPH_CELLS: tuple[tuple[int, int, int], ...] = (
+    (1, 0, 0),
+    (1, 1, 1),
+    (1, 2, 2),
+    (2, 0, NEUTRAL_COLOUR),
+    (0, 1, NEUTRAL_COLOUR),
+)
+
+
+def act_d4_square(index: int) -> frozenset[tuple[int, int, int]]:
+    """D4 moving the F-pentomino. A rigid motion, like the native task."""
+    return act_on_glyph(index, SQUARE_GLYPH_CELLS)
+
+
+#: E1b. D4 element (rot, flip) is drawn as the native J of the element this
+#: maps it to. The eight tiles are exactly the native ones; only which element
+#: each one stands for changes. Chosen by enumeration over all 40320
+#: bijections: none of a tile's own characters equals or opposes a character
+#: of the element it stands for, the largest agreement is 6 of 8, which no
+#: bijection can beat, and no element keeps its own tile.
+D4_SCRAMBLE: dict[tuple[int, int], tuple[int, int]] = {
+    (0, 0): (0, 1),
+    (0, 1): (0, 0),
+    (1, 0): (1, 1),
+    (1, 1): (1, 0),
+    (2, 0): (3, 0),
+    (2, 1): (3, 1),
+    (3, 0): (2, 1),
+    (3, 1): (2, 0),
+}
+
+
+def act_d4_scrambled(index: int) -> frozenset[tuple[int, int, int]]:
+    """The native J tile of the scrambled element. No longer a rigid motion."""
+    return act_on_glyph(element_index(D4_SCRAMBLE[d4_of(index)], s3_of(index)))
+
+
+#: E2. A neutral anchor at (2, 2) is in every tile, so the bounding box is
+#: always 3 by 3 and the cue pixel at (2, 0) can never re-centre the colour
+#: block. The block itself is exactly the d4_colour block.
+CUE_ANCHOR = (2, 2)
+CUE_PIXEL = (2, 0)
+
+
+def _with_cue(index: int, bit: int) -> frozenset[tuple[int, int, int]]:
+    cells = list(act_d4_colour(index)) + [(*CUE_ANCHOR, NEUTRAL_COLOUR)]
+    if bit:
+        cells.append((*CUE_PIXEL, NEUTRAL_COLOUR))
+    return _normalise(cells)
+
+
+def act_d4_colour_cue(index: int) -> frozenset[tuple[int, int, int]]:
+    """E2a. The cue pixel shows `rotflip`, a character, so it composes."""
+    return _with_cue(index, D4_CHARACTERS["rotflip"](index))
+
+
+def d4_decoy_bit(index: int) -> int:
+    """E2b's partition: rotation index 2 or 3.
+
+    Balanced, and agreeing with every character on exactly four of the eight
+    elements, so it leaks none of them; chosen by enumeration over all 35
+    balanced partitions as the ones with that property. Not a homomorphism,
+    so the cue bits of a problem do not determine the label's.
+    """
+    return int(d4_of(index)[0] >= 2)
+
+
+def act_d4_colour_decoy(index: int) -> frozenset[tuple[int, int, int]]:
+    """E2b. The same pixel on a partition that does not compose."""
+    return _with_cue(index, d4_decoy_bit(index))
+
+
+#: Name to (action, subgroup) for the crossed design. "native" is the real
+#: task and uses the full group with the original glyph.
+SUBSTRATE_ACTIONS = {
+    "s3_spatial": (act_s3_spatial, "s3"),
+    "d4_colour": (act_d4_colour, "d4"),
+    "d4_square": (act_d4_square, "d4"),
+    "d4_scrambled": (act_d4_scrambled, "d4"),
+    "d4_colour_cue": (act_d4_colour_cue, "d4"),
+    "d4_colour_decoy": (act_d4_colour_decoy, "d4"),
+}
+
+
+
+def glyph_action(substrate: str):
+    """The picture-making function for a substrate.
+
+    "native" is the real task: D4 moves the figure and S3 recolours it,
+    both at once. The others isolate one of those.
+    """
+    if substrate == "native":
+        return act_on_glyph
+    try:
+        return SUBSTRATE_ACTIONS[substrate][0]
+    except KeyError:
+        raise ValueError(
+            f"unknown substrate {substrate!r}, expected 'native' or one of "
+            f"{sorted(SUBSTRATE_ACTIONS)}"
+        ) from None
+
+
+def substrate_subgroup(substrate: str, factor: str) -> str:
+    """Which subgroup a substrate draws its elements from.
+
+    A substrate implies its factor: s3_spatial has no D4 content to vary
+    and d4_colour has no S3 content, so letting a config ask for
+    substrate=s3_spatial with factor=d4 would be asking for a task that
+    cannot exist. The substrate wins and the combination is rejected rather
+    than silently reinterpreted.
+    """
+    if substrate == "native":
+        return factor
+    implied = SUBSTRATE_ACTIONS[substrate][1]
+    if factor not in ("full", implied):
+        raise ValueError(
+            f"substrate {substrate!r} acts on the {implied} factor, but the "
+            f"config asks for factor {factor!r}. These cannot both hold."
+        )
+    return implied
+
+def substrate_states(name: str) -> int:
+    """How many visually distinct states a substrate glyph has.
+
+    A collapsed action makes the task impossible and would be read as the
+    model failing, which is the L-tromino failure again. Checked in tests
+    against the subgroup order.
+    """
+    action, sub = SUBSTRATE_ACTIONS[name]
+    return len({action(g) for g in subgroup_members(sub)})
+
+def stabiliser(cells=GLYPH_CELLS) -> list[int]:
+    """Group elements that leave the glyph unchanged.
+
+    A glyph usable for the 48-way task has a stabiliser of exactly
+    [IDENTITY]. Anything larger means the label is not recoverable from the
+    picture and the task is silently smaller than it claims to be.
+    """
+    base = _normalise(cells)
+    return [i for i in range(GROUP_ORDER) if act_on_glyph(i, cells) == base]
+
+
+def distinct_states(cells=GLYPH_CELLS) -> int:
+    """How many visually distinct states the glyph actually has."""
+    return len({act_on_glyph(i, cells) for i in range(GROUP_ORDER)})

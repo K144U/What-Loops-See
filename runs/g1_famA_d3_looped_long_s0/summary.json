@@ -1,0 +1,45 @@
+{
+  "run_id": "g1_famA_d3_looped_long_s0",
+  "config_hash": "4fcab7f2",
+  "final_accuracy": 0.021240234375,
+  "by_cell": {
+    "3x1": 0.017709849587578846,
+    "3x2": 0.023002421307506054,
+    "3x3": 0.023581429624170966,
+    "3x4": 0.020684560453090372
+  },
+  "n_eval": 16384,
+  "params": 10983552,
+  "config": {
+    "family": "A",
+    "d_model": 384,
+    "arch": "looped",
+    "k_train": 1,
+    "k_eval": 1,
+    "depths": [
+      3
+    ],
+    "breadths": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "steps": 200000,
+    "batch_size": 256,
+    "lr": 0.0003,
+    "weight_decay": 0.05,
+    "warmup": 2000,
+    "grad_clip": 1.0,
+    "bptt_window": 8,
+    "eval_every": 2000,
+    "eval_batches": 16,
+    "checkpoint_every_minutes": 30,
+    "seed": 0,
+    "master_seed": 20260901,
+    "num_workers": 3,
+    "state_init": "randn",
+    "conditioning": "none",
+    "inject": true
+  }
+}

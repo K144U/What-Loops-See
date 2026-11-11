@@ -1,0 +1,2 @@
+Q1  failed       why_e04_d4only_s101 learned flip first
+Q2  failed       why_e04_d4colour_s100 on rot2; why_e04_d4colour_s103 on rot2
