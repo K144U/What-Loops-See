@@ -81,11 +81,15 @@ CODE_PATHS = ("src", "tests", "configs", "pyproject.toml",
 
 #: Tests of the cluster tooling, which read scripts the release leaves out:
 #: job chaining, card picking and its lease and ledger, retries, walltime,
-#: memory floors and the launch check.
+#: memory floors and the launch check. And the tests of the TMLR build,
+#: `build_latex.py` and `anonymize_release.py`, which the release leaves out
+#: too: the anonymizer lists the authors' names in order to remove them, so it
+#: cannot travel in the supplement it makes. D-079.
 EXCLUDED_TESTS = (
     "test_chain.py", "test_check_launched.py", "test_gpu_retry.py",
     "test_mem_floor.py", "test_pick_gpus.py", "test_pick_lease.py",
     "test_pick_promise.py", "test_pytest_job.py", "test_wall_margin.py",
+    "test_anonymize_release.py", "test_build_latex.py",
 )
 
 BINARY_SUFFIXES = {".parquet", ".png", ".pdf", ".pt", ".zip"}
@@ -349,12 +353,14 @@ the stored inputs in `{info['figures_dir']}` and computes nothing;
 
 
 def build(args) -> int:
-    ids = load_identifiers(args.identifiers)
-    commit = git("rev-parse", args.commit).decode().strip()
+    # Refused before any work, git included, so the refusal holds in a copy
+    # of the release that is not a git checkout, such as the supplement.
     out = args.out
     if out.exists():
         print(f"refusing: {out} exists")
         return 2
+    ids = load_identifiers(args.identifiers)
+    commit = git("rev-parse", args.commit).decode().strip()
     staging = out.with_name(out.name + ".partial")
     if staging.exists():
         shutil.rmtree(staging)

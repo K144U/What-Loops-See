@@ -79,6 +79,6 @@
     magnitudes. Normalising here would be an unregistered choice
     made after seeing the numbers.
 
-wrote runs/_figures_20261022_d076/m5_summary.json
+wrote runs/_figures_20261112_d079/m5_summary.json
 
 No H2 verdict is printed. Holm runs over the registered family of 14 tests; eight are here and the remaining six are H1 and H3. The Holm column states only what holds whatever those six turn out to be.

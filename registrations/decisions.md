@@ -1809,3 +1809,68 @@ Also from the review: Figure 1 drew a seven-line note that the draft's caption r
 **Found on the way.** `SHA256SUMS` was written with `write_text`, which on Windows ends lines with CRLF, so `sha256sum -c` failed on every line of the first snapshot built for GitHub although every hash was right. `write_sums` now writes bytes with LF ends and leaves the checksum file out of its own list.
 **Checked.** `tests/test_build_release.py`: one new test, and two deliberate breaks (the old `write_text`, and a checksum file that hashes itself), each caught.
 **Reversible:** the draft's line and the builder, yes. A public commit can be removed from the repository but not from any copy made of it.
+
+### D-078. The paper goes to TMLR, built as LaTeX from the draft, with an anonymized supplement
+**Date:** 2026-11-12
+**Milestone:** 12
+**Type:** decision
+**Decision:** The author chose TMLR (Transactions on Machine Learning Research) after weighing it against ICML 2027, NeurIPS 2027, JAIR and JMLR. TMLR takes submissions at any time and judges whether the evidence supports the claims; novelty is not a requirement. The paper is built for it by `scripts/build_latex.py`, which writes the TMLR LaTeX, its BibTeX and its figures from `docs/draft.md`. The supplementary material is made by `scripts/anonymize_release.py` from the release snapshot of D-075 and D-077.
+**What was given up, as the author was told.** The author also wanted the paper to count as an A* conference paper and as an indexed journal paper, and no one venue does both. TMLR's journal-to-conference certification earns a poster at ICLR, ICML or NeurIPS, not a proceedings paper, and TMLR's Scopus and Web of Science indexing could not be confirmed. The only source that claims Scopus is a secondary guide; SCImago refused an automated lookup. JAIR states Science Citation Index indexing on its own page and is the fallback if indexing turns out to matter.
+**Why a generator.** Every count in the draft is checked against the runs, and a hand-ported .tex would be a second source that no check reads. So the draft stays the only source. The generator refuses:
+- a citation that names no reference;
+- a citation that natbib would print in a different form;
+- a reference nobody cites;
+- a heading whose number LaTeX would print differently from the number the text cites;
+- a character it cannot spell;
+- a double hyphen, which LaTeX prints as a dash;
+- a cited figure that is missing or has no caption;
+- in the anonymous build, any author name, name part, affiliation or repository link.
+**Anonymity.** TMLR review is double-blind. The anonymous build replaces the two passages that name the repository and the concurrent work by two of the authors; each must match exactly once, so an edit that moves one breaks the build. The supplement redacts the licence holder and four decision log passages, which name the repository, the institution's cluster, two co-authors and an affiliation. Each is shown as `[withheld for review]`, not deleted. The supplement refuses to finish while any word of the draft's author block can be read anywhere in it, PDF text included.
+**Dependencies.**
+- The TMLR style files are copied unchanged into `paper/tmlr_style/` from https://github.com/JmlrOrg/tmlr-style-file at commit `7bf90ef`, under Apache 2.0.
+- The PDF is compiled with tectonic 0.16.9, a standalone TeX engine already on the Windows machine. Nothing on the cluster needs it.
+- `anonymize_release.py` reads PDF text with PyMuPDF when it is installed. When it cannot read a PDF's text, it refuses rather than passing it.
+**Checked.**
+- `tests/test_build_latex.py` has 29 tests, one of which builds the real draft. Fifteen deliberate breaks of the generator were each caught.
+- `tests/test_anonymize_release.py` has 11 tests. Eleven deliberate breaks were each caught after one test was tightened. That test had passed on Windows only because Windows refuses to rename a folder onto an existing one, which Linux allows.
+- The compiled anonymous PDF is 15 pages, with the main text ending on page 9. No line runs past the margin, no citation or reference is undefined, and the PDF names none of the authors.
+**Reversible:** yes. Nothing is submitted until the author submits it on OpenReview.
+
+### D-079. A finishing pass: plain language, every reference and claim checked, two new figures
+**Date:** 2026-11-12
+**Milestone:** 12
+**Type:** revision
+**Decision:** Before submission the author asked for five passes on the paper:
+- simple language;
+- every reference checked;
+- something behind every claim;
+- the avoid-ai-writing skill;
+- more illustrations and a flow that makes the reader curious.
+All five were done on `docs/draft.md`, and the TMLR and HTML builds were made from it.
+**References.** All eighteen were checked against their arXiv abstract pages: authors, title, year and version are right for every one. Seven sentences claimed a little more than the abstract supports and now say only what it says:
+- the tasks named for Bansal et al.;
+- "across runs" for Chughtai et al., which says "for a given network";
+- "shared block" for Dehghani et al.;
+- a step-norm exit attributed to Geiping et al. Their full text has the KL exit, in Section 6.1, and no step-norm rule. The first-order rule is Pappone et al.'s "naive first-order counterpart".
+- "easy, spurious" for Geirhos et al., which says "perform well on standard benchmarks but fail to transfer";
+- groups for Liu et al., which is about automata;
+- "replicates" for Lu et al., now "agrees with their finding of limited evidence for an interpretable latent chain of thought".
+**Claims.** Every decimal and every integer above 100 in the draft was looked up. Each one traces to one of:
+- a stored output under `runs/_*`;
+- a config default (learning rate 3e-4 in `train/cli.py`);
+- the gate record in `findings.md` (0.9966 and 0.9998);
+- exact arithmetic. The order-blind ceilings are 52/64 and 27/36, since 40 of D4's 64 ordered pairs commute and 18 of S3's 36 do. The Holm threshold is 0.05/14, and 5040 is 7!.
+
+Every count passes `escape_rates --check`. The donor table's "S3, appearance" was checked against the code, which maps `s3only` to S3 acting on identity.
+**Figures.** Two were added, and both appear in the introduction:
+- `f11_training` draws every seed of four arms, held-out accuracy against step, with nothing selected: cold start, a same-task donor, the composing cue E2a and the matched pixel E2b. The escape level and the trap band are read from stored files.
+- `f12_schematic` is a diagram that reads no data: the two substrates, the looped model and its baselines, and the rescue experiment.
+
+Appendix A gains a row for both. `scripts/build_figures.sh` draws them and hashes them with the rest. Their hashes enter a stored figure set at the next cluster run of that script.
+**Writing.** The avoid-ai-writing detector scored the draft Clean before and after. Its one note is bold phrases, which went from 28 to 40 because every figure reference must be bold for the build to renumber it. The skill's preservation validator found no mechanical errors.
+**Checked.** `tests/test_f11_f12.py` has 8 tests. Seven deliberate breaks of the curve figure were each caught.
+**Reversible:** yes.
+
+**Addendum, 2026-11-12: the stored figure set.** On the author's word, `039fc33` was shipped to the cluster and `scripts/build_figures.sh` was run there into `runs/_figures_20261112_d079/`. It exited 0. The seven figures of D-076 came out byte for byte the same; their hashes match `runs/_figures_20261022_d076/figures.sha256`. Every stored input is byte-identical to D-076's except three printed logs, which differ only in the directory name they print. So Appendix A now names the new set for every figure and for Appendix B's numbers, and no number in the paper changes. The first attempt was workq job 14912. It failed in one second because the compute nodes have no `git`, and it left an empty folder under the new name, which was removed. The build then ran on the login node, as the script's header says. See L-039.
+
+**Second addendum, 2026-11-12: the supplement would not build.** Rebuilt from `d18752e`, the release for the first time carried the TMLR tooling's two test files, `test_anonymize_release.py` and `test_build_latex.py`, without the two scripts they import. The release's own suite stopped at collection on them, and the supplement's leak scan stopped on them as well: the anonymizer's tests hold the authors' names, because the anonymizer must know what to remove. Both tests are now left out of the release, beside the cluster tooling's, and a test fails if any shipped test imports or opens a script the release does not ship. The scan also stopped on D-078's link to the TMLR style files on GitHub, which names nobody. That one link is now set aside by its exact address, and any other GitHub link still stops the build. Last, the release builder asked git for the commit before refusing an existing output folder, so that test failed in any copy that is not a git checkout, the supplement among them. The refusal now comes first. Six deliberate breaks were each caught.

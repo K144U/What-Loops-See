@@ -70,8 +70,15 @@ python -m loopvision.analysis.plots.f6_halting --summary "$DIR/m5_summary.json" 
     --task "$F6_TASK"
 python -m loopvision.analysis.plots.f8_absent
 python -m loopvision.analysis.plots.f9_binding --rates "$DIR/rates.json"
+# Added 2026-11-12 (D-079): every seed's training curve for four arms, and a
+# schematic that reads no data. The trap band is read from its registration.
+python -m loopvision.analysis.plots.f11_training --runs runs --rates "$DIR/rates.json" \
+    --registered runs/_revision_verdicts_20261021/registered.txt \
+    --out figures/f11_training
+python -m loopvision.analysis.plots.f12_schematic --out figures/f12_schematic
 
 sha256sum figures/f1_tasks.png figures/f2_curves.png figures/f3_patching.png \
     figures/f4_coda.png figures/f6_halting.png figures/f8_absent.png \
-    figures/f9_binding.png > "$DIR/figures.sha256"
+    figures/f9_binding.png figures/f11_training.png figures/f12_schematic.png \
+    > "$DIR/figures.sha256"
 echo "stored inputs and figure hashes in $DIR"

@@ -10,6 +10,7 @@ ledger that dates an entry by a later edit. Every identifier here is made up.
 from __future__ import annotations
 
 import hashlib
+import re
 import sys
 from pathlib import Path
 
@@ -89,6 +90,28 @@ def test_a_run_file_nobody_listed_is_named_not_dropped(tmp_path) -> None:
     (d / "extra").mkdir()
     _, unknown = R.plan_run(d)
     assert unknown == ["famA_d2_d4only_s0/extra/", "famA_d2_d4only_s0/train.log"]
+
+
+def test_every_shipped_test_reaches_only_shipped_scripts() -> None:
+    """A test of a script the release leaves out cannot run inside the release.
+
+    On 2026-11-12 the two tests of the TMLR build were about to ship without
+    the scripts they import, and the release's own suite would have stopped
+    at collection.
+    """
+    root = Path(__file__).resolve().parents[1]
+    scripts = {p.stem: p.name for p in (root / "scripts").glob("*.py")}
+    shipped = {Path(p).name for p in R.CODE_PATHS if p.startswith("scripts/")}
+    bad = []
+    for t in sorted((root / "tests").glob("test_*.py")):
+        if t.name in R.EXCLUDED_TESTS:
+            continue
+        text = t.read_text(encoding="utf-8")
+        used = {m.group(1) for m in re.finditer(r"^\s*(?:import|from)\s+(\w+)", text, re.M)}
+        used = {scripts[u] for u in used if u in scripts}
+        used |= set(re.findall(r"\"scripts\"\s*/\s*\"([\w.]+)\"", text))
+        bad += [f"{t.name}: {u}" for u in sorted(used - shipped)]
+    assert not bad, bad
 
 
 def test_the_jitter_arms_are_excluded_and_nothing_else() -> None:
@@ -196,9 +219,11 @@ def test_an_existing_release_is_never_written_over(tmp_path) -> None:
                    encoding="utf-8")
     pdf = tmp_path / "paper.pdf"
     pdf.write_bytes(b"%PDF")
+    # A commit no repository has: if git were asked before the refusal, this
+    # would raise, as it does in any copy of the release that is not a checkout.
     rc = R.main(["--runs", str(tmp_path), "--pdf", str(pdf), "--figures",
                  str(tmp_path), "--out", str(out), "--identifiers", str(ids),
-                 "--licence-holder", "A. Author"])
+                 "--licence-holder", "A. Author", "--commit", "no-such-commit-anywhere"])
     assert rc == 2
 
 
