@@ -209,4 +209,4 @@ Every family A cell with a finished run:
   why_e1a_square                           16 of 20 escaped
   why_e1b_scrambled                        14 of 20 escaped
 
-wrote runs/_figures_20261112_d079/rates.json
+wrote runs/_figures_20261112_d080/rates.json

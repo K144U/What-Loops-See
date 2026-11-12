@@ -1,4 +1,0 @@
-kept the runs of 2 config(s): famB_curve111, famC_breadth111
-wrote runs/_figures_20261112_d079/m1_kmin.parquet  (350 cells from 20 run(s))
-wrote runs/_figures_20261112_d079/m1_summary.json
---no-fit: stopping before the bootstrap

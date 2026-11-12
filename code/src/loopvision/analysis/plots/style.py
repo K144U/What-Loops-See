@@ -61,6 +61,23 @@ OUTCOME = {
     "unfinished": REFERENCE,
 }
 
+#: One mark per run, for the figures that draw every seed (F13 to F16, from
+#: 2026-11-12). Shape and fill carry the outcome on their own, so colour is a
+#: second cue and never the only one. The colours differ from OUTCOME's on
+#: purpose: OUTCOME's ochre and brick are 1.5 apart for a deuteranope, and its
+#: green reads as grey. These three pass every check of the dataviz palette
+#: validator against a white page: lightness band, chroma floor, colour-blind
+#: separation, the normal-vision floor and contrast. OUTCOME is kept as it
+#: was, so the seven figures drawn with it do not change.
+OUTCOME_MARKS = {
+    "escaped": {"color": "#0f8a5f", "marker": "o", "filled": True,
+                "label": "solved"},
+    "collapsed": {"color": "#c1442a", "marker": "s", "filled": False,
+                  "label": "stuck at chance"},
+    "neither": {"color": "#6b4c9a", "marker": "D", "filled": False,
+                "label": "left chance, not solved"},
+}
+
 
 def series(i: int) -> dict:
     """Colour, marker and dash for series i, cycling if there are many."""

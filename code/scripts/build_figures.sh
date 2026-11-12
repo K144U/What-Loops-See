@@ -76,9 +76,22 @@ python -m loopvision.analysis.plots.f11_training --runs runs --rates "$DIR/rates
     --registered runs/_revision_verdicts_20261021/registered.txt \
     --out figures/f11_training
 python -m loopvision.analysis.plots.f12_schematic --out figures/f12_schematic
+# Added 2026-11-12 (D-080): the illustrations. F13 and F16 read only the
+# generator and the group's arithmetic; F14 and F15 read the stored outputs
+# named here, which the draft's tables already quote.
+python -m loopvision.analysis.plots.f13_anatomy --out figures/f13_anatomy
+python -m loopvision.analysis.plots.f14_renderings \
+    --salience runs/_tile_distinguishability_20261022_d076/d070.json \
+    --out figures/f14_renderings
+python -m loopvision.analysis.plots.f15_rescue \
+    --timing runs/_revision_verdicts_20261021/timing.json \
+    --out figures/f15_rescue
+python -m loopvision.analysis.plots.f16_trap --out figures/f16_trap
 
 sha256sum figures/f1_tasks.png figures/f2_curves.png figures/f3_patching.png \
     figures/f4_coda.png figures/f6_halting.png figures/f8_absent.png \
     figures/f9_binding.png figures/f11_training.png figures/f12_schematic.png \
+    figures/f13_anatomy.png figures/f14_renderings.png figures/f15_rescue.png \
+    figures/f16_trap.png \
     > "$DIR/figures.sha256"
 echo "stored inputs and figure hashes in $DIR"

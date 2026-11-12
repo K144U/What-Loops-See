@@ -2,7 +2,7 @@
 
 This archive accompanies the preprint *A Rescue That Knows Its Group: Training Deadlocks and Partial-Credit Traps in Learning to Compose from Pixels*, in `paper.pdf`. It
 was taken from commit
-`f17cdef4e69ff4b4b30072f318812fed4169d03a` of the project repository on 2026-11-12. Appendix A of
+`359b4147e91996eb78c7fcff369a9ff9122d1a0a` of the project repository on 2026-11-12. Appendix A of
 the paper names, for each claim, the decision log entry behind it and the
 stored file it is read from; both are here.
 
@@ -15,14 +15,14 @@ stored file it is read from; both are here.
   `registrations/experiment-substrate.md`, the design of the substrate
   experiment.
 - `registrations/ledger.csv`, the commit and time at which each decision log
-  entry was first committed, 79 entries.
+  entry was first committed, 80 entries.
 - `runs/`, 657 training runs in 77 arms: each run's
   config, metrics over training and evaluation, summary, and the output of
   every instrument run on it.
 - `runs/_*/`, the stored outputs the verdicts and figures are read from,
   11 directories, each with the commit that wrote it.
-- `figures/`, the 9 figures of the paper, each identical to
-  the hash stored beside its inputs in `runs/_figures_20261112_d079/`.
+- `figures/`, the 13 figures of the paper, each identical to
+  the hash stored beside its inputs in `runs/_figures_20261112_d080/`.
 - `code/`, the `loopvision` package, its tests and its configs at the same
   commit.
 - `SHA256SUMS`, a hash of every other file here.
@@ -66,5 +66,5 @@ Python 3.10 or later, PyTorch 2 (the runs used the cu121 build).
         --config configs/m3/famC_breadth_111.yaml
 
 Each figure script under `code/src/loopvision/analysis/plots/` reads one of
-the stored inputs in `runs/_figures_20261112_d079/` and computes nothing;
+the stored inputs in `runs/_figures_20261112_d080/` and computes nothing;
 `code/scripts/build_figures.sh` lists the command for each.

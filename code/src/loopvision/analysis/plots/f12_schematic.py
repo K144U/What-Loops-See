@@ -1,9 +1,10 @@
 """F12. The study in one picture: two pictures of one group, the model, the rescue.
 
 A schematic, added 2026-11-12 so a reader meets the setup as a picture
-before the prose. It plots no measured number, so it reads no file. The
-tiles are drawn to explain the two conditions of Section 3 and are not the
-renderer's tiles; Figure 1 shows those.
+before the prose. It plots no measured number, so it reads no file. Since
+D-080 the tiles of (a) are the renderer's own, drawn by `pictures.tile`: the
+first version drew a glyph the renderer never draws, which beside the real
+tiles of the other figures would have shown a reader two different glyphs.
 
     (a) the same group element acting on position and on colour
     (b) the looped model and its feedforward baselines
@@ -16,35 +17,26 @@ from __future__ import annotations
 
 import argparse
 
-#: A 4 by 4 glyph with no symmetry, so a quarter turn changes its silhouette.
-GLYPH = ((0, 0), (0, 1), (0, 2), (0, 3), (1, 3), (2, 3), (1, 1))
-
-#: Four colours for the appearance tile's quadrants: same silhouette, colours move.
-QUADRANTS = ("#1b3a6b", "#c1442a", "#2e7d5b", "#d9b44a")
+#: The two elements panel (a) shows: doing nothing and a quarter turn, as
+#: indices of the full group with the colour part left alone.
+IDENTITY, QUARTER_TURN = 0, 12
 
 NL = "\n"
 
 
-def _turn(cells, n=4):
-    """A quarter turn of a set of cells in an n by n tile."""
-    return tuple((c, n - 1 - r) for r, c in cells)
+def outline(g: int, substrate: str) -> frozenset:
+    """The cells a tile fills, colour ignored: what a reader calls its outline."""
+    from loopvision.analysis.plots import pictures as P
+
+    t = P.tile(g, substrate)
+    return frozenset((r, c) for r in range(t.shape[0]) for c in range(t.shape[1])
+                     if tuple(int(v) for v in t[r, c]) != tuple(P.BACKGROUND))
 
 
-def _tile(ax, x0, y0, size, cells=None, colours=None):
-    from matplotlib.patches import Rectangle
+def _tile(ax, x0, y0, size, g, substrate):
+    from loopvision.analysis.plots import pictures as P
 
-    step = size / 4
-    ax.add_patch(Rectangle((x0, y0), size, size, fill=False, lw=0.8, ec="#555555"))
-    if cells is not None:
-        for r, c in cells:
-            ax.add_patch(Rectangle((x0 + c * step, y0 + (3 - r) * step), step, step,
-                                   color="#1a1a1a", lw=0))
-    if colours is not None:
-        half = size / 2
-        for i, col in enumerate(colours):
-            r, c = divmod(i, 2)
-            ax.add_patch(Rectangle((x0 + c * half, y0 + (1 - r) * half), half, half,
-                                   color=col, lw=0))
+    P.draw_pixels(ax, P.tile(g, substrate), x0, y0, size)
 
 
 def _arrow(ax, x0, y0, x1, y1, text=None, below=False):
@@ -69,15 +61,14 @@ def panel_substrates(ax):
     ax.set_title("(a) One group, two kinds of picture", fontsize=8, loc="left")
     ax.text(0.0, 0.93, "On position, the element turns the glyph," + NL
             + "so its outline changes.", fontsize=6.3, va="top")
-    _tile(ax, 0.08, 0.45, 0.24, cells=GLYPH)
+    _tile(ax, 0.08, 0.45, 0.24, IDENTITY, "native")
     _arrow(ax, 0.38, 0.57, 0.60, 0.57, "quarter turn", below=True)
-    _tile(ax, 0.66, 0.45, 0.24, cells=_turn(GLYPH))
+    _tile(ax, 0.66, 0.45, 0.24, QUARTER_TURN, "native")
     ax.text(0.0, 0.34, "On colour, the same element moves the" + NL
             + "colours; the outline never changes.", fontsize=6.3, va="top")
-    turned = (QUADRANTS[2], QUADRANTS[0], QUADRANTS[3], QUADRANTS[1])
-    _tile(ax, 0.08, -0.12, 0.24, colours=QUADRANTS)
+    _tile(ax, 0.08, -0.12, 0.24, IDENTITY, "d4_colour")
     _arrow(ax, 0.38, 0.0, 0.60, 0.0, "quarter turn", below=True)
-    _tile(ax, 0.66, -0.12, 0.24, colours=turned)
+    _tile(ax, 0.66, -0.12, 0.24, QUARTER_TURN, "d4_colour")
 
 
 def panel_model(ax):
@@ -131,6 +122,9 @@ def draw(out: str):
         ax.set_xlim(-0.02, 1.02)
         ax.set_ylim(-0.16, 1.0)
         ax.axis("off")
+    # Square pixels: the renderer's tiles must not be stretched. "datalim"
+    # widens the limits instead of shrinking the panel, so the layout holds.
+    axes[0].set_aspect("equal", adjustable="datalim")
     panel_substrates(axes[0])
     panel_model(axes[1])
     panel_rescue(axes[2])

@@ -107,10 +107,3 @@ def test_the_schematic_draws(tmp_path) -> None:
     import matplotlib.pyplot as plt
     plt.close("all")
 
-
-def test_a_quarter_turn_four_times_is_the_identity() -> None:
-    cells = F12.GLYPH
-    for _ in range(4):
-        cells = F12._turn(cells)
-    assert sorted(cells) == sorted(F12.GLYPH)
-    assert sorted(F12._turn(F12.GLYPH)) != sorted(F12.GLYPH)
