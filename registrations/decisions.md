@@ -1891,3 +1891,18 @@ New figures use a new outcome encoding, `style.OUTCOME_MARKS`: shape and fill fi
 **Placement.** The build places a figure at its first citation, and the introduction now cites all four. So the reader's Figures 1 to 6 come before Related work, a visual tour of the premise and the three findings. The TMLR build is 19 pages, with the main text ending on page 13.
 **Checked.** `tests/test_f13_f16.py` has 20 tests. Ten deliberate breaks were each caught. The writing detector scores both the draft and the captions Clean.
 **Reversible:** yes.
+
+### D-081. The writing pass is redone with the full avoid-ai-writing skill, and three overstatements are corrected
+**Date:** 2026-11-12
+**Milestone:** 12
+**Type:** revision
+**Decision:** D-079's writing pass relied on the bundled detector, which scored the draft Clean, while Turnitin marked 24% of the anonymous PDF as likely AI-written. The author asked for `SKILL.full.md` to be applied in full. Most of the marked passages shared structural patterns that the detector does not score: "X, not Y" contrast pairs (16 in the main text), aphorisms, staged short verdicts, mirrored antitheses, bold labels ending in periods, "So" openers and repeated statements of our own rigour. 54 paragraphs and captions were rewritten in place, and every number, citation, count annotation and figure reference was kept. Tables were left alone, as protected content.
+
+Three sentences said more than the data. They now match it:
+- the introduction's "held there on fresh seeds" now says the fresh seeds did not contradict it, as in Section 5.2 and the Limitations;
+- the Discussion's "a donor of the right group fixes it in every seed" now says all or nearly all, since the other-picture donor rescued 9 of 10;
+- the Code and data line said every figure reads a stored file, and two figures read none.
+
+The 5.2 heading, which a D-080 edit had joined to the end of a caption line, is on its own line again.
+**Checked:** `escape_rates --check` passes. The skill's preservation validator finds no mechanical errors once that heading repair is taken into account, and its quote pass needed no change. The detector scores 0. Both PDFs build, the anonymous one at 19 pages with no names, and 56 build tests pass.
+**Reversible:** yes.
