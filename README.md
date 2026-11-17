@@ -2,7 +2,7 @@
 
 This archive accompanies the preprint *A Rescue That Knows Its Group: Training Deadlocks and Partial-Credit Traps in Learning to Compose from Pixels*, in `paper.pdf`. It
 was taken from commit
-`c5042fa8c3bc2020df8cd761159b7042245dd2f4` of the project repository on 2026-11-17. Appendix A of
+`17e396c46877b6b4e42418f25bbf974071b8dee4` of the project repository on 2026-11-17. Appendix A of
 the paper names, for each claim, the decision log entry behind it and the
 stored file it is read from; both are here.
 
@@ -15,7 +15,7 @@ stored file it is read from; both are here.
   `registrations/experiment-substrate.md`, the design of the substrate
   experiment.
 - `registrations/ledger.csv`, the commit and time at which each decision log
-  entry was first committed, 81 entries.
+  entry was first committed, 82 entries.
 - `runs/`, 657 training runs in 77 arms: each run's
   config, metrics over training and evaluation, summary, and the output of
   every instrument run on it.

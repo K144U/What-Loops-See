@@ -1906,3 +1906,16 @@ Three sentences said more than the data. They now match it:
 The 5.2 heading, which a D-080 edit had joined to the end of a caption line, is on its own line again.
 **Checked:** `escape_rates --check` passes. The skill's preservation validator finds no mechanical errors once that heading repair is taken into account, and its quote pass needed no change. The detector scores 0. Both PDFs build, the anonymous one at 19 pages with no names, and 56 build tests pass.
 **Reversible:** yes.
+
+### D-082. The introduction states the problem the paper solves
+**Date:** 2026-11-17
+**Milestone:** 12
+**Type:** revision
+**Decision:** Before submitting, the author asked whether the introduction says why the work was done and what problem it solves, and asked that readers see the authors take the problem seriously. It said what was done and found, but it did not state the problem. The opening paragraph and the paragraph after it were replaced by three:
+- the task, framed as a small and exact case of multi-step reasoning;
+- why looped models were expected to help, citing the recurrent-depth papers already in Related work, and that they did not;
+- the problem. Runs that never learn give no sign of why, and two explanations remain open: the model cannot represent the composite, or it can and training never finds it. These call for different fixes, and the paper tells them apart.
+
+The figure citation order is unchanged, so no figure renumbers. "Two runs in three never learned it" is 20 of the 30 cold-start seeds on the D4 colour task, read from `runs/_curriculum_contrasts_20261006/contrasts.txt`. It counts both the 18 collapsed runs and the 2 that left chance without solving, so it does not say "collapsed".
+**Checked:** `escape_rates --check` passes. The preservation validator finds no mechanical errors; its new numbers are the citation years and the count note. The detector scores 0. The TMLR PDF is still 19 pages, with references on page 13, no names and no LaTeX warnings. The author reruns Turnitin.
+**Reversible:** yes.
